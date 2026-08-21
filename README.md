@@ -34,7 +34,7 @@ This project includes:
 ## Installation
 
 1. Create and activate the virtual environment.
-2. Install dependencies with `pip install -r requirements.txt`.
+2. Install dependencies with `pip install -r backend/requirements.txt`.
 3. Create a local `.env` file from `.env.example`.
 4. Set `PIST_EXTERNAL_API_KEY` and `SECRET_KEY`.
 
@@ -49,6 +49,7 @@ This project includes:
 Run migrations:
 
 ```bash
+cd backend
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -56,12 +57,14 @@ python manage.py migrate
 Seed the database:
 
 ```bash
+cd backend
 python manage.py seed_pist
 ```
 
 ## Running the Development Server
 
 ```bash
+cd backend
 python manage.py runserver
 ```
 
@@ -69,7 +72,8 @@ python manage.py runserver
 
 ### PythonAnywhere backend
 
-- Use [passenger_wsgi.py](passenger_wsgi.py) as the WSGI entrypoint.
+- Backend code is now inside `backend/`.
+- Use `backend/passenger_wsgi.py` as the WSGI entrypoint.
 - Set environment variables in the PythonAnywhere web app:
   - `SECRET_KEY`
   - `DEBUG=False`
@@ -79,6 +83,7 @@ python manage.py runserver
 - Run:
 
 ```bash
+cd backend
 python manage.py migrate
 python manage.py seed_pist
 python manage.py collectstatic --noinput
@@ -149,6 +154,7 @@ Successful applications return `HTTP 201 Created` with the generated application
 Create a Django staff user:
 
 ```bash
+cd backend
 python manage.py createsuperuser
 ```
 
@@ -157,6 +163,7 @@ Then use `/university-admin/login/` to access the staff dashboard.
 ## Testing
 
 ```bash
+cd backend
 python manage.py test
 ```
 
@@ -169,7 +176,8 @@ The test suite covers:
 
 ## Project Structure
 
-- `admissions/` - public site, models, API, services, and seed command
-- `university_admin/` - staff portal and exports
-- `templates/` - shared layout and error pages
-- `static/` - global CSS and JavaScript
+- `backend/admissions/` - public site, models, API, services, and seed command
+- `backend/university_admin/` - staff portal and exports
+- `backend/templates/` - shared layout and error pages
+- `backend/static/` - global CSS and JavaScript
+- `frontend/` - separate static frontend for Vercel

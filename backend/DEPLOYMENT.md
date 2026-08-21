@@ -3,7 +3,7 @@
 ## Backend: PythonAnywhere
 
 1. Create a new PythonAnywhere web app with the same Python version used locally.
-2. Point the WSGI configuration to `passenger_wsgi.py` or use the Django WSGI app from `config.wsgi`.
+2. Point the WSGI configuration to `backend/passenger_wsgi.py` or use the Django WSGI app from `backend/config/wsgi.py`.
 3. Set the environment variables:
    - `SECRET_KEY`
    - `DEBUG=False`
@@ -17,6 +17,7 @@
 4. Run migrations and seed data:
 
 ```bash
+cd backend
 python manage.py migrate
 python manage.py seed_pist
 python manage.py collectstatic --noinput
