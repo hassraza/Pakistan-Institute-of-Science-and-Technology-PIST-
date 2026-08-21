@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}PIST Admin{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">PIST ADMIN</div>
+    <nav>
+      <a href="{% url 'university_admin:dashboard' %}">Dashboard</a>
+      <a href="{% url 'university_admin:applications' %}">Applications</a>
+      <a href="{% url 'admissions:campuses' %}" target="_blank" rel="noopener">Public Site</a>
+      <a href="{% url 'university_admin:logout' %}">Logout</a>
+    </nav>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <strong>{% block admin_heading %}University Admission Office{% endblock %}</strong>
+        <span>Data-driven admissions management</span>
+      </div>
+    </header>
+    <main class="admin-content">
+      {% include 'partials/messages.html' %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script src="{% static 'js/admin.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

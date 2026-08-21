@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Track Application | PIST{% endblock %}
+{% block content %}
+<section class="container section narrow-copy">
+  <span class="eyebrow">Admissions</span>
+  <h1>Track application</h1>
+  <p class="lead">Enter a roll number or application identifier to review the current admission status.</p>
+
+  <form class="track-form" method="get">
+    {{ form.reference.label_tag }}
+    {{ form.reference }}
+    <button class="button button--primary" type="submit">Track</button>
+  </form>
+
+  {% if application %}
+    <div class="detail-card">
+      <div class="detail-card__header">
+        <h2>{{ application.full_name }}</h2>
+        <span class="status status--{% if application.status == 'Rejected' %}closed{% else %}open{% endif %}">{{ application.status }}</span>
+      </div>
+      <dl class="definition-list">
+        <div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div>
+        <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
+        <div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div>
+        <div><dt>Test Date</dt><dd>{{ application.test_date|default:'To be scheduled' }}</dd></div>
+        <div><dt>Venue</dt><dd>{{ application.test_venue|default:'To be announced' }}</dd></div>
+      </dl>
+      <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}">View roll slip</a>
+    </div>
+  {% elif form.is_bound %}
+    <div class="empty-state compact">No matching application was found.</div>
+  {% endif %}
+</section>
+{% endblock %}

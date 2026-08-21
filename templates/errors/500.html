@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Server Error | PIST{% endblock %}
+{% block content %}
+<section class="container empty-state">
+  <h1>Server Error</h1>
+  <p>An unexpected error occurred. Please try again later.</p>
+  <a class="button button--primary" href="{% url 'admissions:home' %}">Return to PIST Homepage</a>
+</section>
+{% endblock %}

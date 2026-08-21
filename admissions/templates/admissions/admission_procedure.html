@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}How Admission Works | PIST{% endblock %}
+{% block content %}
+<section class="container section narrow-copy">
+  <span class="eyebrow">Admissions</span>
+  <h1>How admission works</h1>
+  <p class="lead">The central portal submits an authenticated JSON application to PIST, which validates eligibility, generates a roll number, and schedules an entry test automatically.</p>
+  <div class="timeline-panel timeline-panel--full">
+    <ol class="timeline timeline--vertical">
+      {% for step in steps %}
+        <li>{{ forloop.counter }}. {{ step }}</li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endblock %}

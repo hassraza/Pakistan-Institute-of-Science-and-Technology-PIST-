@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://YOUR-PYTHONANYWHERE-USERNAME.pythonanywhere.com/api/$1"
+    }
+  ]
+}

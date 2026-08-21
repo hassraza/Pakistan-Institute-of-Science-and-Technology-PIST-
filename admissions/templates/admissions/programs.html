@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Programs | PIST{% endblock %}
+{% block content %}
+<section class="container section">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Academics</span>
+      <h1>Programs</h1>
+    </div>
+  </div>
+  <div class="filter-strip">
+    <a class="chip {% if not campus_code %}chip--active{% endif %}" href="{% url 'admissions:programs' %}">All campuses</a>
+    {% for campus in active_campuses %}
+      <a class="chip {% if campus_code == campus.code %}chip--active{% endif %}" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">{{ campus.code }}</a>
+    {% endfor %}
+  </div>
+  <div class="card-grid card-grid--two">
+    {% for program in programs %}
+      <article class="program-card">
+        <div class="program-card__meta">
+          <span class="badge badge--muted">{{ program.department.campus.code }}</span>
+          <span class="badge badge--success">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
+        </div>
+        <h2>{{ program.name }}</h2>
+        <p>{{ program.department.name }} • {{ program.department.campus.name }}</p>
+        <p class="meta">{{ program.degree_level }} • {{ program.duration }} • {{ program.required_test_type }}</p>
+        <a class="text-link" href="{% url 'admissions:program_detail' program.slug %}">View program</a>
+      </article>
+    {% empty %}
+      <p>No programs found.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

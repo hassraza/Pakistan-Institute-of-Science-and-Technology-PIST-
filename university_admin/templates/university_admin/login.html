@@ -1,0 +1,13 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}University Admin Login | PIST{% endblock %}
+{% block content %}
+<section class="auth-panel">
+  <h1>University Admin Login</h1>
+  <p>Only authorized admission officers can access this portal.</p>
+  <form method="post" class="auth-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="button button--primary" type="submit">Sign in</button>
+  </form>
+</section>
+{% endblock %}

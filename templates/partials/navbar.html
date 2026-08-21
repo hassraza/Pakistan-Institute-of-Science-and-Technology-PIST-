@@ -1,0 +1,23 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="{% url 'admissions:home' %}">
+      <span class="brand__mark">PIST</span>
+      <span class="brand__text">
+        <strong>Pakistan Institute of Science and Technology</strong>
+        <small>Fictional university admissions ecosystem</small>
+      </span>
+    </a>
+    <button class="menu-toggle" type="button" aria-label="Toggle navigation" data-menu-toggle>Menu</button>
+    <nav class="site-nav" data-site-nav>
+      <a href="{% url 'admissions:about' %}">About</a>
+      <a href="{% url 'admissions:campuses' %}">Campuses</a>
+      <a href="{% url 'admissions:departments' %}">Departments</a>
+      <a href="{% url 'admissions:programs' %}">Programs</a>
+      <a href="{% url 'admissions:admission_procedure' %}">Admissions</a>
+      <a href="{% url 'admissions:research' %}">Research</a>
+      <a href="{% url 'admissions:student_life' %}">Student Life</a>
+      <a href="{% url 'admissions:contact' %}">Contact</a>
+      <a class="button button--primary" href="{% url 'admissions:track_application' %}">Track Application</a>
+    </nav>
+  </div>
+</header>

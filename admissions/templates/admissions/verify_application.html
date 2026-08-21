@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Application Verification | PIST{% endblock %}
+{% block content %}
+<section class="container section narrow-copy">
+  <span class="eyebrow">Verification</span>
+  <h1>Application verified</h1>
+  <p class="lead">This page is linked from the roll slip QR area and confirms the candidate's admission record.</p>
+
+  <div class="detail-card">
+    <dl class="definition-list">
+      <div><dt>Name</dt><dd>{{ application.full_name }}</dd></div>
+      <div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div>
+      <div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div>
+      <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
+      <div><dt>Status</dt><dd>{{ application.status }}</dd></div>
+      <div><dt>Test Date</dt><dd>{{ application.test_date|default:'To be scheduled' }}</dd></div>
+    </dl>
+  </div>
+</section>
+{% endblock %}

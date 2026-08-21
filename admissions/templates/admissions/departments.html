@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Departments | PIST{% endblock %}
+{% block content %}
+<section class="container section">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Academics</span>
+      <h1>Departments</h1>
+    </div>
+  </div>
+  <div class="card-grid card-grid--two">
+    {% for department in departments %}
+      <article class="department-card">
+        <div class="info-card__top">
+          <span class="badge badge--muted">{{ department.campus.code }}</span>
+          <span class="meta">{{ department.programs.count }} programs</span>
+        </div>
+        <h2>{{ department.name }}</h2>
+        <p>{{ department.description|default:'A campus-specific department represented in the university database.' }}</p>
+        <a class="text-link" href="{% url 'admissions:campus_detail' department.campus.code %}">View campus</a>
+      </article>
+    {% empty %}
+      <p>No departments available.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

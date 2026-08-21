@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Invalid Verification | PIST{% endblock %}
+{% block content %}
+<section class="container section narrow-copy">
+  <span class="eyebrow">Verification</span>
+  <h1>Invalid Verification</h1>
+  <p class="lead">The verification link is not valid or the record could not be found.</p>
+  <a class="button button--primary" href="{% url 'admissions:home' %}">Return to Homepage</a>
+</section>
+{% endblock %}

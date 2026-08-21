@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ program.name }} | {{ program.department.campus.code }} | PIST{% endblock %}
+{% block meta_description %}{{ program.name }} at {{ program.department.campus.name }}. Eligibility, requirements, and admission information for PIST.{% endblock %}
+{% block content %}
+<section class="container section narrow-copy">
+  <div class="page-header">
+    <div>
+      <span class="eyebrow">Program Detail</span>
+      <h1>{{ program.name }}</h1>
+      <p class="lead">{{ program.department.name }} • {{ program.department.campus.name }}</p>
+    </div>
+    <span class="status status--{% if program.admissions_open %}open{% else %}closed{% endif %}">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h2>Program Overview</h2>
+      <p>{{ program.description|default:'This page is driven by the Program, Department, and Campus models so each offering can be managed independently.' }}</p>
+      <dl class="definition-list">
+        <div><dt>Department</dt><dd>{{ program.department.name }}</dd></div>
+        <div><dt>Campus</dt><dd>{{ program.department.campus.name }}</dd></div>
+        <div><dt>Degree</dt><dd>{{ program.degree_level }}</dd></div>
+        <div><dt>Duration</dt><dd>{{ program.duration }}</dd></div>
+        <div><dt>Eligibility</dt><dd>{{ program.eligibility_percentage }}% minimum</dd></div>
+        <div><dt>Required Test</dt><dd>{{ program.required_test_type }}</dd></div>
+      </dl>
+    </div>
+    <div class="detail-card">
+      <h2>Admission Requirements</h2>
+      <p>{{ program.eligibility_text|default:'Minimum eligibility is configured from the database. The external admission API applies these rules before issuing a roll number.' }}</p>
+      {% if program.application_deadline %}
+        <p><strong>Application deadline:</strong> {{ program.application_deadline }}</p>
+      {% else %}
+        <p><strong>Application deadline:</strong> To be configured</p>
+      {% endif %}
+      <p><strong>Roll number pattern:</strong> PIST-{{ program.department.campus.code }}-{{ program.code }}-YYYY-XXXX</p>
+    </div>
+    <div class="detail-card">
+      <h2>Career Opportunities</h2>
+      <p>{{ career_opportunities }}</p>
+      <h2 style="margin-top: 18px;">Admission Procedure</h2>
+      <ol class="timeline" style="padding-left: 18px;">
+        {% for step in procedure_steps %}
+          <li>{{ step }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+{% endblock %}

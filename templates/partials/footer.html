@@ -1,0 +1,33 @@
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div>
+      <h3>PIST</h3>
+      <p>Fictional university website and admission workflow for a final year project demonstration.</p>
+    </div>
+    <div>
+      <h4>Campus Links</h4>
+      <ul>
+        {% for campus in active_campuses %}
+          <li><a href="{% url 'admissions:campus_detail' campus.code %}">{{ campus.name }}</a></li>
+        {% empty %}
+          <li>No campuses configured yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h4>Admissions</h4>
+      <ul>
+        <li><a href="{% url 'admissions:admission_procedure' %}">How Admission Works</a></li>
+        <li><a href="{% url 'admissions:track_application' %}">Track Application</a></li>
+        <li><a href="{% url 'university_admin:login' %}">University Admin</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Important</h4>
+      <ul>
+        <li><a href="{% url 'admissions:about' %}">About PIST</a></li>
+        <li><a href="{% url 'admissions:contact' %}">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

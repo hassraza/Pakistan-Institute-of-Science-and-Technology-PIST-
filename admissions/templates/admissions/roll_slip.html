@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Roll Slip | {{ application.roll_number }}{% endblock %}
+{% block extra_head %}
+<style>
+@media print {
+  .site-header, .site-footer, .message-stack, .roll-slip__actions { display: none !important; }
+  body { background: #fff; }
+  .roll-slip { box-shadow: none; border: 1px solid #cbd5e1; }
+}
+</style>
+{% endblock %}
+{% block content %}
+<section class="container section roll-slip-shell">
+  <div class="roll-slip__actions no-print">
+    <button class="button button--primary" type="button" data-print-roll-slip>Print Roll Slip</button>
+    <a class="button button--secondary" href="{% url 'admissions:track_application' %}">Back to Tracking</a>
+  </div>
+  <article class="roll-slip">
+    <div class="roll-slip__header">
+      <div>
+        <span class="eyebrow">Pakistan Institute of Science and Technology</span>
+        <h1>Admission Entry Test 2026</h1>
+        <p>{{ application.campus.name }}</p>
+      </div>
+      <div class="roll-slip__logo">PIST</div>
+    </div>
+    <div class="roll-slip__grid">
+      <div>
+        <h2>Candidate Information</h2>
+        <dl class="definition-list definition-list--compact">
+          <div><dt>Name</dt><dd>{{ application.full_name }}</dd></div>
+          <div><dt>Father Name</dt><dd>{{ application.father_name }}</dd></div>
+          <div><dt>CNIC</dt><dd>{{ application.cnic }}</dd></div>
+          <div><dt>Email</dt><dd>{{ application.email }}</dd></div>
+          <div><dt>Application ID</dt><dd>{{ application.pk }}</dd></div>
+          <div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div>
+        </dl>
+      </div>
+      <div class="roll-slip__photo">
+        {% if application.profile_photo %}
+          <img src="{{ application.profile_photo.url }}" alt="Candidate photo">
+        {% else %}
+          <div class="photo-placeholder">Candidate Photo</div>
+        {% endif %}
+        <div class="qr-box">
+          <span>QR Verification Area</span>
+          <small>{{ verification_url }}</small>
+        </div>
+      </div>
+    </div>
+    <div class="roll-slip__grid roll-slip__grid--two">
+      <div>
+        <h2>Academic Information</h2>
+        <dl class="definition-list definition-list--compact">
+          <div><dt>Matric Marks</dt><dd>{{ application.matric_marks }} / {{ application.matric_total }}</dd></div>
+          <div><dt>FSc Marks</dt><dd>{{ application.fsc_marks }} / {{ application.fsc_total }}</dd></div>
+        </dl>
+      </div>
+      <div>
+        <h2>Program Information</h2>
+        <dl class="definition-list definition-list--compact">
+          <div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div>
+          <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
+          <div><dt>Test Date</dt><dd>{{ application.test_date }}</dd></div>
+          <div><dt>Reporting Time</dt><dd>{{ application.reporting_time }}</dd></div>
+          <div><dt>Test Venue</dt><dd>{{ application.test_venue }}</dd></div>
+          <div><dt>Building</dt><dd>{{ application.test_building }}</dd></div>
+          <div><dt>Hall</dt><dd>{{ application.test_hall }}</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="roll-slip__instructions">Print this slip and bring the original CNIC/B-Form. This slip is issued by the university admissions office for the scheduled entry test only.</p>
+    <div class="roll-slip__footer">
+      <span>Authorized Admission Officer</span>
+      <span>University Admission Office</span>
+    </div>
+  </article>
+</section>
+{% endblock %}

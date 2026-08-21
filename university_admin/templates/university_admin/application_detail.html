@@ -1,0 +1,54 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Application {{ application.pk }} | PIST Admin{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel__heading">
+    <div>
+      <h1>{{ application.full_name }}</h1>
+      <p>{{ application.program.name }} • {{ application.campus.name }}</p>
+    </div>
+    <div class="panel__actions">
+      <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}">Print Roll Slip</a>
+      <a class="button button--secondary" href="{% url 'university_admin:export_applications' 'csv' %}?search={{ application.pk }}">Export</a>
+    </div>
+  </div>
+
+  <div class="detail-grid detail-grid--admin">
+    <div class="detail-card">
+      <h2>Candidate</h2>
+      <p>{{ application.father_name }}</p>
+      <p>{{ application.cnic }}</p>
+      <p>{{ application.email }}</p>
+      <p>{{ application.phone }}</p>
+      <p>{{ application.address }}</p>
+    </div>
+    <div class="detail-card">
+      <h2>Academic</h2>
+      <p>Matric: {{ application.matric_marks }} / {{ application.matric_total }} ({{ application.matric_percentage|floatformat:2 }}%)</p>
+      <p>FSc: {{ application.fsc_marks }} / {{ application.fsc_total }} ({{ application.fsc_percentage|floatformat:2 }}%)</p>
+    </div>
+    <div class="detail-card">
+      <h2>Admission</h2>
+      <p>Application Date: {{ application.created_at }}</p>
+      <p>Source Application ID: {{ application.source_application_id }}</p>
+      <p>Roll Number: {{ application.roll_number|default:'Pending' }}</p>
+      <p>Test Date: {{ application.test_date|default:'TBA' }}</p>
+      <p>Venue: {{ application.test_venue|default:'TBA' }}</p>
+    </div>
+    <div class="detail-card">
+      <h2>Standardized Tests</h2>
+      {% for score in application.test_scores.all %}
+        <p>{{ score.test_type }}: {{ score.score }}/{{ score.max_score }}</p>
+      {% empty %}
+        <p>No test scores available.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <form method="post" class="status-form" data-confirm="Update the application status?">
+    {% csrf_token %}
+    {{ form.status }}
+    <button class="button button--primary" type="submit">Update Status</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Permission Denied | PIST{% endblock %}
+{% block content %}
+<section class="container empty-state">
+  <h1>Permission Denied</h1>
+  <p>You do not have access to this page.</p>
+  <a class="button button--primary" href="{% url 'admissions:home' %}">Return to PIST Homepage</a>
+</section>
+{% endblock %}

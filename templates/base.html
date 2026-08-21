@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}PIST is a fictional academic institution developed for a university admission ecosystem project.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/pist.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% include 'partials/navbar.html' %}
+  <main class="site-main">
+    {% include 'partials/messages.html' %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include 'partials/footer.html' %}
+  <script src="{% static 'js/pist.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
