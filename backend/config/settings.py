@@ -16,13 +16,28 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'pist-demo-secret-key-change-this-befo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-#ALLOWED_HOSTS = ['Hasaza55.pythonanywhere.com' ,host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
-ALLOWED_HOSTS = ['Hasaza55.pythonanywhere.com'] + [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        'ALLOWED_HOSTS',
+        'hasaza55.pythonanywhere.com,localhost,127.0.0.1',
+    ).split(',')
+    if host.strip()
+]
 
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        'CORS_ALLOWED_ORIGINS',
+        'https://pak-uni-portal.vercel.app',
+    ).split(',')
     if origin.strip()
 ]
 
@@ -179,5 +194,3 @@ SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000' if no
 SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True' if not DEBUG else 'False').lower() == 'true'
 SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD', 'True' if not DEBUG else 'False').lower() == 'true'
 
-
-CORS_ALLOW_ALL_ORIGINS = True

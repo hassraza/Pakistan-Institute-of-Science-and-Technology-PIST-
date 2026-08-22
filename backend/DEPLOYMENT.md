@@ -3,12 +3,13 @@
 ## Backend: PythonAnywhere
 
 1. Create a new PythonAnywhere web app with the same Python version used locally.
-2. Point the WSGI configuration to `backend/passenger_wsgi.py` or use the Django WSGI app from `backend/config/wsgi.py`.
+2. Set the web app source/code directory to `/home/USERNAME/<project>/backend` and point the WSGI configuration to that directory's `passenger_wsgi.py`.
 3. Set the environment variables:
    - `SECRET_KEY`
    - `DEBUG=False`
    - `ALLOWED_HOSTS=your-domain.pythonanywhere.com`
    - `CSRF_TRUSTED_ORIGINS=https://your-domain.pythonanywhere.com`
+   - `CORS_ALLOWED_ORIGINS=https://pak-uni-portal.vercel.app`
    - `PIST_EXTERNAL_API_KEY=your-secret-key`
    - `USE_HTTPS_PROXY=True`
    - `SESSION_COOKIE_SECURE=True`
@@ -29,10 +30,10 @@ Student document and profile files should be served through the authenticated po
 
 ## Frontend: Vercel
 
-1. Create a separate Vercel project with the root directory set to `frontend/`.
-2. Edit `frontend/vercel.json` and replace `YOUR-PYTHONANYWHERE-USERNAME.pythonanywhere.com` with your actual backend domain.
-3. Deploy the static site.
-4. The frontend calls the backend using the proxied `/api/v1/...` routes.
+1. Create a separate Vercel project with the root directory set to `frontend/` (not the repository root).
+2. Use the backend hostname in `frontend/vercel.json` if the PythonAnywhere username differs from `hasaza55`.
+3. Leave the build command empty; this is a static HTML/CSS/JavaScript site.
+4. Deploy the site. The frontend calls the backend using the proxied `/api/v1/...` routes.
 
 ## Notes
 
