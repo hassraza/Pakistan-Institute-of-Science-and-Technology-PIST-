@@ -12,6 +12,7 @@ This project includes:
 - Applicant receiving and processing pipeline
 - Roll number generation and test scheduling
 - Roll slip generation
+- Student registration, authentication, academic records, document uploads, program applications, and QR-verified roll slips
 - Staff-only university admin dashboard
 - Seed data and tests
 
@@ -109,6 +110,13 @@ This repository is ready to push to GitHub. The included [.github/workflows/djan
 - `/admissions/track/`
 - `/admissions/roll-slip/<uuid>/`
 - `/verify/<uuid>/`
+- `/student/register/`
+- `/student/login/`
+- `/student/dashboard/`
+- `/student/academic-record/`
+- `/student/documents/`
+- `/student/registered-programs/`
+- `/admissions/verify/roll-slip/<qr-token>/`
 
 ## API Documentation
 

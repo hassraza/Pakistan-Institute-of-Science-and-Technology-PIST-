@@ -5,7 +5,8 @@
 @media print {
   .site-header, .site-footer, .message-stack, .roll-slip__actions { display: none !important; }
   body { background: #fff; }
-  .roll-slip { box-shadow: none; border: 1px solid #cbd5e1; }
+    .roll-slip { box-shadow: none; border: 1px solid #cbd5e1; }
+  .roll-slip__qr img { width: 120px; height: 120px; }
 }
 </style>
 {% endblock %}
@@ -32,8 +33,9 @@
           <div><dt>Father Name</dt><dd>{{ application.father_name }}</dd></div>
           <div><dt>CNIC</dt><dd>{{ application.cnic }}</dd></div>
           <div><dt>Email</dt><dd>{{ application.email }}</dd></div>
-          <div><dt>Application ID</dt><dd>{{ application.pk }}</dd></div>
-          <div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div>
+          <div><dt>Application ID</dt><dd>{{ application.application_id|default:application.pk }}</dd></div>
+          <div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id|default:'Not assigned' }}</dd></div>
+          <div><dt>Entry Test Roll Number</dt><dd>{{ application.roll_number|default:'Not assigned' }}</dd></div>
         </dl>
       </div>
       <div class="roll-slip__photo">
@@ -42,9 +44,8 @@
         {% else %}
           <div class="photo-placeholder">Candidate Photo</div>
         {% endif %}
-        <div class="qr-box">
-          <span>QR Verification Area</span>
-          <small>{{ verification_url }}</small>
+        <div class="qr-box roll-slip__qr">
+          {% if roll_slip %}<img src="{% url 'admissions:roll_slip_qr' application.pk %}" alt="QR code for roll slip verification"><span>Scan to verify this slip</span>{% else %}<span>Verification unavailable</span>{% endif %}
         </div>
       </div>
     </div>
@@ -61,15 +62,16 @@
         <dl class="definition-list definition-list--compact">
           <div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div>
           <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
-          <div><dt>Test Date</dt><dd>{{ application.test_date }}</dd></div>
-          <div><dt>Reporting Time</dt><dd>{{ application.reporting_time }}</dd></div>
-          <div><dt>Test Venue</dt><dd>{{ application.test_venue }}</dd></div>
-          <div><dt>Building</dt><dd>{{ application.test_building }}</dd></div>
-          <div><dt>Hall</dt><dd>{{ application.test_hall }}</dd></div>
+          <div><dt>Test Date</dt><dd>{{ application.test_session.test_date|default:application.test_date|default:'Not yet scheduled' }}</dd></div>
+          <div><dt>Reporting Time</dt><dd>{{ application.test_session.reporting_time|default:application.reporting_time|default:'Not yet scheduled' }}</dd></div>
+          <div><dt>Test Start Time</dt><dd>{{ application.test_session.start_time|default:'Not yet scheduled' }}</dd></div>
+          <div><dt>Test Venue</dt><dd>{{ application.test_session.test_center.name|default:application.test_venue|default:'Not yet scheduled' }}</dd></div>
+          <div><dt>Building</dt><dd>{{ application.test_session.building|default:application.test_building|default:'Not yet scheduled' }}</dd></div>
+          <div><dt>Hall</dt><dd>{{ application.test_session.hall|default:application.test_hall|default:'Not yet scheduled' }}</dd></div>
         </dl>
       </div>
     </div>
-    <p class="roll-slip__instructions">Print this slip and bring the original CNIC/B-Form. This slip is issued by the university admissions office for the scheduled entry test only.</p>
+    <div class="roll-slip__instructions"><strong>Important Instructions</strong><ul><li>Arrive at least 30 minutes before the reporting time.</li><li>Bring this printed roll slip and your original CNIC/B-Form.</li><li>Mobile phones, calculators, books, and other prohibited items are not allowed.</li></ul></div>
     <div class="roll-slip__footer">
       <span>Authorized Admission Officer</span>
       <span>University Admission Office</span>

@@ -25,6 +25,8 @@ python manage.py collectstatic --noinput
 
 5. Map `/static/` and `/media/` in the PythonAnywhere web tab if you are not using WhiteNoise.
 
+Student document and profile files should be served through the authenticated portal views in production. Do not expose the development `MEDIA_URL` mapping publicly for private student records.
+
 ## Frontend: Vercel
 
 1. Create a separate Vercel project with the root directory set to `frontend/`.

@@ -2,8 +2,9 @@
 {% block title %}Permission Denied | PIST{% endblock %}
 {% block content %}
 <section class="container empty-state">
-  <h1>Permission Denied</h1>
-  <p>You do not have access to this page.</p>
-  <a class="button button--primary" href="{% url 'admissions:home' %}">Return to PIST Homepage</a>
+  <p class="eyebrow">PIST Student Portal</p>
+  <h1>Access not available</h1>
+  <p>You do not have permission to view this page or record.</p>
+  {% if user.is_authenticated and user.student_profile %}<a class="button button--primary" href="{% url 'students:dashboard' %}">Return to Dashboard</a>{% else %}<a class="button button--primary" href="{% url 'admissions:home' %}">Return to Homepage</a>{% endif %}
 </section>
 {% endblock %}

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'main',
     'admissions',
     'university_admin',
+    'students',
 ]
 
 
@@ -69,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'admissions.context_processors.site_context',
+                'students.context_processors.student_portal_context',
             ],
         },
     },
@@ -154,6 +156,17 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+STUDENT_MIN_AGE = 15
+STUDENT_MAX_AGE = 100
+STUDENT_MIN_NAME_LENGTH = 3
+STUDENT_ID_PREFIX = 'PIST-STU'
+STUDENT_PHOTO_MAX_SIZE_MB = 2
+ACADEMIC_DOCUMENT_MAX_SIZE_MB = 5
+PIST_ADMISSION_YEAR = int(os.environ.get('PIST_ADMISSION_YEAR', '2026'))
+LOGIN_ATTEMPT_LIMIT = 5
+LOGIN_ATTEMPT_WINDOW_MINUTES = 10
+SESSION_COOKIE_HTTPONLY = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if os.environ.get('USE_HTTPS_PROXY', 'False').lower() == 'true' else None
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True' if not DEBUG else 'False').lower() == 'true'

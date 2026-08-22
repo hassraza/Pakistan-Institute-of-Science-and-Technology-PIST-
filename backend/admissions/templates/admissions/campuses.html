@@ -16,6 +16,7 @@
           <span class="status status--{% if campus.admissions_open %}open{% else %}closed{% endif %}">{% if campus.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
         </div>
         <h2>{{ campus.name }}</h2>
+        {% if campus.is_main_campus %}<span class="badge badge--success">Main Campus</span>{% endif %}
         <p>{{ campus.city }}</p>
         <p>{{ campus.address }}</p>
         <p class="meta">{{ campus.department_count }} departments • {{ campus.program_count }} programs</p>

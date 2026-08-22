@@ -59,7 +59,8 @@ class ExternalApplicationSerializer(serializers.Serializer):
         except Program.DoesNotExist as exc:
             raise serializers.ValidationError({'program_code': ['Program not found.']}) from exc
 
-        if attrs['program'].department.campus_id != attrs['campus'].id:
+        program_campus_id = attrs['program'].campus_id or attrs['program'].department.campus_id
+        if program_campus_id != attrs['campus'].id:
             raise serializers.ValidationError({'program_code': ['Program does not belong to the selected campus.']})
 
         photo_value = attrs.get('profile_photo')

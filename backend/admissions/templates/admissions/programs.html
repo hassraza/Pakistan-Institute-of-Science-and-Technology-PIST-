@@ -18,12 +18,14 @@
     {% for program in programs %}
       <article class="program-card">
         <div class="program-card__meta">
-          <span class="badge badge--muted">{{ program.department.campus.code }}</span>
-          <span class="badge badge--success">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
+          <span class="badge badge--muted">{{ program.campus.name|default:program.department.campus.name }}</span>
+          <span class="badge badge--{% if program.admissions_open %}success{% else %}muted{% endif %}">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
         </div>
         <h2>{{ program.name }}</h2>
-        <p>{{ program.department.name }} • {{ program.department.campus.name }}</p>
-        <p class="meta">{{ program.degree_level }} • {{ program.duration }} • {{ program.required_test_type }}</p>
+        <p>{{ program.department.name }}</p>
+        <p class="meta">{{ program.degree_level }} • {{ program.duration }} • Minimum {{ program.eligibility_percentage }}%</p>
+        {% if program.eligibility_rules.all %}<p class="meta"><strong>Qualifications:</strong> {% for rule in program.eligibility_rules.all %}{{ rule.qualification.name }}{% if not forloop.last %} OR {% endif %}{% endfor %}</p>{% endif %}
+        {% if program.test_requirements.all %}<p class="meta"><strong>Required tests:</strong> {% for requirement in program.test_requirements.all %}{{ requirement.test_type.name }}{% if not forloop.last %} OR {% endif %}{% endfor %}</p>{% else %}<p class="meta">Required test: {{ program.required_test_type }}</p>{% endif %}
         <a class="text-link" href="{% url 'admissions:program_detail' program.slug %}">View program</a>
       </article>
     {% empty %}

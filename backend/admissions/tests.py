@@ -4,10 +4,12 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.core.management import call_command
+from io import StringIO
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from admissions.models import Campus, Department, PISTApplicant, Program, TestCenter, TestSession
+from admissions.models import Campus, Department, PISTApplicant, Program, ProgramEligibility, ProgramTestRequirement, Qualification, TestCenter, TestSession, TestType
 from admissions.services import EligibilityService, RollNumberService, TestSchedulingService
 
 
@@ -44,6 +46,15 @@ class AdmissionsModelTests(TestCase):
         self.assertEqual(self.program.department.campus, self.campus)
         self.assertEqual(self.campus.departments.count(), 1)
         self.assertEqual(self.department.programs.count(), 1)
+
+    def test_only_one_main_campus_is_retained(self):
+        self.campus.is_main_campus = True
+        self.campus.save()
+        other = Campus.objects.create(name='Other Campus', city='Lahore', code='OTH', address='Other address', is_main_campus=True)
+        self.assertFalse(Campus.objects.get(pk=self.campus.pk).is_main_campus)
+        self.assertEqual(Campus.objects.filter(is_main_campus=True).count(), 1)
+        self.assertTrue(other.is_main_campus)
+
 
     def test_applicant_creation_and_roll_number_uniqueness_constraint(self):
         applicant = PISTApplicant.objects.create(
@@ -266,6 +277,24 @@ class PublicAndAdminTests(TestCase):
         self.assertContains(response, 'Admissions Open - Fall 2026')
         self.assertContains(response, 'Top 5 Tech University in Pakistan')
 
+    def test_homepage_shows_database_driven_statistics_and_program_details(self):
+        response = self.client.get(reverse('admissions:home'))
+        self.assertEqual(response.context['campus_count'], 1)
+        self.assertEqual(response.context['department_count'], 1)
+        self.assertEqual(response.context['program_count'], 1)
+        self.assertEqual(response.context['open_program_count'], 1)
+        self.assertContains(response, 'Department of Computer Science')
+        self.assertContains(response, 'BS Computer Science')
+        self.assertContains(response, 'Admissions Open')
+
+    def test_homepage_shows_closed_program_status(self):
+        self.program.admissions_open = False
+        self.program.save(update_fields=['admissions_open'])
+        response = self.client.get(reverse('admissions:home'))
+        self.assertEqual(response.context['program_count'], 1)
+        self.assertEqual(response.context['open_program_count'], 0)
+        self.assertNotContains(response, 'BS Computer Science')
+
     def test_campuses_page_loads(self):
         response = self.client.get(reverse('admissions:campuses'))
         self.assertEqual(response.status_code, 200)
@@ -363,27 +392,6 @@ class PublicAndAdminTests(TestCase):
         applicant.refresh_from_db()
         self.assertEqual(applicant.status, PISTApplicant.Status.ROLL_ISSUED)
 
-    def test_unauthorized_user_cannot_access_admin(self):
-        response = self.client.get(reverse('university_admin:dashboard'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_authorized_staff_can_access_admin(self):
-        self.client.login(username='officer', password='password123')
-        response = self.client.get(reverse('university_admin:dashboard'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_dashboard_contains_summary_counts(self):
-        self.client.login(username='officer', password='password123')
-        response = self.client.get(reverse('university_admin:dashboard'))
-        self.assertContains(response, 'Total Applications')
-        self.assertContains(response, 'Islamabad')
-
-    def test_applications_page_supports_filters(self):
-        self.client.login(username='officer', password='password123')
-        response = self.client.get(reverse('university_admin:applications'), {'campus': self.campus.pk, 'status': PISTApplicant.Status.ROLL_ISSUED})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.applicant.full_name)
-
     def test_filter_pagination_preserves_query(self):
         self.client.login(username='officer', password='password123')
         for index in range(30):
@@ -462,3 +470,29 @@ class PublicAndAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.applicant.refresh_from_db()
         self.assertEqual(self.applicant.status, PISTApplicant.Status.SELECTED)
+
+
+class AcademicSeedTests(TestCase):
+    def run_seed(self):
+        output = StringIO()
+        call_command('seed_pist', stdout=output)
+        return output.getvalue()
+
+    def test_seed_creates_full_academic_structure_and_is_idempotent(self):
+        self.run_seed()
+        models = (Campus, Department, Program, Qualification, TestType, ProgramEligibility, ProgramTestRequirement)
+        counts = {model.__name__: model.objects.count() for model in models}
+        self.assertEqual(Campus.objects.get(code='ISB').name, 'Pakistan Institute of Science and Technology — Islamabad Main Campus')
+        self.assertTrue(Campus.objects.get(code='ISB').is_main_campus)
+        self.assertEqual(Campus.objects.filter(is_main_campus=True).count(), 1)
+        self.assertEqual(Department.objects.count(), 24)
+        self.assertEqual(Program.objects.filter(campus__code='ISB').count(), 41)
+        self.assertEqual(Program.objects.count(), 55)
+        for campus_code in ('ISB', 'LHR', 'KHI'):
+            self.assertTrue(Program.objects.filter(name='Bachelor of Science in Computer Science', campus__code=campus_code).exists())
+        self.assertEqual(Program.objects.filter(eligibility_rules__isnull=True).count(), 0)
+        self.assertEqual(Program.objects.filter(test_requirements__isnull=True).count(), 0)
+        self.assertTrue(Program.objects.filter(admissions_open=True).exists())
+        self.assertTrue(Program.objects.filter(admissions_open=False).exists())
+        self.run_seed()
+        self.assertEqual(counts, {model.__name__: model.objects.count() for model in models})

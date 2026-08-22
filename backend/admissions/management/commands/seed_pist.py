@@ -1,139 +1,177 @@
-from datetime import timedelta
+from __future__ import annotations
+
+from datetime import time, timedelta
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
+from django.utils.text import slugify
 
-from admissions.models import Campus, Department, Program, TestCenter, TestSession
+from admissions.models import (
+    Campus, Department, Program, Qualification, TestType,
+    ProgramEligibility, ProgramTestRequirement, TestCenter, TestSession,
+)
+from admissions.seed_data import DEPARTMENT_DATA, MIRRORED_CODES, PROGRAM_DATA, QUALIFICATION_GROUP_CODES, QUALIFICATIONS, TEST_TYPES
 
 
 class Command(BaseCommand):
-    help = 'Seed fictional PIST campuses, departments, programs, test centers, and test sessions.'
+    help = 'Seed fictional PIST campuses, academic structure, eligibility, test centers, and sessions.'
 
-    campus_rows = [
-        {
-            'name': 'PIST Islamabad Campus',
-            'city': 'Islamabad',
-            'code': 'ISB',
-            'address': 'H-12, Islamabad',
-            'description': 'Primary campus for science, engineering, and management programs.',
-        },
-        {
-            'name': 'PIST Lahore Campus',
-            'city': 'Lahore',
-            'code': 'LHR',
-            'address': 'Raiwind Road, Lahore',
-            'description': 'Regional campus serving central Punjab applicants.',
-        },
-        {
-            'name': 'PIST Karachi Campus',
-            'city': 'Karachi',
-            'code': 'KHI',
-            'address': 'PECHS Block 6, Karachi',
-            'description': 'Southern campus with modern teaching and testing facilities.',
-        },
-    ]
+    def _update(self, model, lookup, defaults, counts):
+        _, created = model.objects.update_or_create(defaults=defaults, **lookup)
+        counts[model.__name__][('created' if created else 'updated')] += 1
 
-    departments = [
-        {
-            'name': 'Department of Computer Science',
-            'description': 'Programs focused on software engineering, AI, and computing foundations.',
-            'programs': [
-                ('BS Computer Science', 'BSCS', 'USAT', 'Minimum 60% in FSc Pre-Engineering / ICS or equivalent.'),
-                ('BS Software Engineering', 'BSSE', 'USAT', 'Minimum 60% in FSc Pre-Engineering / ICS or equivalent.'),
-                ('BS Artificial Intelligence', 'BSAI', 'USAT', 'Minimum 60% in FSc Pre-Engineering / ICS or equivalent.'),
-            ],
-        },
-        {
-            'name': 'Department of Electrical & Mechanical Engineering',
-            'description': 'Engineering programs for students preparing for technical and industrial careers.',
-            'programs': [
-                ('BS Electrical Engineering', 'BSEE', 'ECAT', 'Minimum 60% in FSc Pre-Engineering or equivalent.'),
-                ('BS Mechanical Engineering', 'BSME', 'ECAT', 'Minimum 60% in FSc Pre-Engineering or equivalent.'),
-            ],
-        },
-        {
-            'name': 'Department of Health & Medical Sciences',
-            'description': 'Professional health and medical pathways aligned with competitive entry requirements.',
-            'programs': [
-                ('MBBS', 'MBBS', 'MDCAT', 'Minimum 70% in FSc Pre-Medical or equivalent.'),
-                ('Pharm-D', 'PHD', 'MDCAT', 'Minimum 60% in FSc Pre-Medical or equivalent.'),
-            ],
-        },
-        {
-            'name': 'Department of Management Sciences',
-            'description': 'Business, finance, and management degree programs for future professionals.',
-            'programs': [
-                ('BBA', 'BBA', 'USAT', 'Minimum 50% in FSc or equivalent.'),
-                ('BS Accounting & Finance', 'BAF', 'USAT', 'Minimum 50% in FSc or equivalent.'),
-            ],
-        },
-    ]
+    def _program_slug(self, department, code):
+        desired = slugify(code)
+        if Program.objects.filter(department=department, slug=desired).exclude(code=code).exists():
+            return f'{desired}-program'
+        return desired
 
+    @transaction.atomic
     def handle(self, *args, **options):
-        with transaction.atomic():
-            campuses = {}
-            for campus_row in self.campus_rows:
-                campus, _ = Campus.objects.update_or_create(
-                    code=campus_row['code'],
-                    defaults=campus_row,
+        counts = {name: {'created': 0, 'updated': 0} for name in (
+            'Campus', 'Department', 'Program', 'Qualification', 'TestType',
+            'ProgramEligibility', 'ProgramTestRequirement', 'TestCenter', 'TestSession',
+        )}
+        today = timezone.localdate()
+        deadline = today + timedelta(days=45)
+        closed_deadline = today - timedelta(days=10)
+
+        campuses = {}
+        campus_rows = [
+            ('Pakistan Institute of Science and Technology — Islamabad Main Campus', 'Islamabad', 'ISB', 'Plot H-12, Sector H-12, Islamabad, Islamabad Capital Territory, Pakistan', True),
+            ('Pakistan Institute of Science and Technology — Lahore Campus', 'Lahore', 'LHR', 'Raiwind Road, Lahore, Punjab, Pakistan', False),
+            ('Pakistan Institute of Science and Technology — Karachi Campus', 'Karachi', 'KHI', 'PECHS Block 6, Karachi, Sindh, Pakistan', False),
+        ]
+        for name, city, code, address, is_main in campus_rows:
+            campus, created = Campus.objects.update_or_create(code=code, defaults={
+                'name': name, 'city': city, 'address': address,
+                'description': f'{name} provides modern teaching, research, and student support facilities.',
+                'admissions_open': True, 'is_active': True, 'is_main_campus': is_main,
+            })
+            counts['Campus']['created' if created else 'updated'] += 1
+            campuses[code] = campus
+        campuses['ISB'].is_main_campus = True
+        campuses['ISB'].save(update_fields=['is_main_campus'])
+        for code in ('LHR', 'KHI'):
+            if campuses[code].is_main_campus:
+                campuses[code].is_main_campus = False
+                campuses[code].save(update_fields=['is_main_campus'])
+
+        departments = {}
+        for name, code in DEPARTMENT_DATA:
+            department, created = Department.objects.update_or_create(
+                code=code,
+                defaults={
+                    'campus': campuses['ISB'], 'name': name,
+                    'slug': slugify(f'ISB-{code}-{name}'),
+                    'description': f'{name} develops professional expertise through rigorous teaching, applied research, experienced faculty, and purpose-built facilities.',
+                    'is_active': True,
+                },
+            )
+            counts['Department']['created' if created else 'updated'] += 1
+            departments[code] = department
+
+        qualifications = {}
+        for key, name in QUALIFICATIONS.items():
+            qualification, created = Qualification.objects.update_or_create(
+                name=name,
+                defaults={'qualification_group_code': QUALIFICATION_GROUP_CODES.get(key, '')},
+            )
+            counts['Qualification']['created' if created else 'updated'] += 1
+            qualifications[key] = qualification
+
+        tests = {}
+        for key, name in TEST_TYPES.items():
+            test_type, created = TestType.objects.update_or_create(
+                name=name,
+                defaults={'description': f'{name} is an admissions assessment used by PIST for eligible applicants.'},
+            )
+            counts['TestType']['created' if created else 'updated'] += 1
+            tests[key] = test_type
+
+        programs = []
+        for index, row in enumerate(PROGRAM_DATA, start=1):
+            is_open = index % 10 not in {0, 3, 7}
+            program, created = Program.objects.update_or_create(
+                code=row['code'],
+                defaults={
+                    'department': departments[row['department']], 'campus': campuses['ISB'],
+                    'name': row['name'], 'slug': self._program_slug(departments[row['department']], row['code']),
+                    'description': f"{row['name']} provides a structured curriculum in its discipline, combining foundational knowledge, practical learning, and preparation for responsible professional practice.",
+                    'eligibility_percentage': row['percentage'],
+                    'eligibility_text': f"Minimum {row['percentage']}% in the qualifying examination.",
+                    'required_test_type': row['tests'][0].upper() if row['tests'][0] in {'usat', 'ecat', 'mdcat', 'lat'} else 'Other',
+                    'required_qualification': qualifications[row['qualification'][0]],
+                    'admissions_open': is_open,
+                    'application_deadline': deadline if is_open else closed_deadline,
+                    'duration': row['duration'], 'degree_level': row['degree'],
+                    'career_opportunities': row['careers'],
+                },
+            )
+            counts['Program']['created' if created else 'updated'] += 1
+            programs.append(program)
+            ProgramEligibility.objects.filter(program=program).exclude(qualification_id__in=[qualifications[key].pk for key in row['qualification']]).delete()
+            for key in row['qualification']:
+                _, rule_created = ProgramEligibility.objects.update_or_create(
+                    program=program, qualification=qualifications[key],
+                    defaults={'minimum_percentage': row['percentage']},
                 )
-                campuses[campus.code] = campus
+                counts['ProgramEligibility']['created' if rule_created else 'updated'] += 1
+            ProgramTestRequirement.objects.filter(program=program).exclude(test_type_id__in=[tests[key].pk for key in row['tests']]).delete()
+            for key in row['tests']:
+                _, requirement_created = ProgramTestRequirement.objects.update_or_create(
+                    program=program, test_type=tests[key], defaults={'is_alternative': len(row['tests']) > 1},
+                )
+                counts['ProgramTestRequirement']['created' if requirement_created else 'updated'] += 1
 
-            for campus in campuses.values():
-                for department_row in self.departments:
-                    department_slug = f'{campus.code}-{department_row["name"]}'.lower().replace('&', 'and').replace(' ', '-')
-                    department, _ = Department.objects.update_or_create(
-                        campus=campus,
-                        slug=department_slug,
-                        defaults={
-                            'name': department_row['name'],
-                            'description': department_row['description'],
-                            'is_active': True,
-                        },
-                    )
-
-                    for program_name, program_code, required_test, eligibility_text in department_row['programs']:
-                        program_slug = f'{campus.code}-{program_code}'.lower()
-                        Program.objects.update_or_create(
-                            department=department,
-                            code=program_code,
-                            defaults={
-                                'name': program_name,
-                                'slug': program_slug,
-                                'description': f'{program_name} at {campus.name}.',
-                                'eligibility_percentage': 60 if program_code not in {'MBBS'} else 70,
-                                'eligibility_text': eligibility_text,
-                                'required_test_type': required_test,
-                                'admissions_open': True,
-                                'application_deadline': timezone.now().date() + timedelta(days=21),
-                                'duration': '4 Years' if program_code not in {'MBBS'} else '5 Years',
-                                'degree_level': 'Bachelor',
-                            },
-                        )
-
-                test_center, _ = TestCenter.objects.update_or_create(
-                    campus=campus,
-                    name=f'{campus.name} Admission Test Center',
+        for campus_code in ('LHR', 'KHI'):
+            for base_code, short_code in MIRRORED_CODES.items():
+                base = next(program for program in programs if program.code == base_code)
+                code = f'{short_code}-{campus_code}'
+                legacy_program = Program.objects.filter(code=f'{code}-{campus_code}').first()
+                if legacy_program and not Program.objects.filter(code=code).exists():
+                    legacy_program.code = code
+                    legacy_program.save(update_fields=['code'])
+                program, created = Program.objects.update_or_create(
+                    code=code,
                     defaults={
-                        'address': campus.address,
-                        'building': 'Academic Block A',
-                        'hall': 'Hall A-101',
-                        'capacity': 240,
-                        'is_active': True,
+                        'department': base.department, 'campus': campuses[campus_code],
+                        'name': base.name, 'slug': self._program_slug(base.department, code), 'description': base.description,
+                        'eligibility_percentage': base.eligibility_percentage, 'eligibility_text': base.eligibility_text,
+                        'required_test_type': base.required_test_type, 'required_qualification': base.required_qualification,
+                        'admissions_open': True, 'application_deadline': deadline,
+                        'duration': base.duration, 'degree_level': base.degree_level,
+                        'career_opportunities': base.career_opportunities,
                     },
                 )
-
-                for program in Program.objects.filter(department__campus=campus).select_related('department'):
-                    TestSession.objects.update_or_create(
-                        test_center=test_center,
-                        program=program,
-                        test_date=timezone.now().date() + timedelta(days=10),
-                        defaults={
-                            'reporting_time': timezone.datetime.strptime('08:30', '%H:%M').time(),
-                            'available_seats': test_center.capacity,
-                            'is_active': True,
-                        },
+                counts['Program']['created' if created else 'updated'] += 1
+                for rule in base.eligibility_rules.all():
+                    _, rule_created = ProgramEligibility.objects.update_or_create(
+                        program=program, qualification=rule.qualification,
+                        defaults={'minimum_percentage': rule.minimum_percentage},
                     )
+                    counts['ProgramEligibility']['created' if rule_created else 'updated'] += 1
+                for requirement in base.test_requirements.all():
+                    _, requirement_created = ProgramTestRequirement.objects.update_or_create(
+                        program=program, test_type=requirement.test_type,
+                        defaults={'is_alternative': requirement.is_alternative},
+                    )
+                    counts['ProgramTestRequirement']['created' if requirement_created else 'updated'] += 1
 
-        self.stdout.write(self.style.SUCCESS('PIST seed data created or updated successfully.'))
+        for campus in campuses.values():
+            test_center, created = TestCenter.objects.update_or_create(
+                campus=campus, name=f'{campus.name} Admission Test Center',
+                defaults={'address': campus.address, 'city': campus.city, 'building': 'Academic Block A', 'hall': 'Hall A-101', 'capacity': 240, 'is_active': True},
+            )
+            counts['TestCenter']['created' if created else 'updated'] += 1
+            for program in Program.objects.filter(campus=campus):
+                _, session_created = TestSession.objects.update_or_create(
+                    test_center=test_center, program=program, test_date=today + timedelta(days=10),
+                    defaults={'reporting_time': time(8, 30), 'start_time': time(9, 0), 'building': 'Academic Block A', 'hall': 'Hall 3', 'available_seats': test_center.capacity, 'is_active': True},
+                )
+                counts['TestSession']['created' if session_created else 'updated'] += 1
+
+        self.stdout.write(self.style.SUCCESS('PIST seed completed.'))
+        for model_name, result in counts.items():
+            self.stdout.write(f'{model_name}: {result["created"]} created, {result["updated"]} updated')
