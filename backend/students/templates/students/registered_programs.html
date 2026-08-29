@@ -1,1 +1,71 @@
-{% extends 'students/base_student.html' %}{% block title %}Registered Programs | PIST{% endblock %}{% block content %}<section class="portal"><div class="profile-heading"><div><p class="eyebrow">Student applications</p><h1>Registered Programs</h1><p class="muted">Your submitted applications and entry-test details.</p></div><a class="button" href="{% url 'admissions:programs' %}">Browse programs</a></div><div class="application-list">{% for application in applications %}<article class="application-row"><div><h2>{{ application.program.name }}</h2><p class="muted">{{ application.program.department.name }} · {{ application.campus.name }}</p></div><dl class="application-meta"><div><dt>Application ID</dt><dd>{{ application.application_id|default:application.pk }}</dd></div><div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id|default:'Pending' }}</dd></div><div><dt>Eligibility</dt><dd>{{ application.get_eligibility_status_display }}</dd></div><div><dt>Application status</dt><dd>{{ application.get_application_status_display }}</dd></div><div><dt>Roll number</dt><dd>{{ application.roll_number|default:'Not yet assigned' }}</dd></div><div><dt>Test date</dt><dd>{{ application.test_date|default:'To be announced' }}</dd></div></dl><div class="document-actions"><a href="{% url 'students:application_detail' application.pk %}">View application</a>{% if application.roll_number %}<a href="{% url 'students:application_roll_slip' application.pk %}">View roll slip</a>{% endif %}</div></article>{% empty %}<div class="portal-panel"><h2>No registered programs yet</h2><p class="muted">Browse the available programs to begin an application.</p><a class="button" href="{% url 'admissions:programs' %}">Explore programs</a></div>{% endfor %}</div></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Registered Programs | PIST{% endblock %}
+{% block content %}
+<section class="portal">
+  <div class="profile-heading">
+    <div>
+      <p class="eyebrow">Student applications</p>
+      <h1>Registered Programs</h1>
+      <p class="muted">Track your submitted program applications, admission review status, and entry-test schedules.</p>
+    </div>
+    <a class="button" href="{% url 'admissions:programs' %}">Browse Programs</a>
+  </div>
+
+  <div class="application-list" style="margin-top: 24px;">
+    {% for application in applications %}
+      <article class="application-row" style="background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--emerald); border-radius: 6px; padding: 24px; margin-bottom: 16px;">
+        <div style="margin-bottom: 16px;">
+          <h2 style="margin: 0 0 4px 0; font-size: 1.3rem; color: var(--navy);">{{ application.program.name }}</h2>
+          <p class="muted" style="margin: 0; font-size: 0.95rem;">{{ application.program.department.name }} &bull; {{ application.campus.name }}</p>
+        </div>
+        <dl class="application-meta" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; background: var(--slate-50); padding: 16px; border-radius: 6px; border: 1px solid var(--line);">
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Application ID</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 700; color: var(--navy); font-size: 0.95rem;">{{ application.application_id|default:application.pk }}</dd>
+          </div>
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Program Reg ID</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 700; color: var(--navy); font-size: 0.95rem;">{{ application.program_registration_id|default:'Pending Assignment' }}</dd>
+          </div>
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Eligibility</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 600;">{{ application.get_eligibility_status_display }}</dd>
+          </div>
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Review Status</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 600;">{{ application.get_application_status_display }}</dd>
+          </div>
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Roll Number</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 600; color: {% if application.roll_number %}var(--emerald){% else %}var(--muted){% endif %};">{{ application.roll_number|default:'Not yet issued' }}</dd>
+          </div>
+          <div>
+            <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Entry Test Date</dt>
+            <dd style="margin: 4px 0 0 0; font-weight: 600;">{{ application.test_date|default:'Schedule pending' }}</dd>
+          </div>
+        </dl>
+        <div class="document-actions" style="display: flex; gap: 12px; align-items: center;">
+          <a class="button button--secondary" href="{% url 'students:application_detail' application.pk %}">View Details</a>
+          {% if application.roll_number %}
+            <a class="button button--primary" href="{% url 'students:application_roll_slip' application.pk %}">Download Roll Slip</a>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <div class="portal-panel empty-state" style="padding: 48px 24px; text-align: center; border: 2px dashed var(--line); border-radius: 8px; background: #fff;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--emerald-50); color: var(--emerald); display: grid; place-items: center; font-size: 1.5rem; margin: 0 auto 16px auto;">
+          &#127891;
+        </div>
+        <h2 style="margin-top: 0; color: var(--navy); font-size: 1.4rem;">No registered programs yet</h2>
+        <p class="muted" style="max-width: 540px; margin: 0 auto 24px auto; font-size: 0.95rem; line-height: 1.6;">
+          You have not applied to any degree programs. To begin your admissions journey, explore our programs, check your eligibility criteria, and submit your application.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a class="button button--primary" href="{% url 'admissions:programs' %}">Explore Degree Programs</a>
+          <a class="button button--secondary" href="{% url 'students:academic_record' %}">Verify Academic Records</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

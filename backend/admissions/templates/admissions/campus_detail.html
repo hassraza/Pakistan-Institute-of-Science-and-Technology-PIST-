@@ -8,15 +8,30 @@
       <h1>{{ campus.name }}</h1>
       <p class="lead">{{ campus.address }}</p>
     </div>
-    <span class="badge badge--muted">{{ campus.code }}</span>
+    <div class="page-header__actions">
+      <span class="badge badge--muted">{{ campus.code }}</span>
+      <a class="button button--secondary" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View campus programs</a>
+    </div>
   </div>
+  <div class="panel" style="margin-bottom: 40px; padding: 24px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px;">
+    <h2 style="margin-top: 0;">Explore {{ campus.name }}</h2>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px;">
+      <a class="button button--primary" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View Campus Programs</a>
+      <a class="button button--secondary" href="{% url 'admissions:admission_procedure' %}">Admissions Info</a>
+    </div>
+  </div>
+
+  <h2>Campus Departments</h2>
   <div class="card-grid card-grid--two">
     {% for department in campus.departments.all %}
       <article class="department-card">
         <span class="badge badge--muted">{{ department.programs.count }} programs</span>
-        <h2>{{ department.name }}</h2>
+        <a href="{% url 'admissions:department_detail' department.slug %}" style="text-decoration: none; color: inherit;"><h3 style="margin: 12px 0 8px 0; font-size: 1.25rem;">{{ department.name }}</h3></a>
         <p>{{ department.description|default:'Department details are maintained from the database and can be expanded without changing templates.' }}</p>
-        <a class="text-link" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View programs</a>
+        <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+          <a class="button button--secondary" href="{% url 'admissions:department_detail' department.slug %}" style="padding: 6px 12px; font-size: 0.85rem;">View Department</a>
+          <a class="text-link" href="{% url 'admissions:programs' %}?campus={{ campus.code }}&amp;department={{ department.code }}">Filter programs</a>
+        </div>
       </article>
     {% empty %}
       <p>No departments are configured for this campus.</p>

@@ -4,7 +4,7 @@
       <span class="brand__mark">PIST</span>
       <span class="brand__text">
         <strong>Pakistan Institute of Science and Technology</strong>
-        <small>Fictional university admissions ecosystem</small>
+        <small>Islamabad · Lahore · Karachi</small>
       </span>
     </a>
     <button class="menu-toggle" type="button" aria-label="Toggle navigation" data-menu-toggle>Menu</button>
@@ -17,7 +17,16 @@
       <a href="{% url 'admissions:research' %}">Research</a>
       <a href="{% url 'admissions:student_life' %}">Student Life</a>
       <a href="{% url 'admissions:contact' %}">Contact</a>
-      <a class="button button--primary" href="{% url 'admissions:track_application' %}">Track Application</a>
+      <a href="{% url 'admissions:track_application' %}">Track Application</a>
+      <span class="site-nav__account">
+        {% if user.is_authenticated and user.student_profile %}
+          <a class="button button--primary" href="{% url 'students:dashboard' %}">Student Portal</a>
+        {% else %}
+          <a href="{% url 'students:dashboard' %}">Student Portal</a>
+          <a href="{% url 'students:login' %}">Login</a>
+          <a class="button button--primary" href="{% url 'students:register' %}">Create Account</a>
+        {% endif %}
+      </span>
     </nav>
   </div>
 </header>

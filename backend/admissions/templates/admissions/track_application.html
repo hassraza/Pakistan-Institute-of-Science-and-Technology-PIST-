@@ -3,32 +3,57 @@
 {% block content %}
 <section class="container section narrow-copy">
   <span class="eyebrow">Admissions</span>
-  <h1>Track application</h1>
-  <p class="lead">Enter a roll number or application identifier to review the current admission status.</p>
+  <h1>Track Application</h1>
+  <p class="lead">You can track your application status using any of your assigned identifiers:</p>
+
+  <div class="panel" style="padding: 16px 20px; margin-bottom: 20px; background: #fff; border-left: 4px solid var(--emerald);">
+    <p style="margin: 0 0 8px; font-weight: 700; font-size: 0.95rem;">Accepted tracking identifiers:</p>
+    <ul style="margin: 0; padding-left: 20px; color: var(--slate-700); font-size: 0.9rem; line-height: 1.6;">
+      <li><strong>Application ID:</strong> e.g., <code>APP-2026-12345</code> (received upon submission)</li>
+      <li><strong>Program Registration ID:</strong> e.g., <code>CS26-0001</code> (program-specific registration)</li>
+      <li><strong>Roll Number:</strong> e.g., <code>PIST-ISB-CS-2026-0001</code> (assigned once scheduled)</li>
+    </ul>
+  </div>
 
   <form class="track-form" method="get">
     {{ form.reference.label_tag }}
     {{ form.reference }}
-    <button class="button button--primary" type="submit">Track</button>
+    <button class="button button--primary" type="submit">Track Application</button>
   </form>
 
   {% if application %}
-    <div class="detail-card">
+    <div class="detail-card" style="margin-top: 24px;">
       <div class="detail-card__header">
-        <h2>{{ application.full_name }}</h2>
-        <span class="status status--{% if application.status == 'Rejected' %}closed{% else %}open{% endif %}">{{ application.status }}</span>
+        <div>
+          <span class="eyebrow">Application Found</span>
+          <h2>{{ application.full_name }}</h2>
+        </div>
+        <span class="status status--{% if application.application_status == 'REJECTED' or application.status == 'Rejected' %}closed{% else %}open{% endif %}">{{ application.get_application_status_display|default:application.status }}</span>
       </div>
       <dl class="definition-list">
-        <div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div>
+        <div><dt>Application ID</dt><dd>{{ application.application_id|default:application.pk }}</dd></div>
+        <div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id|default:'Pending' }}</dd></div>
         <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
-        <div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div>
-        <div><dt>Test Date</dt><dd>{{ application.test_date|default:'To be scheduled' }}</dd></div>
-        <div><dt>Venue</dt><dd>{{ application.test_venue|default:'To be announced' }}</dd></div>
+        <div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div>
+        <div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div>
+        <div><dt>Roll Number</dt><dd>{{ application.roll_number|default:'Not yet assigned' }}</dd></div>
+        <div><dt>Test Date</dt><dd>{{ application.test_date|default:'To be announced' }}</dd></div>
+        <div><dt>Test Venue</dt><dd>{{ application.test_venue|default:'To be announced' }}</dd></div>
       </dl>
-      <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}">View roll slip</a>
+      <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+        {% if application.roll_number and application.test_session %}
+          <a class="button button--primary" href="{% url 'admissions:roll_slip' application.pk %}">View &amp; Print Roll Slip</a>
+        {% endif %}
+        {% if user.is_authenticated and user.student_profile and application.student == user.student_profile %}
+          <a class="button button--secondary" href="{% url 'students:application_detail' application.pk %}">View in Student Portal</a>
+        {% endif %}
+      </div>
     </div>
   {% elif form.is_bound %}
-    <div class="empty-state compact">No matching application was found.</div>
+    <div class="empty-state compact" style="margin-top: 24px;">
+      <p style="margin: 0; font-weight: 600;">No matching application was found.</p>
+      <p class="meta" style="margin: 6px 0 0;">Please check your Application ID (e.g. APP-2026-...), Program Registration ID (e.g. CS26-0001), or Roll Number and try again.</p>
+    </div>
   {% endif %}
 </section>
 {% endblock %}

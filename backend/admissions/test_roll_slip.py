@@ -5,8 +5,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Campus, Department, PISTApplicant, Program, RollSlip, TestCenter, TestSession
-from .services import RollNumberService
+from admissions.models import Campus, Department, PISTApplicant, Program, RollSlip, TestCenter, TestSession
+from admissions.services import RollNumberService
 from students.models import StudentProfile
 
 

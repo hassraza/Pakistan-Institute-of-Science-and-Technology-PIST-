@@ -4,6 +4,10 @@
 <section class="panel">
   <div class="panel__heading">
     <h1>Applications</h1>
+    <div class="panel__actions">
+      <a class="button button--secondary" href="{% url 'university_admin:export_applications' 'csv' %}?{{ request.GET.urlencode }}">Export CSV</a>
+      <a class="button button--secondary" href="{% url 'university_admin:export_applications' 'json' %}?{{ request.GET.urlencode }}">Export JSON</a>
+    </div>
   </div>
   <form method="get" class="filter-bar">
     {% for field in filter.form.visible_fields %}

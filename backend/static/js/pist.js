@@ -3,8 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const siteNav = document.querySelector('[data-site-nav]');
 
   if (menuToggle && siteNav) {
+    menuToggle.setAttribute('aria-expanded', 'false');
     menuToggle.addEventListener('click', () => {
-      siteNav.classList.toggle('is-open');
+      const isOpen = siteNav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && siteNav.classList.contains('is-open')) {
+        siteNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.focus();
+      }
     });
   }
 

@@ -25,4 +25,4 @@ jobs:
         run: |
           cd backend
           python manage.py check
-          python manage.py test main admissions university_admin
+          python manage.py test

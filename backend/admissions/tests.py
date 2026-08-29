@@ -10,6 +10,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from admissions.models import Campus, Department, PISTApplicant, Program, ProgramEligibility, ProgramTestRequirement, Qualification, TestCenter, TestSession, TestType
+from students.models import StudentProfile
 from admissions.services import EligibilityService, RollNumberService, TestSchedulingService
 
 
@@ -315,6 +316,96 @@ class PublicAndAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Career Opportunities')
         self.assertContains(response, 'Admission Procedure')
+
+    def test_public_navbar_exposes_student_portal_login_and_register(self):
+        response = self.client.get(reverse('admissions:programs'))
+        self.assertContains(response, 'Student Portal')
+        self.assertContains(response, 'Login')
+        self.assertContains(response, 'Create Account')
+        self.assertContains(response, reverse('students:dashboard'))
+        self.assertContains(response, reverse('students:login'))
+        self.assertContains(response, reverse('students:register'))
+
+    def test_programs_listing_shows_login_to_apply_for_open_programs(self):
+        response = self.client.get(reverse('admissions:programs'))
+        self.assertContains(response, 'View Program')
+        self.assertContains(response, 'Login to Apply')
+        self.assertContains(response, reverse('students:apply_program', kwargs={'program_slug': self.program.slug}))
+
+    def test_logged_in_student_sees_apply_now_and_portal_dashboard(self):
+        user = get_user_model().objects.create_user(username='nav@example.com', email='nav@example.com', password='PortalPass!29')
+        StudentProfile.objects.create(
+            user=user, full_name='Nav Student', cnic='12345-1234567-8', date_of_birth='2000-01-15',
+            phone='03001234567', address='Islamabad', student_id='PIST-STU-NAV-0001',
+        )
+        self.client.force_login(user)
+        programs = self.client.get(reverse('admissions:programs'))
+        self.assertContains(programs, 'Apply Now')
+        self.assertNotContains(programs, 'Create Account')
+        self.assertContains(programs, reverse('students:dashboard'))
+        portal = self.client.get(reverse('students:dashboard'))
+        self.assertContains(portal, 'Back to PIST Website')
+        self.assertContains(portal, reverse('admissions:home'))
+
+    def test_departments_and_campuses_link_to_existing_program_filters(self):
+        self.department.code = 'CS'
+        self.department.save(update_fields=['code'])
+        departments = self.client.get(reverse('admissions:departments'))
+        self.assertContains(departments, '?department=CS')
+        campuses = self.client.get(reverse('admissions:campuses'))
+        self.assertContains(campuses, f'?campus={self.campus.code}')
+        campus = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': self.campus.code}))
+        self.assertContains(campus, f'?campus={self.campus.code}')
+
+    def test_admission_procedure_describes_student_portal_workflow(self):
+        response = self.client.get(reverse('admissions:admission_procedure'))
+        self.assertContains(response, 'Create Student Account')
+        self.assertContains(response, 'Download Roll Slip')
+        self.assertNotContains(response, 'central portal')
+        home = self.client.get(reverse('admissions:home'))
+        self.assertNotContains(home, 'PIST API')
+
+    def test_track_application_by_application_id_and_program_registration_id(self):
+        applicant = PISTApplicant.objects.create(
+            full_name='Track Student',
+            father_name='Father',
+            cnic='12345-1234567-3',
+            email='track@example.com',
+            phone='03001234569',
+            address='Islamabad',
+            matric_marks=850,
+            matric_total=1100,
+            fsc_marks=920,
+            fsc_total=1100,
+            campus=self.campus,
+            program=self.program,
+            application_id='APP-2026-TRACK01',
+            program_registration_id='CS26-0055',
+            roll_number='PIST-ISB-BSCS-2026-9999',
+            source_application_id='SRC-TRACK-01',
+        )
+        # Search by Application ID
+        resp_app_id = self.client.get(reverse('admissions:track_application') + '?reference=APP-2026-TRACK01')
+        self.assertEqual(resp_app_id.status_code, 200)
+        self.assertContains(resp_app_id, 'Track Student')
+        self.assertContains(resp_app_id, 'APP-2026-TRACK01')
+
+        # Search by Program Registration ID
+        resp_prog_id = self.client.get(reverse('admissions:track_application') + '?reference=CS26-0055')
+        self.assertEqual(resp_prog_id.status_code, 200)
+        self.assertContains(resp_prog_id, 'Track Student')
+        self.assertContains(resp_prog_id, 'CS26-0055')
+
+        # Search by Roll Number
+        resp_roll = self.client.get(reverse('admissions:track_application') + '?reference=PIST-ISB-BSCS-2026-9999')
+        self.assertEqual(resp_roll.status_code, 200)
+        self.assertContains(resp_roll, 'Track Student')
+        self.assertContains(resp_roll, 'PIST-ISB-BSCS-2026-9999')
+
+        # Public Application Lookup API by Program Registration ID
+        api_resp = self.client.get('/api/v1/public/track/?reference=CS26-0055')
+        self.assertEqual(api_resp.status_code, 200)
+        self.assertEqual(api_resp.json()['full_name'], 'Track Student')
 
     def test_roll_number_service_format(self):
         roll_number = RollNumberService.generate(campus_code=self.campus.code, program_code=self.program.code, year=2026)

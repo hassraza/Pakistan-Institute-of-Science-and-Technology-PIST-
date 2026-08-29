@@ -24,11 +24,8 @@ from .forms import AcademicDocumentForm, AcademicDocumentReplaceForm, Intermedia
 from .models import AcademicDocument, IntermediateRecord, MatricRecord, StudentProfile, StudentTestScore
 from .services import generate_student_id
 
-# Audit: StudentProfile is a OneToOneField over Django's default User.
-# Audit: Student IDs use the existing per-year StudentIdSequence generator.
-# Audit: student login is students:login; university-admin authentication is unchanged.
-# Audit: no registered-program or academic-document model exists; those widgets remain unavailable.
-# Audit: PISTApplicant has no student FK, so applications are scoped by the authenticated user's email.
+# StudentProfile is a OneToOneField over Django's User.
+# Applications are scoped by student relationship.
 
 
 def _redirect_if_authenticated(request):
@@ -62,7 +59,12 @@ def _profile_completion(profile):
 
 
 def _student_application(request):
-    return PISTApplicant.objects.select_related('campus', 'program__department').filter(email__iexact=request.user.email).order_by('-created_at').first()
+    profile = getattr(request.user, 'student_profile', None)
+    if not profile:
+        return None
+    return PISTApplicant.objects.select_related('campus', 'program__department').filter(
+        student=profile,
+    ).exclude(application_status=PISTApplicant.ApplicationStatus.WITHDRAWN).order_by('-created_at').first()
 
 
 def register(request):
@@ -142,12 +144,15 @@ def dashboard(request):
     ).exclude(application_status=PISTApplicant.ApplicationStatus.WITHDRAWN).order_by('test_session__test_date').first()
     document_types = AcademicDocument.DocumentType.choices
     uploaded_document_count = profile.academic_documents.values('document_type').distinct().count()
+    registered_programs_count = PISTApplicant.objects.filter(
+        student=profile,
+    ).exclude(application_status=PISTApplicant.ApplicationStatus.WITHDRAWN).count()
     return render(request, 'students/dashboard.html', {
         'profile': profile,
         'completion': _profile_completion(profile),
         'application': application,
         'upcoming_application': upcoming_application,
-        'registered_programs_count': 0,
+        'registered_programs_count': registered_programs_count,
         'uploaded_document_count': uploaded_document_count,
         'document_type_count': len(document_types),
         'onboarding_progress': profile.get_onboarding_progress(),
@@ -174,8 +179,10 @@ def profile_edit(request):
 @login_required(login_url='students:login')
 def roll_slip(request):
     application = _student_application(request)
-    if not application or not application.roll_number:
-        return render(request, 'students/roll_slip_unavailable.html', status=404)
+    if not application:
+        return render(request, 'students/roll_slip_unavailable.html', {'has_application': False})
+    if not application.roll_number or not application.test_session_id:
+        return render(request, 'students/roll_slip_unavailable.html', {'application': application, 'has_application': True})
     return redirect('admissions:roll_slip', application_uuid=application.pk)
 
 
@@ -478,8 +485,10 @@ def application_detail(request, application_uuid):
 @login_required(login_url='students:login')
 def application_roll_slip(request, application_uuid):
     application = PISTApplicant.objects.select_related('program', 'program__department', 'campus', 'student').filter(student=request.user.student_profile, pk=application_uuid).first()
-    if not application or not application.roll_number:
+    if not application:
         raise Http404
+    if not application.roll_number or not application.test_session_id:
+        return render(request, 'students/roll_slip_unavailable.html', {'application': application, 'has_application': True})
     return redirect('admissions:roll_slip', application_uuid=application.pk)
 
 

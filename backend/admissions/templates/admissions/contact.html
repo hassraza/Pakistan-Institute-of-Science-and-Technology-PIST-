@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Contact PIST{% endblock %}
+{% block content %}
+<section class="container section">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Connect with us</span>
+      <h1>Contact PIST</h1>
+      <p class="lead">Reach out to our campus admission offices for guidance and support.</p>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid--two" style="margin-top: 32px;">
+    {% for campus in campuses %}
+      <article class="panel" style="padding: 24px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px;">
+        <span class="badge badge--muted">{{ campus.code }}</span>
+        <h2 style="margin: 12px 0 8px 0;">{{ campus.name }}</h2>
+        <p style="margin-top: 0;"><strong>City:</strong> {{ campus.city }}</p>
+        <p><strong>Address:</strong> {{ campus.address }}</p>
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+          <a class="button button--primary" href="mailto:admissions@pist.edu.pk">Email Admissions</a>
+          <a class="button button--secondary" href="{% url 'admissions:campus_detail' campus.code %}">View Campus</a>
+        </div>
+      </article>
+    {% empty %}
+      <p>Campus contact information is currently unavailable.</p>
+    {% endfor %}
+  </div>
+
+  <div class="panel" style="margin-top: 48px; padding: 32px; text-align: center; background: var(--emerald); color: white; border-radius: 8px;">
+    <h2 style="margin-top: 0;">General Inquiries</h2>
+    <p style="max-width: 600px; margin: 0 auto 24px auto;">For general questions regarding the university, programs, or admission procedures that are not specific to a campus, please reach out to our central admissions desk.</p>
+    <a class="button button--secondary" href="mailto:info@pist.edu.pk" style="background: white; color: var(--emerald); border: none;">info@pist.edu.pk</a>
+  </div>
+</section>
+{% endblock %}

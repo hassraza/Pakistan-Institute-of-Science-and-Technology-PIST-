@@ -21,6 +21,7 @@
         <p>{{ campus.address }}</p>
         <p class="meta">{{ campus.department_count }} departments • {{ campus.program_count }} programs</p>
         <a class="text-link" href="{% url 'admissions:campus_detail' campus.code %}">View Campus</a>
+        <a class="text-link" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View programs</a>
       </article>
     {% empty %}
       <p>No campuses available.</p>

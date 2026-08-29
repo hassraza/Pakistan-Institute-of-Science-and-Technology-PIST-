@@ -10,6 +10,7 @@ urlpatterns = [
     path('campuses/', views.campuses, name='campuses'),
     path('campuses/<str:campus_code>/', views.campus_detail, name='campus_detail'),
     path('departments/', views.departments, name='departments'),
+    path('departments/<slug:department_slug>/', views.department_detail, name='department_detail'),
     path('programs/', views.programs, name='programs'),
     path('programs/<slug:program_slug>/', views.program_detail, name='program_detail'),
     path('admissions/', views.admission_procedure, name='admission_procedure'),

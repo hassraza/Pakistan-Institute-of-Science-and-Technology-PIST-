@@ -1,0 +1,10 @@
+<div class="program-card__actions">
+  <a class="text-link" href="{% url 'admissions:program_detail' program.slug %}">View Program</a>
+  {% if not program.admissions_open %}
+    <span class="status status--closed">Admissions Closed</span>
+  {% elif user.is_authenticated and user.student_profile %}
+    <a class="text-link program-card__apply" href="{% url 'students:apply_program' program.slug %}">Apply Now</a>
+  {% else %}
+    <a class="text-link program-card__apply" href="{% url 'students:login' %}?next={% url 'students:apply_program' program.slug %}">Login to Apply</a>
+  {% endif %}
+</div>

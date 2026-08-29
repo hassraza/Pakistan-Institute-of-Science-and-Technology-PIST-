@@ -2,24 +2,30 @@
   <div class="container site-footer__grid">
     <div>
       <h3>PIST</h3>
-      <p>Fictional university website and admission workflow for a final year project demonstration.</p>
+      <p>Pakistan Institute of Science and Technology. Undergraduate admissions and student services for the Fall 2026 intake.</p>
     </div>
     <div>
-      <h4>Campus Links</h4>
+      <h4>Explore</h4>
       <ul>
+        <li><a href="{% url 'admissions:programs' %}">Programs</a></li>
+        <li><a href="{% url 'admissions:campuses' %}">Campuses</a></li>
         {% for campus in active_campuses %}
           <li><a href="{% url 'admissions:campus_detail' campus.code %}">{{ campus.name }}</a></li>
-        {% empty %}
-          <li>No campuses configured yet.</li>
         {% endfor %}
+        <li><a href="{% url 'admissions:admission_procedure' %}">Admissions</a></li>
       </ul>
     </div>
     <div>
-      <h4>Admissions</h4>
+      <h4>Student Portal</h4>
       <ul>
-        <li><a href="{% url 'admissions:admission_procedure' %}">How Admission Works</a></li>
+        {% if user.is_authenticated and user.student_profile %}
+          <li><a href="{% url 'students:dashboard' %}">Student Portal</a></li>
+        {% else %}
+          <li><a href="{% url 'students:dashboard' %}">Student Portal</a></li>
+          <li><a href="{% url 'students:login' %}">Login</a></li>
+          <li><a href="{% url 'students:register' %}">Create Account</a></li>
+        {% endif %}
         <li><a href="{% url 'admissions:track_application' %}">Track Application</a></li>
-        <li><a href="{% url 'university_admin:login' %}">University Admin</a></li>
       </ul>
     </div>
     <div>
@@ -27,6 +33,7 @@
       <ul>
         <li><a href="{% url 'admissions:about' %}">About PIST</a></li>
         <li><a href="{% url 'admissions:contact' %}">Contact</a></li>
+        <li><a href="{% url 'university_admin:login' %}">University Admin</a></li>
       </ul>
     </div>
   </div>

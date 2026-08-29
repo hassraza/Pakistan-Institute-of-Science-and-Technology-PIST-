@@ -102,15 +102,45 @@ def departments(request):
     return render(request, 'admissions/departments.html', {'departments': department_qs})
 
 
+def department_detail(request, department_slug):
+    department = get_object_or_404(Department.objects.select_related('campus').prefetch_related('programs'), slug=department_slug, is_active=True)
+    return render(request, 'admissions/department_detail.html', {'department': department})
+
+
 def programs(request):
     program_qs = Program.objects.select_related('department', 'department__campus', 'campus', 'required_qualification').prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type')
-    campus_code = request.GET.get('campus')
-    department_code = request.GET.get('department')
+    
+    campus_code = request.GET.get('campus', '')
+    department_code = request.GET.get('department', '')
+    status_filter = request.GET.get('status', '')
+    search_query = request.GET.get('q', '').strip()
+    
     if campus_code:
         program_qs = program_qs.filter(campus__code=campus_code)
     if department_code:
         program_qs = program_qs.filter(department__code=department_code)
-    return render(request, 'admissions/programs.html', {'programs': program_qs, 'campus_code': campus_code, 'department_code': department_code})
+    if status_filter == 'open':
+        program_qs = program_qs.filter(admissions_open=True)
+    elif status_filter == 'closed':
+        program_qs = program_qs.filter(admissions_open=False)
+    if search_query:
+        program_qs = program_qs.filter(name__icontains=search_query)
+        
+    active_campuses = Campus.objects.filter(is_active=True).order_by('name')
+    active_departments = Department.objects.filter(is_active=True).order_by('name')
+    if campus_code:
+        active_departments = active_departments.filter(campus__code=campus_code)
+        
+    context = {
+        'programs': program_qs,
+        'campus_code': campus_code,
+        'department_code': department_code,
+        'status_filter': status_filter,
+        'search_query': search_query,
+        'active_campuses': active_campuses,
+        'active_departments': active_departments,
+    }
+    return render(request, 'admissions/programs.html', context)
 
 
 def program_detail(request, program_slug):
@@ -135,11 +165,11 @@ def program_detail(request, program_slug):
             ),
             'career_opportunities': program.career_opportunities or career_opportunities.get(program.department.name.replace('Department of ', ''), 'Career outcomes aligned with the program and sector demand.'),
             'procedure_steps': [
-                'Review the eligibility criteria',
-                'Complete the external application',
-                'PIST validates eligibility and test requirements',
-                'Roll number and test session are assigned',
-                'Download the roll slip and appear in the entry test',
+                'Create a student account and complete your profile',
+                'Add academic information and upload documents',
+                'Check eligibility and apply through the Student Portal',
+                'Receive an Application ID while the application is processed',
+                'Download the roll slip after the roll number and test schedule are issued',
             ],
         },
     )
@@ -147,20 +177,17 @@ def program_detail(request, program_slug):
 
 def admission_procedure(request):
     steps = [
-        'Create Profile',
-        'Enter Academic Information',
-        'Search Universities',
-        'Select PIST',
-        'Select Campus / Department / Program',
-        'Submit Application',
-        'Central Portal Sends Application to PIST',
-        'PIST Validates Eligibility',
-        'PIST Generates Roll Number',
-        'Entry Test Is Scheduled',
-        'Digital Roll Slip Generated',
-        'Candidate Appears in Entry Test',
-        'Application Moves Through Admission Process',
-        'Merit List',
+        'Create Student Account',
+        'Complete Profile',
+        'Add Academic Information',
+        'Upload Academic Documents',
+        'Explore Programs',
+        'Check Eligibility',
+        'Apply for Program',
+        'Receive Application ID',
+        'Application is processed',
+        'Receive Roll Number and Test Schedule',
+        'Download Roll Slip',
     ]
     return render(request, 'admissions/admission_procedure.html', {'steps': steps})
 
@@ -174,7 +201,10 @@ def track_application(request):
             application = PISTApplicant.objects.select_related('campus', 'program__department').get(pk=reference)
         except (PISTApplicant.DoesNotExist, ValidationError, ValueError, TypeError):
             application = PISTApplicant.objects.select_related('campus', 'program__department').filter(
-                Q(roll_number=reference) | Q(source_application_id=reference)
+                Q(application_id__iexact=reference)
+                | Q(program_registration_id__iexact=reference)
+                | Q(roll_number__iexact=reference)
+                | Q(source_application_id__iexact=reference)
             ).first()
     return render(request, 'admissions/track_application.html', {'form': form, 'application': application})
 
@@ -257,39 +287,16 @@ def verify_roll_slip(request, qr_token):
 
 
 def research(request):
-    return render(
-        request,
-        'admissions/info_page.html',
-        {
-            'page_title': 'Research',
-            'headline': 'Applied research and academic inquiry',
-            'body': 'PIST research content is intentionally concise in this FYP demo while preserving the structure expected from a serious university website.',
-        },
-    )
+    return render(request, 'admissions/research.html')
 
 
 def student_life(request):
-    return render(
-        request,
-        'admissions/info_page.html',
-        {
-            'page_title': 'Student Life',
-            'headline': 'Student support, co-curricular activity, and campus services',
-            'body': 'This section illustrates how a university can present student services, societies, and support pathways in a credible institutional format.',
-        },
-    )
+    return render(request, 'admissions/student_life.html')
 
 
 def contact(request):
-    return render(
-        request,
-        'admissions/info_page.html',
-        {
-            'page_title': 'Contact PIST',
-            'headline': 'Admission Office and campus contact information',
-            'body': 'Use this page to surface campus-specific contact details, office timings, and admission support contacts from the database.',
-        },
-    )
+    campuses = Campus.objects.filter(is_active=True).order_by('name')
+    return render(request, 'admissions/contact.html', {'campuses': campuses})
 
 
 class ExternalApplicationAPIView(APIView):
@@ -399,11 +406,19 @@ class PublicApplicationLookupAPIView(APIView):
         if not reference:
             return Response({'success': False, 'message': 'Reference is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        application = (
-            PISTApplicant.objects.select_related('campus', 'program__department')
-            .filter(Q(pk=reference) | Q(roll_number=reference) | Q(source_application_id=reference))
-            .first()
-        )
+        try:
+            application = PISTApplicant.objects.select_related('campus', 'program__department').get(pk=reference)
+        except (PISTApplicant.DoesNotExist, ValidationError, ValueError, TypeError):
+            application = (
+                PISTApplicant.objects.select_related('campus', 'program__department')
+                .filter(
+                    Q(application_id__iexact=reference)
+                    | Q(program_registration_id__iexact=reference)
+                    | Q(roll_number__iexact=reference)
+                    | Q(source_application_id__iexact=reference)
+                )
+                .first()
+            )
 
         if application is None:
             return Response({'success': False, 'message': 'No matching application was found.'}, status=status.HTTP_404_NOT_FOUND)

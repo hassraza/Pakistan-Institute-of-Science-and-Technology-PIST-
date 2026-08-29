@@ -33,7 +33,7 @@
     </div>
     <div class="detail-card">
       <h2>Admission Requirements</h2>
-      {% if program.eligibility_rules.all %}<ul>{% for rule in program.eligibility_rules.all %}<li>{{ rule.qualification.name }} — minimum {{ rule.minimum_percentage }}%</li>{% endfor %}</ul>{% else %}<p>{{ program.eligibility_text|default:'Minimum eligibility is configured from the database. The external admission API applies these rules before issuing a roll number.' }}</p>{% endif %}
+      {% if program.eligibility_rules.all %}<ul>{% for rule in program.eligibility_rules.all %}<li>{{ rule.qualification.name }} — minimum {{ rule.minimum_percentage }}%</li>{% endfor %}</ul>{% else %}<p>{{ program.eligibility_text|default:'Minimum eligibility is configured from the database and is checked in the Student Portal before you can submit an application.' }}</p>{% endif %}
       {% if program.application_deadline %}
         <p><strong>Application deadline:</strong> {{ program.application_deadline }}</p>
       {% else %}
