@@ -1,1 +1,28 @@
-{% extends 'students/base_student.html' %}{% block title %}Delete test score | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><div class="auth-card"><p class="eyebrow">Confirm action</p><h1>Delete test score?</h1><p>Are you sure you want to remove {{ score.test_type.name }} dated {{ score.test_date }}?</p><form method="post">{% csrf_token %}<button class="button button--danger" type="submit">Delete test score</button> <a class="button button--secondary" href="{% url 'students:academic_record' %}">Cancel</a></form></div></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Delete Test Score | PIST{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="mb-8 border-b border-outline-variant pb-6 text-center">
+            <span class="material-symbols-outlined text-error text-[48px] mb-4">warning</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Delete Test Score?</h1>
+        </div>
+
+        <p class="font-body-lg text-body-lg text-on-surface-variant text-center mb-8">
+            Are you sure you want to delete the <strong>{{ test_score.test_type.name }}</strong> record? This action cannot be undone.
+        </p>
+
+        <form method="post" class="flex flex-col sm:flex-row gap-4 justify-center">
+            {% csrf_token %}
+            <button class="w-full sm:w-auto bg-error text-on-error font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-error-container hover:text-on-error-container transition-all focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 shadow-sm" type="submit">
+                Delete Record
+            </button>
+            <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:academic_record' %}">
+                Cancel
+            </a>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

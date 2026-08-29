@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BS Computer Science - Pakistan Institute of Science and Technology (PIST)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased">
+<!-- Top Navigation Utility Bar (Implicit in Style Guide) -->
+<div class="bg-primary-container text-on-primary font-label-md text-label-md py-xs hidden md:block">
+<div class="max-w-container-max mx-auto px-gutter flex justify-end gap-sm items-center">
+<a class="hover:underline" href="#">Faculty</a>
+<a class="hover:underline" href="#">Students</a>
+<a class="hover:underline" href="#">Alumni</a>
+<span class="material-symbols-outlined text-[16px] cursor-pointer" data-icon="search">search</span>
+</div>
+</div>
+<!-- TopNavBar Shared Component -->
+<header class="bg-surface border-b border-outline-variant flex items-center h-20 top-0 z-50">
+<div class="max-w-container-max mx-auto px-gutter flex items-center justify-between w-full h-full">
+<a class="font-title-lg text-title-lg font-bold text-primary" href="#">PIST</a>
+<nav class="hidden md:flex gap-md h-full">
+<a class="flex items-center text-on-surface-variant hover:text-primary transition-colors h-full px-xs" href="#">About</a>
+<a class="flex items-center text-on-surface-variant hover:text-primary transition-colors h-full px-xs" href="#">Admissions</a>
+<a class="flex items-center text-primary border-b-2 border-primary font-bold pb-1 h-full px-xs" href="#">Academics</a>
+<a class="flex items-center text-on-surface-variant hover:text-primary transition-colors h-full px-xs" href="#">Research</a>
+<a class="flex items-center text-on-surface-variant hover:text-primary transition-colors h-full px-xs" href="#">Campus Life</a>
+<a class="flex items-center text-on-surface-variant hover:text-primary transition-colors h-full px-xs" href="#">Contact</a>
+</nav>
+<div class="hidden md:flex gap-sm items-center">
+<button class="font-label-md text-label-md text-primary bg-transparent border border-primary px-sm py-xs rounded hover:bg-surface-container-low transition-all">Portals</button>
+<button class="font-label-md text-label-md text-primary bg-tertiary-fixed px-sm py-xs rounded hover:opacity-90 transition-all font-bold">Apply Now</button>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main>
+<!-- Hero Section -->
+<section class="bg-surface-container py-lg relative overflow-hidden border-b border-outline-variant">
+<div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-12 gap-gutter relative z-10">
+<div class="md:col-span-8 flex flex-col justify-center">
+<span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">Undergraduate Program</span>
+<h1 class="font-display-lg text-display-lg text-primary mb-sm">Bachelor of Science in Computer Science</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-lg">A rigorous, foundational program designed to equip students with deep computational thinking, software engineering skills, and a strong analytical mindset for the modern technological landscape.</p>
+<div class="flex flex-wrap gap-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant">Duration</span>
+<span class="font-title-md text-title-md text-primary">4 Years (8 Semesters)</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant">Degree Level</span>
+<span class="font-title-md text-title-md text-primary">Undergraduate (BS)</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant">Campus</span>
+<span class="font-title-md text-title-md text-primary">Main Campus</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Content Grid -->
+<div class="max-w-container-max mx-auto px-gutter py-xl grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Main Content -->
+<div class="md:col-span-8 space-y-xl">
+<!-- Overview -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Program Overview</h2>
+<p class="font-body-md text-body-md text-on-surface mb-sm">
+                        The BS Computer Science program at PIST offers a comprehensive curriculum that balances theoretical foundations with practical application. Students engage deeply with algorithms, data structures, artificial intelligence, and software systems engineering. Our pedagogical approach emphasizes rigorous problem-solving and critical thinking, preparing graduates to tackle complex computational challenges across diverse industries.
+                    </p>
+<p class="font-body-md text-body-md text-on-surface">
+                        The department fosters a culture of innovation, encouraging students to participate in undergraduate research, hackathons, and collaborative projects with faculty members who are leaders in their respective fields.
+                    </p>
+</section>
+<!-- Learning Outcomes -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Learning Outcomes</h2>
+<div class="bg-surface border border-outline-variant rounded p-md">
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<div>
+<h3 class="font-title-md text-title-md text-primary">Computational Foundation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Apply knowledge of computing and mathematics appropriate to the discipline.</p>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<div>
+<h3 class="font-title-md text-title-md text-primary">Problem Analysis</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Analyze a problem, and identify and define the computing requirements appropriate to its solution.</p>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<div>
+<h3 class="font-title-md text-title-md text-primary">System Design</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Design, implement, and evaluate a computer-based system, process, component, or program to meet desired needs.</p>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<div>
+<h3 class="font-title-md text-title-md text-primary">Professional Ethics</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Understand professional, ethical, legal, security and social issues and responsibilities.</p>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<!-- Curriculum Structure -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Curriculum Structure</h2>
+<p class="font-body-md text-body-md text-on-surface mb-md">The curriculum requires the completion of 130 credit hours over 8 semesters.</p>
+<div class="space-y-sm">
+<!-- Semester 1 -->
+<details class="group border border-outline-variant rounded bg-surface overflow-hidden">
+<summary class="flex justify-between items-center font-title-md text-title-md text-primary p-sm cursor-pointer bg-surface-container-low hover:bg-surface-container transition-colors">
+                                Semester 1 (16 Credits)
+                                <span class="material-symbols-outlined transition duration-300 group-open:-rotate-180" data-icon="expand_more">expand_more</span>
+</summary>
+<div class="p-sm bg-surface">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-primary text-on-primary">
+<tr>
+<th class="p-xs font-title-md text-title-md">Course Code</th>
+<th class="p-xs font-title-md text-title-md">Course Title</th>
+<th class="p-xs font-title-md text-title-md text-right">Credits</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="bg-surface-bright">
+<td class="p-xs font-title-md text-title-md text-primary">CS101</td>
+<td class="p-xs text-on-surface">Introduction to Computing</td>
+<td class="p-xs text-right">4.0</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="p-xs font-title-md text-title-md text-primary">MT101</td>
+<td class="p-xs text-on-surface">Calculus I</td>
+<td class="p-xs text-right">3.0</td>
+</tr>
+<tr class="bg-surface-bright">
+<td class="p-xs font-title-md text-title-md text-primary">EN101</td>
+<td class="p-xs text-on-surface">English Composition</td>
+<td class="p-xs text-right">3.0</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="p-xs font-title-md text-title-md text-primary">PH101</td>
+<td class="p-xs text-on-surface">Applied Physics</td>
+<td class="p-xs text-right">3.0</td>
+</tr>
+<tr class="bg-surface-bright">
+<td class="p-xs font-title-md text-title-md text-primary">IS101</td>
+<td class="p-xs text-on-surface">Islamic Studies</td>
+<td class="p-xs text-right">3.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<!-- Semester 2 -->
+<details class="group border border-outline-variant rounded bg-surface overflow-hidden">
+<summary class="flex justify-between items-center font-title-md text-title-md text-primary p-sm cursor-pointer bg-surface-container-low hover:bg-surface-container transition-colors">
+                                Semester 2 (17 Credits)
+                                <span class="material-symbols-outlined transition duration-300 group-open:-rotate-180" data-icon="expand_more">expand_more</span>
+</summary>
+<div class="p-sm bg-surface">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-primary text-on-primary">
+<tr>
+<th class="p-xs font-title-md text-title-md">Course Code</th>
+<th class="p-xs font-title-md text-title-md">Course Title</th>
+<th class="p-xs font-title-md text-title-md text-right">Credits</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="bg-surface-bright">
+<td class="p-xs font-title-md text-title-md text-primary">CS102</td>
+<td class="p-xs text-on-surface">Programming Fundamentals</td>
+<td class="p-xs text-right">4.0</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="p-xs font-title-md text-title-md text-primary">MT102</td>
+<td class="p-xs text-on-surface">Linear Algebra</td>
+<td class="p-xs text-right">3.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<!-- Semester 3+ (Placeholder) -->
+<div class="p-sm border border-outline-variant border-dashed text-center text-on-surface-variant font-body-sm rounded">
+                            Full curriculum details available in the course catalog.
+                         </div>
+</div>
+</section>
+<!-- Career Opportunities -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Career Opportunities</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+<div class="bg-surface border border-outline-variant p-sm rounded flex items-center gap-sm">
+<div class="bg-primary-container text-on-primary p-xs rounded">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</div>
+<span class="font-title-md text-title-md text-primary">Software Engineer</span>
+</div>
+<div class="bg-surface border border-outline-variant p-sm rounded flex items-center gap-sm">
+<div class="bg-primary-container text-on-primary p-xs rounded">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+</div>
+<span class="font-title-md text-title-md text-primary">Data Scientist</span>
+</div>
+<div class="bg-surface border border-outline-variant p-sm rounded flex items-center gap-sm">
+<div class="bg-primary-container text-on-primary p-xs rounded">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+</div>
+<span class="font-title-md text-title-md text-primary">Cybersecurity Analyst</span>
+</div>
+<div class="bg-surface border border-outline-variant p-sm rounded flex items-center gap-sm">
+<div class="bg-primary-container text-on-primary p-xs rounded">
+<span class="material-symbols-outlined" data-icon="cloud">cloud</span>
+</div>
+<span class="font-title-md text-title-md text-primary">Cloud Architect</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Sidebar -->
+<div class="md:col-span-4">
+<div class="sticky top-24 space-y-md">
+<!-- Admissions Action Card -->
+<div class="bg-surface border border-outline-variant rounded p-md shadow-sm">
+<div class="flex items-center gap-xs mb-sm">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider">Admissions Open</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-primary mb-xs">Fall 2024 Intake</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Applications are currently being accepted for the upcoming academic session.</p>
+<button class="w-full bg-tertiary-fixed text-primary font-title-md text-title-md py-sm rounded hover:opacity-90 transition-opacity mb-sm flex justify-center items-center gap-xs">
+                            Apply Now
+                            <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="font-label-md text-label-md text-on-surface-variant text-center">Deadline: August 15, 2024</p>
+</div>
+<!-- Fee Information Card -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-md">
+<h3 class="font-title-lg text-title-lg text-primary mb-md border-b border-outline-variant pb-xs">Fee Structure</h3>
+<div class="space-y-sm">
+<div class="flex justify-between items-center border-b border-outline-variant border-dashed pb-xs">
+<span class="font-body-md text-body-md text-on-surface">Admission Fee (One-time)</span>
+<span class="font-title-md text-title-md text-primary">PKR 50,000</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant border-dashed pb-xs">
+<span class="font-body-md text-body-md text-on-surface">Tuition Fee (Per Semester)</span>
+<span class="font-title-md text-title-md text-primary">PKR 180,000</span>
+</div>
+<div class="flex justify-between items-center pt-xs">
+<span class="font-title-md text-title-md text-primary">Estimated Total (4 Yrs)</span>
+<span class="font-title-lg text-title-lg text-primary">PKR 1,490,000</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm text-xs">*Fees are subject to annual revision. Financial aid available.</p>
+</div>
+<!-- Contact Department -->
+<div class="bg-primary text-on-primary rounded p-md">
+<h3 class="font-title-lg text-title-lg mb-sm">Department of Computer Science</h3>
+<div class="space-y-sm font-body-sm text-body-sm">
+<div class="flex items-start gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="location_on">location_on</span>
+<span>Academic Block 2, Ground Floor<br/>PIST Main Campus</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="call">call</span>
+<span>+92 51 1234567 Ext 201</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+<span>cs.admissions@pist.edu.pk</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shared Component -->
+<footer class="bg-primary text-on-primary w-full mt-xl">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<!-- Brand -->
+<div class="flex flex-col gap-sm">
+<span class="font-headline-md text-headline-md text-on-primary">PIST</span>
+<p class="font-body-sm text-body-sm text-on-primary/80">Pakistan Institute of Science and Technology.</p>
+</div>
+<!-- Links Column 1 -->
+<div class="flex flex-col gap-sm">
+<h4 class="font-title-md text-title-md">Information</h4>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Campus Address</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Admissions</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Alumni</a>
+</div>
+<!-- Links Column 2 -->
+<div class="flex flex-col gap-sm">
+<h4 class="font-title-md text-title-md">Resources</h4>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Research</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary" href="#">Careers</a>
+</div>
+<!-- Copyright -->
+<div class="md:col-span-4 mt-lg pt-sm border-t border-on-primary/20 flex flex-col md:flex-row justify-between items-center gap-sm">
+<p class="font-body-sm text-body-sm text-on-primary/80">© 2024 Pakistan Institute of Science and Technology. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</body></html>

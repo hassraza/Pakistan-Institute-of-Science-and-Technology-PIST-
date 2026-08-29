@@ -1,1 +1,82 @@
-{% extends 'students/base_student.html' %}{% block title %}Application Submitted | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><div class="auth-card"><p class="eyebrow">Application Status</p><h1>Application Submitted Successfully</h1><p class="lead" style="margin-bottom: 20px;">Your application has been received by PIST Admissions. You can use your <strong>Application ID</strong> or <strong>Program Registration ID</strong> to track your status at any time.</p><dl class="profile-list" style="margin-bottom: 24px;"><div><dt>Application ID</dt><dd><strong>{{ application.application_id|default:application.pk }}</strong></dd></div><div><dt>Program Registration ID</dt><dd><strong>{{ application.program_registration_id|default:'Pending' }}</strong></dd></div><div><dt>Program</dt><dd>{{ application.program.name }}</dd></div><div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div><div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div><div><dt>Current Status</dt><dd><span class="status status--open">{{ application.get_application_status_display|default:application.status }}</span></dd></div><div><dt>Roll Number</dt><dd>{{ application.roll_number|default:'Assigned upon scheduling' }}</dd></div><div><dt>Test Date</dt><dd>{{ application.test_date|default:'To be announced' }}</dd></div></dl><div class="panel" style="padding: 16px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px;"><h3 style="margin-top: 0; font-size: 1rem;">Next Steps</h3><ol style="margin: 0; padding-left: 20px; font-size: 0.9rem; color: var(--slate-700); line-height: 1.6;"><li>Your application will be reviewed for admission verification.</li><li>When an entry test schedule is assigned, your roll number and test center details will be issued.</li><li>You can download and print your official roll slip from the Student Portal or using Track Application.</li></ol></div><div style="display: flex; gap: 12px; flex-wrap: wrap;"><a class="button" href="{% url 'students:registered_programs' %}">View Registered Programs</a>{% if application.roll_number and application.test_session %}<a class="button button--secondary" href="{% url 'students:application_roll_slip' application.pk %}">View Roll Slip</a>{% endif %}<a class="button button--secondary" href="{% url 'students:dashboard' %}">Return to Dashboard</a></div></div></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Application Submitted | PIST{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10 text-center">
+        
+        <div class="mb-8 border-b border-outline-variant pb-8">
+            <div class="w-20 h-20 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-[40px]">task_alt</span>
+            </div>
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Application Status</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-4">Application Submitted Successfully</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">
+                Your application has been received by PIST Admissions. You can use your <strong>Application ID</strong> or <strong>Program Registration ID</strong> to track your status at any time.
+            </p>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-md shadow-sm p-6 md:p-8 mb-8 text-left">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Application ID</dt>
+                    <dd class="font-title-md text-title-md text-primary font-bold">{{ application.application_id|default:application.pk }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program Registration ID</dt>
+                    <dd class="font-title-md text-title-md text-primary font-bold">{{ application.program_registration_id|default:'Pending' }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3 md:col-span-2">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.program.name }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Department</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.program.department.name }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Campus</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.campus.name }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Current Status</dt>
+                    <dd class="font-title-md text-title-md text-secondary flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-[18px]">sync</span> {{ application.get_application_status_display|default:application.status }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Roll Number</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.roll_number|default:'Assigned upon scheduling' }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3 md:col-span-2">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Test Date</dt>
+                    <dd class="font-title-md text-title-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-outline">calendar_month</span> {{ application.test_date|default:'To be announced' }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="bg-surface-container-low border border-outline-variant rounded-md p-6 mb-8 text-left">
+            <h3 class="font-title-md text-title-md text-primary mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">directions_walk</span> Next Steps
+            </h3>
+            <ol class="list-decimal pl-5 font-body-sm text-body-sm text-on-surface-variant space-y-2">
+                <li>Your application will be reviewed for admission verification.</li>
+                <li>When an entry test schedule is assigned, your roll number and test center details will be issued.</li>
+                <li>You can download and print your official roll slip from the Student Portal or using Track Application.</li>
+            </ol>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm" href="{% url 'students:registered_programs' %}">
+                View Registered Programs
+            </a>
+            {% if application.roll_number and application.test_session %}
+                <a class="w-full sm:w-auto bg-tertiary-container text-on-tertiary-container font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-tertiary-fixed transition-colors shadow-sm" href="{% url 'students:application_roll_slip' application.pk %}">
+                    View Roll Slip
+                </a>
+            {% endif %}
+            <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:dashboard' %}">
+                Return to Dashboard
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIST - Contact Us</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<nav class="bg-surface border-b border-outline-variant docked full-width top-0 z-50">
+<div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
+<!-- Brand Logo -->
+<a class="font-title-lg text-title-lg font-bold text-primary" href="#">
+                PIST
+            </a>
+<!-- Navigation Links (Web) -->
+<div class="hidden md:flex items-center space-x-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT" href="#">About</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT" href="#">Admissions</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT" href="#">Academics</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT" href="#">Research</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT" href="#">Campus Life</a>
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary font-bold pb-1 scale-95 duration-150" href="#">Contact</a>
+</div>
+<!-- Trailing Actions -->
+<div class="hidden md:flex items-center space-x-sm">
+<a class="font-label-md text-label-md text-primary font-medium hover:bg-surface-container-low px-3 py-2 rounded-DEFAULT transition-all" href="#">Portals</a>
+<a class="font-label-md text-label-md bg-tertiary-container text-primary font-semibold px-4 py-2 rounded-DEFAULT hover:opacity-90 transition-all" href="#">Apply Now</a>
+</div>
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-primary p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-container-max mx-auto px-margin-mobile md:px-gutter w-full py-xl">
+<!-- Header Section -->
+<header class="mb-lg">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-sm">Contact Us</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                Get in touch with the Pakistan Institute of Science and Technology. We are here to assist prospective students, current scholars, and partners.
+            </p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Form -->
+<section class="md:col-span-7 bg-surface-container-lowest border border-surface-variant rounded-lg p-md md:p-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-md">Send a Message</h2>
+<form class="space-y-sm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<div class="flex flex-col">
+<label class="font-label-md text-label-md text-on-surface-variant mb-xs" for="name">Full Name</label>
+<input class="font-body-md text-body-md bg-surface-bright border border-outline-variant rounded-DEFAULT px-sm py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all" id="name" name="name" required="" type="text"/>
+</div>
+<div class="flex flex-col">
+<label class="font-label-md text-label-md text-on-surface-variant mb-xs" for="email">Email Address</label>
+<input class="font-body-md text-body-md bg-surface-bright border border-outline-variant rounded-DEFAULT px-sm py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all" id="email" name="email" required="" type="email"/>
+</div>
+</div>
+<div class="flex flex-col">
+<label class="font-label-md text-label-md text-on-surface-variant mb-xs" for="subject">Subject</label>
+<select class="font-body-md text-body-md bg-surface-bright border border-outline-variant rounded-DEFAULT px-sm py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all" id="subject" name="subject">
+<option>General Inquiry</option>
+<option>Admissions</option>
+<option>Financial Aid</option>
+<option>Research Collaboration</option>
+</select>
+</div>
+<div class="flex flex-col">
+<label class="font-label-md text-label-md text-on-surface-variant mb-xs" for="message">Message</label>
+<textarea class="font-body-md text-body-md bg-surface-bright border border-outline-variant rounded-DEFAULT px-sm py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all resize-y" id="message" name="message" required="" rows="5"></textarea>
+</div>
+<button class="font-label-md text-label-md bg-primary text-on-primary px-lg py-3 rounded-DEFAULT hover:bg-primary-container transition-colors w-full md:w-auto mt-sm" type="submit">Submit Inquiry</button>
+</form>
+</section>
+<!-- Right Column: Info & Directory -->
+<div class="md:col-span-5 flex flex-col gap-md">
+<!-- General Info Card -->
+<section class="bg-surface-container-low border border-surface-variant rounded-lg p-md">
+<h2 class="font-title-lg text-title-lg text-primary mb-sm">Contact Details</h2>
+<ul class="space-y-sm">
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-xs" data-icon="call">call</span>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">Main Switchboard</span>
+<span class="font-body-md text-body-md text-on-surface">+92 51 1234567</span>
+</div>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-xs" data-icon="mail">mail</span>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">General Email</span>
+<a class="font-body-md text-body-md text-primary hover:underline" href="mailto:info@pist.edu.pk">info@pist.edu.pk</a>
+</div>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-xs" data-icon="schedule">schedule</span>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">Office Hours</span>
+<span class="font-body-md text-body-md text-on-surface">Mon - Fri, 9:00 AM - 5:00 PM (PKT)</span>
+</div>
+</li>
+</ul>
+</section>
+<!-- Department Directory Card -->
+<section class="bg-surface-container-lowest border border-surface-variant rounded-lg p-md">
+<h2 class="font-title-lg text-title-lg text-primary mb-sm">Department Directory</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-variant">
+<th class="font-label-md text-label-md text-on-surface-variant py-2 pr-2">Department</th>
+<th class="font-label-md text-label-md text-on-surface-variant py-2 pl-2 text-right">Ext.</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="border-b border-surface-container">
+<td class="py-2 pr-2">Admissions Office</td>
+<td class="py-2 pl-2 text-right font-medium">101</td>
+</tr>
+<tr class="border-b border-surface-container bg-surface-bright">
+<td class="py-2 pr-2">Finance / Bursar</td>
+<td class="py-2 pl-2 text-right font-medium">105</td>
+</tr>
+<tr class="border-b border-surface-container">
+<td class="py-2 pr-2">Registrar's Office</td>
+<td class="py-2 pl-2 text-right font-medium">110</td>
+</tr>
+<tr class="bg-surface-bright">
+<td class="py-2 pr-2">Student Affairs</td>
+<td class="py-2 pl-2 text-right font-medium">120</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+<!-- Location Section -->
+<section class="mt-xl">
+<h2 class="font-headline-md text-headline-md text-primary mb-md">Campus Location</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter items-center bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden">
+<div class="p-md md:p-lg">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-sm">Main Campus</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-sm">
+                        Pakistan Institute of Science and Technology<br/>
+                        University Road, Sector H-12<br/>
+                        Islamabad, 44000<br/>
+                        Pakistan
+                    </p>
+<a class="inline-flex items-center font-label-md text-label-md text-secondary font-medium hover:underline" href="#">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="directions">directions</span>
+                        Get Directions
+                    </a>
+</div>
+<div class="h-64 md:h-full w-full bg-surface-container-highest relative">
+<!-- Stylized Map Placeholder -->
+<div class="absolute inset-0 bg-cover bg-center w-full h-full grayscale opacity-80 mix-blend-multiply" data-alt="A highly detailed, stylized overhead map view of a modern university campus set in Islamabad, Pakistan. The map features crisp, minimal lines with a light-mode aesthetic, utilizing deep navy blues for building footprints and soft teal accents for green spaces. The visual style is professional, institutional, and highly legible." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBWqof3g6htR07CLYuXNAp93Ejq903TjDzGJwvgb7zCPthQdFv8bnuyEcU5Ov4WG-Yozz7BSuR0CZrCi6PL9-xKGv2tJLDVcGlGF118z2Emfm9BBqX9rXQP_AiPHAwIjKGSY8cLuM3Uo-h7O7xlBKb4GAprhmaN7Ny3aqXXpiXFRUtsrFtaOGDdAwEVG3Wimvsi3ofLq5fwJUF6ztbIRAU-tvZYxWizxC95UwGcMCLSngn4cCylqJ-tBw')"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="bg-primary full-width mt-auto">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<!-- Brand & Copyright -->
+<div class="col-span-1 md:col-span-2">
+<h3 class="font-headline-md text-headline-md text-on-primary mb-sm">PIST</h3>
+<p class="font-body-sm text-body-sm text-on-primary/80 mb-sm">
+                    Empowering the next generation of innovators and leaders in science and technology.
+                </p>
+<p class="font-body-sm text-body-sm text-on-primary/60">
+                    © 2024 Pakistan Institute of Science and Technology. All rights reserved.
+                </p>
+</div>
+<!-- Links Column 1 -->
+<div class="col-span-1">
+<h4 class="font-title-md text-title-md text-on-primary mb-sm">Information</h4>
+<ul class="space-y-xs">
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Campus Address</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Admissions</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Alumni</a></li>
+</ul>
+</div>
+<!-- Links Column 2 -->
+<div class="col-span-1">
+<h4 class="font-title-md text-title-md text-on-primary mb-sm">Legal &amp; Connect</h4>
+<ul class="space-y-xs">
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Research</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Privacy Policy</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all outline-none focus:ring-2 focus:ring-tertiary rounded-sm" href="#">Careers</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

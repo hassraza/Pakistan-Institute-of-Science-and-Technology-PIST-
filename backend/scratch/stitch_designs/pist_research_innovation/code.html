@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Research - Pakistan Institute of Science and Technology</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e1e3e4",
+                      "tertiary-container": "#cea72c",
+                      "inverse-surface": "#2e3132",
+                      "outline": "#74777f",
+                      "error-container": "#ffdad6",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-primary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed-dim": "#adc8f5",
+                      "secondary-fixed": "#afeee9",
+                      "tertiary-fixed": "#ffe08e",
+                      "on-tertiary-fixed-variant": "#584400",
+                      "on-secondary-fixed-variant": "#02504c",
+                      "surface-tint": "#455f87",
+                      "on-tertiary-fixed": "#241a00",
+                      "secondary-fixed-dim": "#93d2cc",
+                      "on-primary-fixed": "#001b3b",
+                      "on-surface": "#191c1d",
+                      "primary-container": "#0f2d52",
+                      "primary-fixed": "#d5e3ff",
+                      "surface-container": "#edeeef",
+                      "tertiary": "#755b00",
+                      "primary": "#001835",
+                      "on-primary-container": "#7b95c0",
+                      "surface-container-low": "#f3f4f5",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#4f3d00",
+                      "on-surface-variant": "#43474e",
+                      "surface-dim": "#d9dadb",
+                      "on-primary-fixed-variant": "#2d476e",
+                      "surface": "#f8f9fa",
+                      "outline-variant": "#c4c6cf",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed-dim": "#ecc246",
+                      "on-secondary-fixed": "#00201e",
+                      "surface-container-high": "#e7e8e9",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#e1e3e4",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#2d6c68",
+                      "on-background": "#191c1d",
+                      "surface-bright": "#f8f9fa",
+                      "background": "#f8f9fa",
+                      "secondary": "#286864",
+                      "inverse-primary": "#adc8f5",
+                      "secondary-container": "#acebe6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "md": "24px",
+                      "xl": "80px",
+                      "base": "4px",
+                      "sm": "16px",
+                      "margin-mobile": "16px",
+                      "xs": "8px",
+                      "lg": "48px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "title-md": [
+                              "Inter"
+                      ],
+                      "title-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "title-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-lg": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #191c1d;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .academic-border {
+            border: 1px solid #e1e3e4;
+        }
+    </style>
+</head>
+<body class="bg-background">
+<!-- Utility Bar -->
+<div class="bg-primary text-on-primary py-xs px-gutter hidden md:block">
+<div class="max-w-container-max mx-auto flex justify-end items-center gap-sm font-label-md text-label-md">
+<a class="hover:text-tertiary-fixed transition-colors" href="#">Faculty</a>
+<span class="text-outline-variant">|</span>
+<a class="hover:text-tertiary-fixed transition-colors" href="#">Students</a>
+<span class="text-outline-variant">|</span>
+<a class="hover:text-tertiary-fixed transition-colors" href="#">Alumni</a>
+<button class="ml-sm flex items-center hover:text-tertiary-fixed transition-colors">
+<span class="material-symbols-outlined text-[16px] mr-base">search</span>
+                Search
+            </button>
+</div>
+</div>
+<!-- TopNavBar -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant sticky z-50">
+<div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
+<!-- Brand Logo -->
+<div class="font-title-lg text-title-lg font-bold text-primary flex items-center gap-xs">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">school</span>
+</div>
+                PIST
+            </div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-md font-label-md text-label-md h-full items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-sm py-xs rounded" href="#">About</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-sm py-xs rounded" href="#">Admissions</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-sm py-xs rounded" href="#">Academics</a>
+<a class="text-primary border-b-2 border-primary font-bold pb-1 h-full flex items-center" href="#">Research</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-sm py-xs rounded" href="#">Campus Life</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low px-sm py-xs rounded" href="#">Contact</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="hidden md:block font-label-md text-label-md text-primary border border-primary px-sm py-xs rounded hover:bg-surface-container-low transition-colors">
+                    Portals
+                </button>
+<button class="font-label-md text-label-md bg-tertiary-container text-on-tertiary-container px-sm py-xs rounded hover:opacity-90 transition-opacity font-bold">
+                    Apply Now
+                </button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Page Header -->
+<section class="bg-surface-container-lowest py-xl border-b border-surface-variant">
+<div class="max-w-container-max mx-auto px-gutter">
+<h1 class="font-display-lg text-display-lg text-primary mb-sm">Research at PIST</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">
+                Advancing knowledge through rigorous inquiry, interdisciplinary collaboration, and a commitment to solving complex global challenges. Our research ecosystem integrates state-of-the-art facilities with world-class faculty.
+            </p>
+</div>
+</section>
+<!-- Main Content Area -->
+<main class="py-xl">
+<div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Core Research Areas -->
+<div class="md:col-span-8 space-y-xl">
+<!-- Research Centers -->
+<section>
+<div class="flex items-center gap-sm mb-md pb-xs border-b border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[28px]">biotech</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">Research Centers</h2>
+</div>
+<div class="space-y-md">
+<!-- Center Item -->
+<div class="bg-surface-container-lowest p-md academic-border flex flex-col sm:flex-row gap-md items-start group hover:shadow-sm transition-shadow">
+<div class="w-full sm:w-1/3 aspect-[4/3] bg-surface-variant relative overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A brightly lit, modern scientific laboratory setting inside an academic institution. Featuring stainless steel equipment, clean white countertops, and researchers in white coats working diligently. The lighting is crisp, professional, and slightly cool, emphasizing precision and technological advancement. A serious, corporate modern aesthetic without any futuristic neon or artificial elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8zoXyDIu3QVIPkl4i5xGlFR3_SSPyqQ2ZyuKQzD2qNBWjs28XiAhcr9Hx9ggwnqnOHRhiS6nqrWx6YFSv2P8UQvE8nw2Yv_SUEZ8hn7zXQpp1Zdc5LFqPgtq0acE1V5XX4qlKRj3eGWMkkVe6KzbHqSb1eCP-6qLqOxV4JH0ogmWegmm4D1xBXvGC2f43Y9yjAf6rTq8qdznCsI2G_kG5Wl7hVd0WYjqRpUSE56YoUv94gxFdCS1NrQ"/>
+</div>
+<div class="w-full sm:w-2/3">
+<h3 class="font-title-lg text-title-lg text-primary mb-xs group-hover:text-secondary transition-colors">Center for Advanced Materials</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-sm">
+                                    Focuses on the synthesis and characterization of novel nanomaterials for energy storage, environmental remediation, and biomedical applications. Integrating experimental techniques with computational modeling.
+                                </p>
+<div class="flex gap-sm">
+<span class="inline-flex items-center bg-surface text-on-surface-variant px-2 py-1 rounded font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">science</span> Nanotechnology
+                                    </span>
+<span class="inline-flex items-center bg-surface text-on-surface-variant px-2 py-1 rounded font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">battery_charging_full</span> Energy Storage
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Center Item -->
+<div class="bg-surface-container-lowest p-md academic-border flex flex-col sm:flex-row gap-md items-start group hover:shadow-sm transition-shadow">
+<div class="w-full sm:w-1/3 aspect-[4/3] bg-surface-variant relative overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A high-performance computing data center within a university setting. Rows of tall, dark server racks line a clean, institutional corridor with functional overhead lighting. The color palette is dominated by deep blues, greys, and stark whites. The mood is serious, analytical, and structured, reflecting a modern corporate academic environment dedicated to computational research." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ8fw02kKTRslJWJYbg8tn3QIa788fHNrFM2ycLbCexDGE81LAFRYPUtJwWSrZGtsIL7UDAhVX8IVDOe4akvxowrPprOqqHhjJXUbu1KzoCOvN-TyDx9K5EW9oDmSxBjyJcd5NA7H_XfPI1E_I2i6cOElZMWm68QbjCXvnWPSLgO1Bh2gWhNaNkgEKFlHuZmRH8tjm4wUMEiRYREfq99PrNr4WI18O_pnokn_QVkM5lkSl3KrCzXzbtw"/>
+</div>
+<div class="w-full sm:w-2/3">
+<h3 class="font-title-lg text-title-lg text-primary mb-xs group-hover:text-secondary transition-colors">Institute of Computational Data Science</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-sm">
+                                    Dedicated to advancing methodologies in machine learning, statistical modeling, and big data analytics. The institute supports cross-disciplinary research requiring high-performance computing resources.
+                                </p>
+<div class="flex gap-sm">
+<span class="inline-flex items-center bg-surface text-on-surface-variant px-2 py-1 rounded font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">data_object</span> Data Analytics
+                                    </span>
+<span class="inline-flex items-center bg-surface text-on-surface-variant px-2 py-1 rounded font-label-md text-label-md border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">model_training</span> Algorithms
+                                    </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Publications (Bento Grid) -->
+<section>
+<div class="flex items-center gap-sm mb-md pb-xs border-b border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[28px]">library_books</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">Recent Publications</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<!-- Pub Card 1 -->
+<div class="bg-surface-container-lowest p-md academic-border flex flex-col h-full hover:-translate-y-1 transition-transform duration-200">
+<div class="text-outline-variant font-label-md text-label-md mb-2 flex items-center justify-between">
+<span>Journal of Applied Physics</span>
+<span>2024</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface mb-2 leading-tight">Quantum Coherence in Semi-Conductor Nanostructures at Room Temperature</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4 flex-grow">
+                                Investigating the stability of quantum states in specific lattice configurations, providing new pathways for scalable quantum computing architectures.
+                            </p>
+<div class="mt-auto border-t border-surface-variant pt-3">
+<span class="font-label-md text-label-md text-primary flex items-center hover:underline cursor-pointer">
+                                    View Abstract <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Pub Card 2 -->
+<div class="bg-surface-container-lowest p-md academic-border flex flex-col h-full hover:-translate-y-1 transition-transform duration-200">
+<div class="text-outline-variant font-label-md text-label-md mb-2 flex items-center justify-between">
+<span>Environmental Science &amp; Technology</span>
+<span>2023</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface mb-2 leading-tight">Sustainable Urban Hydrology: Modeling Contaminant Transport</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4 flex-grow">
+                                A comprehensive study on the efficacy of green infrastructure in mitigating heavy metal runoff in densely populated urban centers.
+                            </p>
+<div class="mt-auto border-t border-surface-variant pt-3">
+<span class="font-label-md text-label-md text-primary flex items-center hover:underline cursor-pointer">
+                                    View Abstract <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</span>
+</div>
+</div>
+</div>
+<div class="mt-sm text-right">
+<a class="font-label-md text-label-md text-secondary hover:underline flex items-center justify-end" href="#">
+                            Browse All Publications <span class="material-symbols-outlined text-[16px] ml-1">open_in_new</span>
+</a>
+</div>
+</section>
+</div>
+<!-- Right Column: Contextual Info & Funding -->
+<div class="md:col-span-4 space-y-lg">
+<!-- Grants & Funding Table -->
+<div class="bg-surface-container-lowest academic-border">
+<div class="bg-primary p-sm border-b border-outline-variant">
+<h3 class="font-title-md text-title-md text-on-primary flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+                            Grants &amp; Funding
+                        </h3>
+</div>
+<div class="p-0">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-variant bg-surface-container-low font-label-md text-label-md text-on-surface-variant">
+<th class="p-sm font-medium">Source</th>
+<th class="p-sm font-medium">Type</th>
+<th class="p-sm font-medium">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr class="border-b border-surface-variant hover:bg-surface transition-colors">
+<td class="p-sm text-primary font-medium">HEC NRPU</td>
+<td class="p-sm text-on-surface-variant">National</td>
+<td class="p-sm text-secondary">Active</td>
+</tr>
+<tr class="border-b border-surface-variant hover:bg-surface transition-colors">
+<td class="p-sm text-primary font-medium">PIST Seed</td>
+<td class="p-sm text-on-surface-variant">Internal</td>
+<td class="p-sm text-secondary">Open</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="p-sm text-primary font-medium">PSF Grant</td>
+<td class="p-sm text-on-surface-variant">Govt</td>
+<td class="p-sm text-outline-variant">Closed</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Innovation Hub / Tech Transfer -->
+<div class="bg-surface-container p-md border-l-4 border-primary">
+<div class="flex items-start gap-sm mb-xs">
+<span class="material-symbols-outlined text-primary text-[24px]">lightbulb</span>
+<h3 class="font-title-md text-title-md text-primary">Innovation &amp; Tech Transfer</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant ml-8">
+                        The PIST Innovation Hub facilitates the transition of academic research into commercial applications. We provide intellectual property protection, licensing support, and incubation for faculty-led startups.
+                    </p>
+<button class="ml-8 mt-sm font-label-md text-label-md text-primary border border-primary px-3 py-1 rounded hover:bg-surface-container-low transition-colors">
+                        Learn More
+                    </button>
+</div>
+<!-- Industry Collaboration -->
+<div class="bg-surface-container-lowest p-md academic-border">
+<h3 class="font-title-md text-title-md text-primary mb-sm border-b border-surface-variant pb-xs">Industry Collaboration</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">
+                        Partnering with leading organizations to conduct applied research and solve real-world industrial challenges.
+                    </p>
+<div class="grid grid-cols-2 gap-sm opacity-70 grayscale">
+<div class="h-12 bg-surface flex items-center justify-center border border-surface-variant font-label-md text-label-md text-outline">Partner A</div>
+<div class="h-12 bg-surface flex items-center justify-center border border-surface-variant font-label-md text-label-md text-outline">Partner B</div>
+<div class="h-12 bg-surface flex items-center justify-center border border-surface-variant font-label-md text-label-md text-outline">Partner C</div>
+<div class="h-12 bg-surface flex items-center justify-center border border-surface-variant font-label-md text-label-md text-outline">Partner D</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary full-width mt-xl">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="col-span-1 md:col-span-1">
+<div class="font-headline-md text-headline-md text-on-primary mb-md">PIST</div>
+<p class="font-body-sm text-body-sm text-on-primary/80">
+                    Pakistan Institute of Science and Technology. Advancing academic excellence since 1985.
+                </p>
+</div>
+<div class="col-span-1 md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-md">
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm">Links</h4>
+<ul class="space-y-xs font-body-sm text-body-sm">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Campus Address</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Admissions</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm invisible">Links</h4>
+<ul class="space-y-xs font-body-sm text-body-sm">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Alumni</a></li>
+<li><a class="text-tertiary-fixed font-bold hover:underline transition-all" href="#">Research</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm invisible">Links</h4>
+<ul class="space-y-xs font-body-sm text-body-sm">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Careers</a></li>
+</ul>
+</div>
+</div>
+<div class="col-span-1 md:col-span-4 border-t border-on-primary/20 pt-sm mt-md font-body-sm text-body-sm text-on-primary/60 text-center">
+                © 2024 Pakistan Institute of Science and Technology. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

@@ -1,1 +1,212 @@
-{% extends 'students/base_student.html' %}{% block title %}Academic Information | PIST{% endblock %}{% block content %}<section class="portal"><div class="profile-heading"><div><p class="eyebrow">Academic information</p><h1>Your academic record</h1><p class="muted">Keep your marks and test results current so program eligibility can be checked accurately.</p></div></div><div class="academic-grid"><article class="portal-panel academic-card"><div class="card-heading"><h2>Matric record</h2><a class="text-link" href="{% url 'students:matric_edit' %}">{% if matric_record %}Edit{% else %}Add record{% endif %}</a></div>{% if matric_record %}<dl class="profile-list"><div><dt>Board</dt><dd>{{ matric_record.board }}</dd></div><div><dt>Group</dt><dd>{{ matric_record.group }}</dd></div><div><dt>Passing year</dt><dd>{{ matric_record.passing_year }}</dd></div><div><dt>Marks</dt><dd>{{ matric_record.obtained_marks }} / {{ matric_record.total_marks }}</dd></div><div><dt>Percentage</dt><dd>{{ matric_record.percentage }}%</dd></div></dl>{% else %}<div class="empty-state compact" style="padding: 16px; border: 1px dashed var(--line); border-radius: 6px; text-align: center;"><p style="margin: 0 0 12px 0; font-size: 0.9rem; color: var(--muted);">Matriculation academic history is missing. This is required for calculating admission eligibility.</p><a class="button" href="{% url 'students:matric_edit' %}" style="min-height: 34px; padding: 0 12px; font-size: 0.85rem;">Add Matric Record</a></div>{% endif %}</article><article class="portal-panel academic-card"><div class="card-heading"><h2>Intermediate / FSc record</h2><a class="text-link" href="{% url 'students:intermediate_edit' %}">{% if intermediate_record %}Edit{% else %}Add record{% endif %}</a></div>{% if intermediate_record %}<dl class="profile-list"><div><dt>Board</dt><dd>{{ intermediate_record.board }}</dd></div><div><dt>Group</dt><dd>{{ intermediate_record.get_group_display }}</dd></div><div><dt>Passing year</dt><dd>{{ intermediate_record.passing_year }}</dd></div><div><dt>Marks</dt><dd>{{ intermediate_record.obtained_marks }} / {{ intermediate_record.total_marks }}</dd></div><div><dt>Percentage</dt><dd>{{ intermediate_record.percentage }}%</dd></div></dl>{% else %}<div class="empty-state compact" style="padding: 16px; border: 1px dashed var(--line); border-radius: 6px; text-align: center;"><p style="margin: 0 0 12px 0; font-size: 0.9rem; color: var(--muted);">Intermediate / FSc history is missing. This is required for calculating admission eligibility.</p><a class="button" href="{% url 'students:intermediate_edit' %}" style="min-height: 34px; padding: 0 12px; font-size: 0.85rem;">Add Intermediate Record</a></div>{% endif %}</article><article class="portal-panel academic-card academic-card--wide"><div class="card-heading"><h2>Test scores</h2><a class="text-link" href="{% url 'students:test_score_add' %}">Add test score</a></div>{% if test_scores %}<div class="table-wrap"><table class="data-table"><thead><tr><th>Test</th><th>Score</th><th>Percentage</th><th>Date</th><th>Certificate</th><th>Actions</th></tr></thead><tbody>{% for score in test_scores %}<tr><td>{{ score.test_type.name }}</td><td>{{ score.score }} / {{ score.total_score }}</td><td>{{ score.percentage }}%</td><td>{{ score.test_date }}</td><td>{% if score.result_certificate %}<a class="text-link" href="{% url 'students:test_certificate_view' score.pk %}">View certificate</a>{% else %}Not uploaded{% endif %}</td><td><a class="text-link" href="{% url 'students:test_score_edit' score.pk %}">Edit</a> <a class="danger-link" href="{% url 'students:test_score_delete' score.pk %}">Delete</a></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state" style="padding: 24px; border: 1px dashed var(--line); border-radius: 6px; text-align: center;"><p style="margin: 0 0 16px 0; font-size: 0.9rem; color: var(--muted);">No test scores (USAT, MDCAT, ECAT, GAT, etc.) have been added. Some programs require an entry test score for admission.</p><a class="button" href="{% url 'students:test_score_add' %}" style="min-height: 36px; padding: 0 16px; font-size: 0.9rem;">Add Test Score</a></div>{% endif %}</article></div><article class="portal-panel eligibility-panel"><div class="card-heading"><div><h2>Eligibility preview</h2><p class="muted">Select a program to see every current requirement and reason.</p></div><form method="get"><label class="sr-only" for="program">Program</label><select id="program" name="program" onchange="this.form.submit()"><option value="">Choose a program</option>{% for program in programs %}<option value="{{ program.slug }}"{% if selected_program.slug == program.slug %} selected{% endif %}>{{ program.name }}</option>{% endfor %}</select></form></div>{% if eligibility %}<div class="eligibility-result eligibility-result--{% if eligibility.is_eligible %}eligible{% else %}blocked{% endif %}"><strong>{% if eligibility.is_eligible %}Eligible{% else %}Not Eligible{% endif %}</strong>{% if eligibility.reasons %}<ul>{% for reason in eligibility.reasons %}<li>{{ reason }}</li>{% endfor %}</ul>{% else %}<p>All recorded requirements are currently satisfied.</p>{% endif %}</div>{% endif %}</article></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Academic Information | PIST{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-lg">
+    
+    <!-- Profile Heading -->
+    <div class="bg-white border border-outline-variant p-6 rounded-md shadow-sm mb-6">
+        <span class="font-label-md text-label-md text-secondary tracking-widest uppercase block mb-1">Academic Information</span>
+        <h1 class="font-headline-md text-headline-md text-primary mb-1">Your Academic Record</h1>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Keep your marks and test results current so program eligibility can be checked accurately.</p>
+    </div>
+
+    <!-- Matric Record -->
+    <article class="bg-white border border-outline-variant rounded-md shadow-sm overflow-hidden">
+        <div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+            <h2 class="font-title-lg text-title-lg text-primary">Matric Record</h2>
+            <a class="bg-surface-container border border-outline-variant text-on-surface font-bold px-4 py-2 rounded-sm hover:bg-surface-variant transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 text-sm" href="{% url 'students:matric_edit' %}">
+                {% if matric_record %}
+                    <span class="material-symbols-outlined text-[16px]">edit</span> Edit Record
+                {% else %}
+                    <span class="material-symbols-outlined text-[16px]">add</span> Add Record
+                {% endif %}
+            </a>
+        </div>
+        <div class="p-6">
+            {% if matric_record %}
+                <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Board</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ matric_record.board }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Group</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ matric_record.group }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Passing Year</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ matric_record.passing_year }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Marks</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ matric_record.obtained_marks }} <span class="text-on-surface-variant text-sm font-normal">/ {{ matric_record.total_marks }}</span></dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Percentage</dt>
+                        <dd class="font-title-md text-title-md text-secondary">{{ matric_record.percentage }}%</dd>
+                    </div>
+                </dl>
+            {% else %}
+                <div class="bg-surface-variant p-6 rounded-md border-2 border-dashed border-outline-variant text-center">
+                    <span class="material-symbols-outlined text-outline text-[32px] mb-2">history_edu</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Matriculation academic history is missing. This is required for calculating admission eligibility.</p>
+                    <a class="inline-block bg-primary text-on-primary font-bold px-6 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm" href="{% url 'students:matric_edit' %}">Add Matric Record</a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+
+    <!-- Intermediate Record -->
+    <article class="bg-white border border-outline-variant rounded-md shadow-sm overflow-hidden mt-6">
+        <div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+            <h2 class="font-title-lg text-title-lg text-primary">Intermediate / FSc Record</h2>
+            <a class="bg-surface-container border border-outline-variant text-on-surface font-bold px-4 py-2 rounded-sm hover:bg-surface-variant transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 text-sm" href="{% url 'students:intermediate_edit' %}">
+                {% if intermediate_record %}
+                    <span class="material-symbols-outlined text-[16px]">edit</span> Edit Record
+                {% else %}
+                    <span class="material-symbols-outlined text-[16px]">add</span> Add Record
+                {% endif %}
+            </a>
+        </div>
+        <div class="p-6">
+            {% if intermediate_record %}
+                <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Board</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ intermediate_record.board }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Group</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ intermediate_record.get_group_display }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Passing Year</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ intermediate_record.passing_year }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Marks</dt>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ intermediate_record.obtained_marks }} <span class="text-on-surface-variant text-sm font-normal">/ {{ intermediate_record.total_marks }}</span></dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Percentage</dt>
+                        <dd class="font-title-md text-title-md text-secondary">{{ intermediate_record.percentage }}%</dd>
+                    </div>
+                </dl>
+            {% else %}
+                <div class="bg-surface-variant p-6 rounded-md border-2 border-dashed border-outline-variant text-center">
+                    <span class="material-symbols-outlined text-outline text-[32px] mb-2">school</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Intermediate / FSc history is missing. This is required for calculating admission eligibility.</p>
+                    <a class="inline-block bg-primary text-on-primary font-bold px-6 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm" href="{% url 'students:intermediate_edit' %}">Add Intermediate Record</a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+
+    <!-- Test Scores -->
+    <article class="bg-white border border-outline-variant rounded-md shadow-sm overflow-hidden mt-6">
+        <div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+            <h2 class="font-title-lg text-title-lg text-primary">Test Scores</h2>
+            <a class="bg-primary text-on-primary font-bold px-4 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 text-sm" href="{% url 'students:test_score_add' %}">
+                <span class="material-symbols-outlined text-[16px]">add</span> Add Test Score
+            </a>
+        </div>
+        
+        {% if test_scores %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-outline-variant bg-surface-container-lowest">
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider">Test</th>
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider">Score</th>
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider">Percentage</th>
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider">Date</th>
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider">Certificate</th>
+                            <th class="p-4 font-label-md text-label-md text-outline uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                        {% for score in test_scores %}
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 font-title-md text-title-md text-on-surface">{{ score.test_type.name }}</td>
+                            <td class="p-4 text-on-surface">{{ score.score }} <span class="text-on-surface-variant text-sm font-normal">/ {{ score.total_score }}</span></td>
+                            <td class="p-4 text-secondary font-bold">{{ score.percentage }}%</td>
+                            <td class="p-4 text-on-surface">{{ score.test_date }}</td>
+                            <td class="p-4 text-on-surface">
+                                {% if score.result_certificate %}
+                                    <a class="text-primary hover:text-secondary hover:underline transition-colors flex items-center gap-1 font-bold text-sm" href="{% url 'students:test_certificate_view' score.pk %}"><span class="material-symbols-outlined text-[16px]">visibility</span> View</a>
+                                {% else %}
+                                    <span class="text-outline text-sm">Not uploaded</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 flex gap-3 justify-end">
+                                <a class="text-primary hover:text-secondary transition-colors" href="{% url 'students:test_score_edit' score.pk %}" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></a>
+                                <a class="text-error hover:text-on-error-container transition-colors" href="{% url 'students:test_score_delete' score.pk %}" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-6">
+                <div class="bg-surface-variant p-6 rounded-md border-2 border-dashed border-outline-variant text-center">
+                    <span class="material-symbols-outlined text-outline text-[32px] mb-2">quiz</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">No test scores (USAT, MDCAT, ECAT, GAT, etc.) have been added. Some programs require an entry test score for admission.</p>
+                    <a class="inline-block bg-primary text-on-primary font-bold px-6 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm" href="{% url 'students:test_score_add' %}">Add Test Score</a>
+                </div>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Eligibility Preview -->
+    <article class="bg-tertiary-fixed border border-outline-variant rounded-md shadow-sm overflow-hidden mt-6">
+        <div class="bg-tertiary-container px-6 py-4 border-b border-outline-variant flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h2 class="font-title-lg text-title-lg text-on-tertiary-container">Eligibility Preview</h2>
+                <p class="font-body-sm text-body-sm text-on-tertiary-container/80">Select a program to see every current requirement and reason.</p>
+            </div>
+            <form method="get" class="w-full md:w-auto">
+                <label class="sr-only" for="program">Program</label>
+                <select class="w-full md:w-64 border border-outline-variant rounded h-10 px-3 bg-surface focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all text-on-surface font-body-md" id="program" name="program" onchange="this.form.submit()">
+                    <option value="">Choose a program</option>
+                    {% for program in programs %}
+                        <option value="{{ program.slug }}" {% if selected_program.slug == program.slug %}selected{% endif %}>{{ program.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        
+        {% if eligibility %}
+            <div class="p-6">
+                <div class="bg-white p-6 rounded-md border {% if eligibility.is_eligible %}border-secondary{% else %}border-error{% endif %} flex flex-col items-center text-center">
+                    {% if eligibility.is_eligible %}
+                        <div class="w-16 h-16 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[32px]">check_circle</span>
+                        </div>
+                        <strong class="font-headline-md text-headline-md text-secondary mb-2">Eligible</strong>
+                    {% else %}
+                        <div class="w-16 h-16 bg-error/10 text-error rounded-full flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[32px]">cancel</span>
+                        </div>
+                        <strong class="font-headline-md text-headline-md text-error mb-2">Not Eligible</strong>
+                    {% endif %}
+                    
+                    {% if eligibility.reasons %}
+                        <ul class="text-left bg-surface-container-lowest border border-outline-variant rounded p-4 w-full max-w-lg mt-4 space-y-2">
+                            {% for reason in eligibility.reasons %}
+                                <li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface">
+                                    <span class="material-symbols-outlined text-[16px] mt-0.5 {% if eligibility.is_eligible %}text-secondary{% else %}text-error{% endif %}">arrow_right</span>
+                                    <span>{{ reason }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">All recorded requirements are currently satisfied.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </article>
+
+</div>
+{% endblock %}

@@ -1,41 +1,69 @@
 {% extends 'base.html' %}
 {% block title %}{{ campus.name }} | PIST{% endblock %}
 {% block content %}
-<section class="container section">
-  <div class="page-header">
-    <div>
-      <span class="eyebrow">Campus</span>
-      <h1>{{ campus.name }}</h1>
-      <p class="lead">{{ campus.address }}</p>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
+  
+  <!-- Hero Section -->
+  <section class="bg-surface-container rounded-md overflow-hidden border border-outline-variant mb-xl relative">
+    <!-- Gradient overlay simulation if we had a bg image -->
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-container to-primary-container/80 z-0 hidden md:block"></div>
+    <div class="absolute inset-0 bg-primary-container z-0 md:hidden"></div>
+    
+    <div class="relative z-10 p-8 md:p-12 text-white">
+      <div class="flex flex-wrap items-center gap-4 mb-4">
+        <span class="font-label-md text-label-md bg-white/20 px-3 py-1 rounded-sm uppercase tracking-widest text-tertiary-fixed font-bold">{{ campus.code }}</span>
+        {% if campus.is_main_campus %}
+          <span class="font-label-md text-label-md bg-tertiary-container text-primary px-3 py-1 rounded-sm uppercase tracking-widest font-bold">Main Campus</span>
+        {% endif %}
+      </div>
+      <h1 class="font-display-lg text-display-lg font-bold mb-4">{{ campus.name }}</h1>
+      <p class="font-body-lg text-body-lg text-white/90 max-w-2xl mb-8 flex items-center gap-2">
+         <span class="material-symbols-outlined text-[20px]">location_on</span>
+         {{ campus.address }}, {{ campus.city }}
+      </p>
+      
+      <div class="flex flex-wrap gap-4">
+        <a class="bg-tertiary-container text-primary font-bold px-6 py-3 rounded-sm shadow-sm hover:brightness-110 transition-all" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View Campus Programs</a>
+        <a class="bg-transparent border border-white text-white font-bold px-6 py-3 rounded-sm hover:bg-white/10 transition-colors" href="{% url 'admissions:admission_procedure' %}">Admissions Info</a>
+      </div>
     </div>
-    <div class="page-header__actions">
-      <span class="badge badge--muted">{{ campus.code }}</span>
-      <a class="button button--secondary" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View campus programs</a>
-    </div>
-  </div>
-  <div class="panel" style="margin-bottom: 40px; padding: 24px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px;">
-    <h2 style="margin-top: 0;">Explore {{ campus.name }}</h2>
-    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px;">
-      <a class="button button--primary" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">View Campus Programs</a>
-      <a class="button button--secondary" href="{% url 'admissions:admission_procedure' %}">Admissions Info</a>
-    </div>
-  </div>
+  </section>
 
-  <h2>Campus Departments</h2>
-  <div class="card-grid card-grid--two">
-    {% for department in campus.departments.all %}
-      <article class="department-card">
-        <span class="badge badge--muted">{{ department.programs.count }} programs</span>
-        <a href="{% url 'admissions:department_detail' department.slug %}" style="text-decoration: none; color: inherit;"><h3 style="margin: 12px 0 8px 0; font-size: 1.25rem;">{{ department.name }}</h3></a>
-        <p>{{ department.description|default:'Department details are maintained from the database and can be expanded without changing templates.' }}</p>
-        <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
-          <a class="button button--secondary" href="{% url 'admissions:department_detail' department.slug %}" style="padding: 6px 12px; font-size: 0.85rem;">View Department</a>
-          <a class="text-link" href="{% url 'admissions:programs' %}?campus={{ campus.code }}&amp;department={{ department.code }}">Filter programs</a>
+  <!-- Departments Section -->
+  <section>
+    <div class="flex justify-between items-end mb-8">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-[12px] uppercase">Academics</span>
+        <h2 class="text-3xl font-bold text-primary mt-2">Campus Departments</h2>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% for department in campus.departments.all %}
+        <article class="bg-surface border border-outline-variant rounded-md p-6 hover:shadow-md transition-shadow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="bg-surface-container-high text-on-surface-variant text-xs font-bold px-2 py-1 rounded">{{ department.programs.count }} programs</span>
+            </div>
+            <a href="{% url 'admissions:department_detail' department.slug %}" class="block hover:text-secondary transition-colors group">
+               <h3 class="text-xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors">{{ department.name }}</h3>
+            </a>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+              {{ department.description|default:'Department details are maintained from the database and can be expanded without changing templates. We focus on rigorous academic standards.' }}
+            </p>
+          </div>
+          <div class="border-t border-surface-variant pt-4 flex gap-4">
+            <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:department_detail' department.slug %}">View Department <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+            <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:programs' %}?campus={{ campus.code }}&amp;department={{ department.code }}">Filter Programs <span class="material-symbols-outlined text-[16px]">filter_list</span></a>
+          </div>
+        </article>
+      {% empty %}
+        <div class="col-span-full bg-surface-variant p-10 rounded-md text-center">
+          <p class="font-body-lg text-body-lg text-on-surface-variant">No departments are configured for this campus.</p>
         </div>
-      </article>
-    {% empty %}
-      <p>No departments are configured for this campus.</p>
-    {% endfor %}
-  </div>
-</section>
+      {% endfor %}
+    </div>
+  </section>
+
+</main>
 {% endblock %}

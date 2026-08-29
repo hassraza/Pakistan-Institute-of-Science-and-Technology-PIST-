@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admissions | PIST</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .accordion-item.active .material-symbols-outlined.chevron {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-surface border-b border-outline-variant docked full-width top-0 z-50">
+<div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-[32px]">school</span>
+<span class="font-title-lg text-title-lg font-bold text-primary">PIST</span>
+</div>
+<nav class="hidden md:flex items-center gap-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-sm" href="#">About</a>
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary font-bold pb-1 py-sm" href="#">Admissions</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-sm" href="#">Academics</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-sm" href="#">Research</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-sm" href="#">Campus Life</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-sm" href="#">Contact</a>
+</nav>
+<div class="hidden md:flex items-center gap-sm">
+<button class="font-label-md text-label-md text-primary font-bold">Portals</button>
+<button class="bg-tertiary-container text-on-tertiary-fixed font-title-md text-title-md py-xs px-sm rounded hover:bg-tertiary-fixed transition-colors">Apply Now</button>
+</div>
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="bg-primary-container text-on-primary relative overflow-hidden py-xl md:py-[120px]">
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="A wide architectural shot of a grand, modern university campus building with a classic brick facade mixed with contemporary glass elements. The scene is shot on a sunny day with clear blue skies, casting strong, structured shadows that emphasize the authoritative and prestigious nature of the institution. Deep navy and gold accents are subtly visible in the environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByZlWkQi6Crzpd1Pscxxck3pp7ubP6kPJsz-GJ0iTvi-b5vVTfO_7BYFgLyGMbab6tb1trOyip8Tng1bvAvmsAEODK-QWqwO41HVcjbKVKGEiz2KRg3JiQNS8piVQVZqN9PYCzBhWvd4fc6MIt_nGExxLfyN4-Amoa48mQBAAqZXoiu5j4oEMPjiNwCUzavavQVE4KkwYIMsCnK_meM0PZ2thfBYpdUlAvt4ketMUnxlE3RbIm6av82Q"/>
+</div>
+<div class="max-w-container-max mx-auto px-gutter relative z-10 flex flex-col items-start gap-md">
+<span class="bg-tertiary-container text-on-tertiary-fixed font-label-md text-label-md px-sm py-[2px] rounded uppercase tracking-wider">Fall 2027 Intake</span>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-primary max-w-3xl">
+                    Admissions Fall 2027<br/>Your Journey Starts Here
+                </h1>
+<p class="font-body-lg text-body-lg text-on-primary-container max-w-2xl">
+                    Join a legacy of innovation and leadership. PIST offers world-class academic programs designed to challenge and inspire the next generation of global problem solvers.
+                </p>
+<div class="flex gap-sm mt-sm">
+<button class="bg-tertiary-container text-on-tertiary-fixed font-title-md text-title-md py-sm px-lg rounded hover:bg-tertiary-fixed transition-colors shadow-sm">
+                        Start Application
+                    </button>
+<button class="border border-on-primary text-on-primary font-title-md text-title-md py-sm px-lg rounded hover:bg-surface-tint transition-colors">
+                        Download Prospectus
+                    </button>
+</div>
+</div>
+</section>
+<div class="max-w-container-max mx-auto px-gutter py-xl grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Sidebar Navigation (Desktop) -->
+<div class="hidden lg:block lg:col-span-3">
+<div class="sticky top-[100px] border border-outline-variant rounded p-sm bg-surface-container-lowest shadow-sm">
+<h3 class="font-title-lg text-title-lg text-primary border-b border-outline-variant pb-xs mb-sm">Quick Links</h3>
+<ul class="flex flex-col gap-xs">
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#overview">Overview</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#eligibility">Eligibility Criteria</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#process">Application Process</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#documents">Required Documents</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#fee-structure">Fee Structure</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#merit">Merit Calculation</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#dates">Important Dates</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:font-bold block py-xs" href="#faq">FAQs</a></li>
+</ul>
+</div>
+</div>
+<!-- Content Area -->
+<div class="lg:col-span-9 flex flex-col gap-xl">
+<!-- Overview -->
+<section class="scroll-mt-[100px]" id="overview">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-sm">
+                        The Pakistan Institute of Science and Technology (PIST) welcomes applications for the Fall 2027 academic session. We seek driven individuals who demonstrate academic excellence and a passion for advancing science and technology.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mt-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[48px] text-primary mb-xs">engineering</span>
+<h4 class="font-title-md text-title-md text-on-surface">50+</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">Undergraduate Programs</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[48px] text-primary mb-xs">science</span>
+<h4 class="font-title-md text-title-md text-on-surface">30+</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">Graduate Programs</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-[48px] text-primary mb-xs">public</span>
+<h4 class="font-title-md text-title-md text-on-surface">15,000+</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">Active Students</p>
+</div>
+</div>
+</section>
+<!-- Eligibility -->
+<section class="scroll-mt-[100px]" id="eligibility">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md">Eligibility Criteria</h2>
+<div class="bg-surface-container-low p-md rounded border border-outline-variant">
+<ul class="list-disc list-inside space-y-xs font-body-md text-body-md text-on-surface">
+<li>Minimum 60% marks in HSSC (Pre-Engineering/Pre-Medical/Computer Science) or equivalent.</li>
+<li>A-Level students must provide an Equivalence Certificate from IBCC.</li>
+<li>Valid score in the PIST Entry Test or an approved standardized test (NAT/HAT).</li>
+<li>For specific engineering programs, adherence to PEC guidelines is mandatory.</li>
+</ul>
+</div>
+</section>
+<!-- Application Process -->
+<section class="scroll-mt-[100px]" id="process">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md">Application Process</h2>
+<div class="flex flex-col gap-sm">
+<div class="flex gap-md bg-surface-container-lowest border border-outline-variant p-md rounded items-start">
+<div class="bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-title-md text-title-md flex-shrink-0">1</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Online Registration</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Create an account on the PIST Admissions Portal and fill out your basic profile information.</p>
+</div>
+</div>
+<div class="flex gap-md bg-surface-container-lowest border border-outline-variant p-md rounded items-start">
+<div class="bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-title-md text-title-md flex-shrink-0">2</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Document Upload</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Scan and upload all required educational documents, CNIC/B-Form, and a recent photograph.</p>
+</div>
+</div>
+<div class="flex gap-md bg-surface-container-lowest border border-outline-variant p-md rounded items-start">
+<div class="bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-title-md text-title-md flex-shrink-0">3</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Application Fee Submission</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Generate the fee challan and deposit the non-refundable processing fee at any designated bank branch.</p>
+</div>
+</div>
+<div class="flex gap-md bg-surface-container-lowest border border-outline-variant p-md rounded items-start">
+<div class="bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-title-md text-title-md flex-shrink-0">4</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Entry Test</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Download your admit card and appear for the PIST Entry Test on the scheduled date.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Fee Structure -->
+<section class="scroll-mt-[100px]" id="fee-structure">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md">Fee Structure (Per Semester)</h2>
+<div class="overflow-x-auto border border-outline-variant rounded">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary text-on-primary font-title-md text-title-md">
+<th class="p-sm border-b border-outline-variant">Faculty/Program</th>
+<th class="p-sm border-b border-outline-variant">Admission Fee (One time)</th>
+<th class="p-sm border-b border-outline-variant">Tuition Fee</th>
+<th class="p-sm border-b border-outline-variant">Total (1st Sem)</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<td class="p-sm text-on-surface font-semibold">Engineering (Civil, Mech, Elec)</td>
+<td class="p-sm text-on-surface-variant">PKR 25,000</td>
+<td class="p-sm text-on-surface-variant">PKR 110,000</td>
+<td class="p-sm text-on-surface">PKR 135,000</td>
+</tr>
+<tr class="bg-surface border-b border-outline-variant">
+<td class="p-sm text-on-surface font-semibold">Computer Sciences &amp; IT</td>
+<td class="p-sm text-on-surface-variant">PKR 25,000</td>
+<td class="p-sm text-on-surface-variant">PKR 125,000</td>
+<td class="p-sm text-on-surface">PKR 150,000</td>
+</tr>
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<td class="p-sm text-on-surface font-semibold">Basic &amp; Applied Sciences</td>
+<td class="p-sm text-on-surface-variant">PKR 20,000</td>
+<td class="p-sm text-on-surface-variant">PKR 85,000</td>
+<td class="p-sm text-on-surface">PKR 105,000</td>
+</tr>
+<tr class="bg-surface">
+<td class="p-sm text-on-surface font-semibold">Management Sciences</td>
+<td class="p-sm text-on-surface-variant">PKR 20,000</td>
+<td class="p-sm text-on-surface-variant">PKR 95,000</td>
+<td class="p-sm text-on-surface">PKR 115,000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- FAQs -->
+<section class="scroll-mt-[100px]" id="faq">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-md">Frequently Asked Questions</h2>
+<div class="border border-outline-variant rounded bg-surface-container-lowest">
+<div class="accordion-item border-b border-outline-variant last:border-b-0">
+<button class="w-full flex justify-between items-center p-md text-left font-title-md text-title-md text-on-surface hover:bg-surface-container-low transition-colors" onclick="this.parentElement.classList.toggle('active')">
+<span>Is financial aid available?</span>
+<span class="material-symbols-outlined chevron transition-transform">expand_more</span>
+</button>
+<div class="accordion-content bg-surface px-md">
+<p class="py-sm font-body-md text-body-md text-on-surface-variant">Yes, PIST offers various need-based and merit-based scholarships. You can apply for financial aid through the admission portal after submitting your initial application.</p>
+</div>
+</div>
+<div class="accordion-item border-b border-outline-variant last:border-b-0">
+<button class="w-full flex justify-between items-center p-md text-left font-title-md text-title-md text-on-surface hover:bg-surface-container-low transition-colors" onclick="this.parentElement.classList.toggle('active')">
+<span>Can I apply for multiple programs?</span>
+<span class="material-symbols-outlined chevron transition-transform">expand_more</span>
+</button>
+<div class="accordion-content bg-surface px-md">
+<p class="py-sm font-body-md text-body-md text-on-surface-variant">Yes, you can select up to three program preferences in a single application. You will be considered for them in the order of your preference based on merit.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-primary-container full-width">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-primary mb-sm">PIST</h3>
+<p class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80">Leading research and innovation in science and technology for a better tomorrow.</p>
+</div>
+<div>
+<ul class="space-y-sm">
+<li><a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Campus Address</a></li>
+<li><a class="font-body-sm text-body-sm text-tertiary-fixed font-bold hover:underline transition-all" href="#">Admissions</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Alumni</a></li>
+</ul>
+</div>
+<div>
+<ul class="space-y-sm">
+<li><a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Research</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Privacy Policy</a></li>
+<li><a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Careers</a></li>
+</ul>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80">© 2024 Pakistan Institute of Science and Technology. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</body></html>

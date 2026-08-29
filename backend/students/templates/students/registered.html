@@ -1,1 +1,32 @@
-{% extends 'students/base_student.html' %}{% block content %}<section class="auth-layout auth-layout--single"><div class="auth-card"><p class="eyebrow">Registration complete</p><h1>Your account is ready.</h1><p>Your permanent Student ID is:</p><div class="student-id">{{ profile.student_id }}</div><p class="muted">Save this ID for future university portal activity. Email verification is optional and can be added asynchronously.</p><a class="button" href="{% url 'students:login' %}">Continue to sign in</a></div></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Registration Complete | PIST{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[calc(100vh-160px)] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10 text-center">
+        
+        <div class="w-20 h-20 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-[40px]">check_circle</span>
+        </div>
+        
+        <div class="mb-8 border-b border-outline-variant pb-6">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Registration Complete</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-4">Your Account is Ready</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                Your permanent Student ID is:
+            </p>
+            <div class="bg-secondary-container/30 border border-secondary-container py-4 px-6 rounded-md inline-block">
+                <span class="font-display-sm text-[28px] text-secondary font-bold">{{ profile.student_id }}</span>
+            </div>
+        </div>
+
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-8 text-left">
+            Save this ID for future university portal activity. Email verification is optional and can be completed later.
+        </p>
+
+        <a class="w-full bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm flex items-center justify-center gap-2" href="{% url 'students:login' %}">
+            Continue to Sign In <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </a>
+
+    </div>
+</div>
+{% endblock %}

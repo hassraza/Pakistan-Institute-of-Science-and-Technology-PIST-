@@ -1,1 +1,82 @@
-{% extends 'students/base_student.html' %}{% block title %}Roll Number Slip | PIST{% endblock %}{% block content %}<section class="roll-slip-page"><div class="roll-slip-actions"><button class="button" type="button" onclick="window.print()">Print / Download</button><a class="button button--secondary" href="{% url 'students:application_detail' application.pk %}">Back</a></div><article class="roll-slip-card"><header><span class="eyebrow">Pakistan Institute of Science and Technology</span><h1>Entry Test Roll Number Slip</h1><p>{{ application.campus.name }}</p></header><dl class="profile-list"><div><dt>Student name</dt><dd>{{ application.full_name }}</dd></div><div><dt>Student ID</dt><dd>{{ application.student.student_id }}</dd></div><div><dt>Program</dt><dd>{{ application.program.name }}</dd></div><div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div><div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id }}</dd></div><div><dt>Roll Number</dt><dd>{{ application.roll_number }}</dd></div><div><dt>Test date</dt><dd>{{ application.test_date|default:'To be announced' }}</dd></div><div><dt>Test venue</dt><dd>{{ application.test_venue|default:'To be announced' }}</dd></div></dl><p class="muted">Bring this slip and your original CNIC/B-Form on the scheduled test date.</p></article></section>{% endblock %}{% block extra_head %}<style>@media print{.student-header,.roll-slip-actions{display:none!important}.student-main{padding:0}.roll-slip-card{box-shadow:none!important;border:1px solid #cbd5e1!important}}</style>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Roll Number Slip | PIST{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-8 roll-slip-page">
+    
+    <div class="flex justify-end gap-4 mb-6 print:hidden">
+        <a class="bg-surface-container border border-outline-variant text-on-surface font-bold px-6 py-2 rounded-sm hover:bg-surface-variant transition-colors shadow-sm whitespace-nowrap flex items-center gap-2" href="{% url 'students:application_detail' application.pk %}">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back
+        </a>
+        <button class="bg-primary text-on-primary font-bold px-6 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm whitespace-nowrap flex items-center gap-2" type="button" onclick="window.print()">
+            <span class="material-symbols-outlined text-[18px]">print</span> Print / Download
+        </button>
+    </div>
+
+    <div class="bg-white border-2 border-outline-variant rounded-lg p-10 print:border-none print:shadow-none shadow-md">
+        
+        <header class="text-center mb-10 border-b-2 border-outline-variant pb-8">
+            <div class="flex justify-center mb-4">
+                <span class="material-symbols-outlined text-primary text-[64px] fill">school</span>
+            </div>
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-2 block">Pakistan Institute of Science and Technology</span>
+            <h1 class="font-display-sm text-[36px] font-bold text-primary tracking-tight uppercase mb-2">Entry Test Roll Number Slip</h1>
+            <p class="font-title-lg text-title-lg text-on-surface-variant">{{ application.campus.name }}</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-10">
+            <div class="border-b border-dashed border-outline-variant pb-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Student Name</dt>
+                <dd class="font-title-lg text-title-lg text-primary font-bold">{{ application.full_name }}</dd>
+            </div>
+            <div class="border-b border-dashed border-outline-variant pb-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Student ID</dt>
+                <dd class="font-title-lg text-title-lg text-primary font-bold">{{ application.student.student_id }}</dd>
+            </div>
+            <div class="border-b border-dashed border-outline-variant pb-2 md:col-span-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program</dt>
+                <dd class="font-title-lg text-title-lg text-on-surface">{{ application.program.name }}</dd>
+            </div>
+            <div class="border-b border-dashed border-outline-variant pb-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Department</dt>
+                <dd class="font-title-md text-title-md text-on-surface">{{ application.program.department.name }}</dd>
+            </div>
+            <div class="border-b border-dashed border-outline-variant pb-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program Registration ID</dt>
+                <dd class="font-title-md text-title-md text-on-surface">{{ application.program_registration_id }}</dd>
+            </div>
+            <div class="bg-secondary-container/30 border border-secondary-container p-4 rounded-md">
+                <dt class="font-label-md text-label-md text-secondary uppercase tracking-wider mb-1 font-bold">Roll Number</dt>
+                <dd class="font-display-sm text-[32px] text-secondary font-bold">{{ application.roll_number }}</dd>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant p-4 rounded-md flex flex-col justify-center">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Test Date & Time</dt>
+                <dd class="font-title-md text-title-md text-on-surface">{{ application.test_date|default:'To be announced' }}</dd>
+            </div>
+            <div class="border-b border-dashed border-outline-variant pb-2 md:col-span-2">
+                <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Test Venue / Center</dt>
+                <dd class="font-title-md text-title-md text-on-surface">{{ application.test_venue|default:'To be announced' }}</dd>
+            </div>
+        </div>
+
+        <div class="bg-surface-variant p-6 rounded-md border-l-4 border-l-primary flex items-start gap-4">
+            <span class="material-symbols-outlined text-primary text-[28px] mt-1">warning</span>
+            <div>
+                <strong class="font-title-md text-title-md text-primary block mb-1">Important Instructions</strong>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Bring this printed slip along with your original CNIC or B-Form on the scheduled test date. Entry to the test center will be strictly prohibited without these documents. Electronic devices are not allowed in the examination hall.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<style>
+    @media print {
+        header#sidebar { display: none !important; }
+        aside#sidebar { display: none !important; }
+        .roll-slip-page { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+        body { background: white !important; }
+        main { padding: 0 !important; }
+    }
+</style>
+{% endblock %}

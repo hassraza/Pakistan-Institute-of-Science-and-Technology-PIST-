@@ -1,25 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}How Admission Works | PIST{% endblock %}
 {% block content %}
-<section class="container section narrow-copy">
-  <span class="eyebrow">Admissions</span>
-  <h1>How admission works</h1>
-  <p class="lead">Undergraduate applications are submitted through the PIST Student Portal. Create an account, complete your academic record, then apply to an open program.</p>
-  <div class="timeline-panel timeline-panel--full">
-    <ol class="timeline timeline--vertical">
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
+  <div class="max-w-4xl mx-auto text-center mb-12">
+    <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">Admissions</span>
+    <h1 class="font-display-lg text-display-lg text-primary mb-xs">How admission works</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">
+      Undergraduate applications are submitted through the PIST Student Portal. Create an account, complete your academic record, then apply to an open program.
+    </p>
+  </div>
+
+  <div class="max-w-3xl mx-auto bg-white rounded-md border border-outline-variant p-8 shadow-sm mb-12">
+    <ol class="relative border-l border-surface-variant ml-4 space-y-8">
       {% for step in steps %}
-        <li>{{ forloop.counter }}. {{ step }}</li>
+        <li class="pl-8 relative">
+          <span class="absolute -left-[17px] flex items-center justify-center w-8 h-8 bg-secondary text-white rounded-full font-bold text-sm">
+            {{ forloop.counter }}
+          </span>
+          <h3 class="font-title-lg text-title-lg text-primary mb-1">{{ step }}</h3>
+        </li>
       {% endfor %}
     </ol>
   </div>
-  <div class="hero__actions">
+
+  <div class="flex justify-center gap-4 flex-wrap">
     {% if user.is_authenticated and user.student_profile %}
-      <a class="button button--primary" href="{% url 'students:dashboard' %}">Open Student Portal</a>
+      <a class="bg-primary text-white font-bold px-8 py-4 rounded-sm hover:bg-primary-container transition-colors shadow-sm" href="{% url 'students:dashboard' %}">Open Student Portal</a>
     {% else %}
-      <a class="button button--primary" href="{% url 'students:register' %}">Create Student Account</a>
-      <a class="button button--secondary" href="{% url 'students:login' %}">Login</a>
+      <a class="bg-primary text-white font-bold px-8 py-4 rounded-sm hover:bg-primary-container transition-colors shadow-sm" href="{% url 'students:register' %}">Create Student Account</a>
+      <a class="bg-transparent border border-primary text-primary font-bold px-8 py-4 rounded-sm hover:bg-surface-container-low transition-colors" href="{% url 'students:login' %}">Login</a>
     {% endif %}
-    <a class="button button--secondary" href="{% url 'admissions:programs' %}">Explore Programs</a>
+    <a class="bg-tertiary-container text-primary font-bold px-8 py-4 rounded-sm hover:bg-tertiary-fixed transition-colors shadow-sm" href="{% url 'admissions:programs' %}">Explore Programs</a>
   </div>
-</section>
+</main>
 {% endblock %}

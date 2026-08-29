@@ -1,1 +1,95 @@
-{% extends 'students/base_student.html' %}{% block title %}{{ title }} | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><form class="auth-card academic-form" method="post" enctype="multipart/form-data"><p class="eyebrow">Academic information</p><h1>{{ title }}</h1>{% csrf_token %}{% if form.non_field_errors %}<div class="notice notice--error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}</div>{% endfor %}<p class="percentage-preview" data-percentage-preview>Percentage preview: enter marks to calculate</p><button class="button" type="submit">Save record</button> <a class="button button--secondary" href="{% url 'students:academic_record' %}">Cancel</a></form></section>{% endblock %}{% block extra_js %}<script>const obtained=document.getElementById('id_obtained_marks');const total=document.getElementById('id_total_marks');const preview=document.querySelector('[data-percentage-preview]');function updatePercentage(){const value=Number(obtained&&obtained.value),maximum=Number(total&&total.value);preview.textContent=maximum>0&&value>=0?'Percentage preview: '+((value/maximum)*100).toFixed(2)+'%':'Percentage preview: enter marks to calculate';}if(obtained&&total){obtained.addEventListener('input',updatePercentage);total.addEventListener('input',updatePercentage);}</script>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}{{ title }} | PIST{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="mb-8 border-b border-outline-variant pb-6">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Academic Information</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">{{ title }}</h1>
+        </div>
+
+        <form class="space-y-6" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-error-container text-on-error-container border border-error/20 rounded p-4 mb-6">
+                    <p class="font-body-sm text-body-sm">{{ form.non_field_errors }}</p>
+                </div>
+            {% endif %}
+
+            <div class="space-y-5 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0 items-start">
+                {% for field in form %}
+                    <div class="flex flex-col space-y-1 mb-5 {% if field.name == 'board' or field.name == 'test_type' or field.name == 'result_certificate' %}md:col-span-2{% endif %}">
+                        <label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="text-xs text-on-surface-variant mt-1">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="text-error text-xs mt-1" id="{{ field.id_for_label }}-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="bg-surface-container border border-transparent flex items-center px-4 py-3 rounded-md mt-4">
+                 <div class="font-title-md text-title-md text-primary-fixed-variant" data-percentage-preview>Percentage preview: enter marks to calculate</div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-outline-variant mt-8">
+                <button class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm" type="submit">
+                    Save Record
+                </button>
+                <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:academic_record' %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    // Style Django generated form fields to match Tailwind design
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'h-12', 'px-3', 'bg-surface-container-lowest', 'border', 'border-outline-variant', 'rounded-sm', 'text-on-surface', 'focus:outline-none', 'focus:border-primary-container', 'focus:ring-2', 'focus:ring-primary-container/20', 'transition-all', 'font-body-md');
+        });
+        
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.classList.add('block', 'w-full', 'text-sm', 'text-on-surface-variant',
+              'file:mr-4', 'file:py-2', 'file:px-4',
+              'file:rounded-sm', 'file:border-0',
+              'file:text-sm', 'file:font-bold',
+              'file:bg-secondary/10', 'file:text-secondary',
+              'hover:file:bg-secondary/20', 'mt-1'
+            );
+        });
+    });
+
+    const obtained = document.getElementById('id_obtained_marks') || document.getElementById('id_score');
+    const total = document.getElementById('id_total_marks') || document.getElementById('id_total_score');
+    const preview = document.querySelector('[data-percentage-preview]');
+    
+    function updatePercentage(){
+        const value = Number(obtained && obtained.value), maximum = Number(total && total.value);
+        if (maximum > 0 && value >= 0) {
+            preview.textContent = 'Calculated Percentage: ' + ((value / maximum) * 100).toFixed(2) + '%';
+        } else {
+            preview.textContent = 'Percentage preview: enter marks to calculate';
+        }
+    }
+    
+    if (obtained && total) {
+        obtained.addEventListener('input', updatePercentage);
+        total.addEventListener('input', updatePercentage);
+        // Call once on load in case editing existing record
+        updatePercentage();
+    }
+</script>
+{% endblock %}

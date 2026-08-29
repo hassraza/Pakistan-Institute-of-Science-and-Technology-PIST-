@@ -1,1 +1,59 @@
-{% extends 'students/base_student.html' %}{% block title %}Student sign in | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><form class="auth-card" method="post"><p class="eyebrow">PIST student portal</p><h1>Welcome back.</h1><p class="muted">Sign in with your student account email.</p>{% csrf_token %}{% if error %}<div class="notice notice--error">{{ error }}</div>{% endif %}<div class="field"><label for="id_email">Email address</label><input id="id_email" name="email" type="email" value="{{ email|default:'' }}" autocomplete="email" required></div><div class="field"><label for="id_password">Password</label><input id="id_password" name="password" type="password" autocomplete="current-password" required></div><input type="hidden" name="next" value="{{ next }}"><button class="button" type="submit">Sign in</button><p class="form-foot"><a href="{% url 'students:password_reset' %}">Forgot your password?</a> &middot; <a href="{% url 'students:register' %}">Create an account</a></p></form></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Student sign in | PIST{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[calc(100vh-160px)] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="flex flex-col items-center mb-8 text-center">
+            <span class="material-symbols-outlined text-primary text-[48px] fill mb-4">school</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Student Portal</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Secure access for enrolled scholars.</p>
+        </div>
+
+        {% if error %}
+            <div class="bg-error-container text-on-error-container border border-error/20 rounded p-4 mb-6 flex items-start gap-3">
+                <span class="material-symbols-outlined text-error">error</span>
+                <p class="font-body-sm text-body-sm pt-0.5">{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <form class="space-y-6 flex flex-col" method="post">
+            {% csrf_token %}
+            
+            <div class="flex flex-col space-y-1">
+                <label class="font-label-md text-label-md text-on-surface" for="id_email">Email address</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">person</span>
+                    <input class="w-full pl-10 pr-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all font-body-md text-body-md" id="id_email" name="email" type="email" value="{{ email|default:'' }}" autocomplete="email" required placeholder="e.g. 2024-SP-1042@pist.edu.pk"/>
+                </div>
+            </div>
+            
+            <div class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center">
+                    <label class="font-label-md text-label-md text-on-surface" for="id_password">Password</label>
+                    <a class="font-label-md text-label-md text-secondary hover:underline focus:outline-none" href="{% url 'students:password_reset' %}">Forgot Password?</a>
+                </div>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+                    <input class="w-full pl-10 pr-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all font-body-md text-body-md" id="id_password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••"/>
+                </div>
+            </div>
+            
+            <input type="hidden" name="next" value="{{ next }}">
+            
+            <button class="w-full bg-primary text-on-primary font-title-md text-title-md py-3 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 flex justify-center items-center mt-4" type="submit">
+                Sign In
+            </button>
+        </form>
+        
+        <div class="mt-8 pt-8 border-t border-outline-variant text-center flex flex-col space-y-4">
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                Prospective Student? 
+            </p>
+            <a class="inline-block bg-tertiary-container text-on-tertiary-container font-title-md text-title-md py-2 px-6 rounded-sm hover:bg-tertiary-fixed transition-colors shadow-sm self-center" href="{% url 'students:register' %}">
+                Create an Account
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

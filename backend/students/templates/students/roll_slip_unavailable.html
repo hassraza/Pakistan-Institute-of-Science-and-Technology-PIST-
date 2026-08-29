@@ -1,79 +1,105 @@
 {% extends 'students/base_student.html' %}
 {% block title %}Entry Test / Roll Slip | PIST{% endblock %}
 {% block content %}
-<section class="auth-layout auth-layout--single">
-  <div class="auth-card" style="padding: 36px;">
-    <p class="eyebrow">Entry Test &amp; Roll Slip</p>
-    
-    {% if has_application %}
-      <h1 style="font-size: 1.8rem; margin: 12px 0; color: var(--navy);">Test Schedule &amp; Roll Slip Pending</h1>
-      <p class="lead" style="margin: 16px 0;">Your application has been received.</p>
-      <p style="color: var(--muted); margin-bottom: 20px;">Your roll number and entry test details will appear here once your application is processed.</p>
-      <div class="notice notice--pending" style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 16px; border-radius: 6px; margin: 16px 0 24px 0;">
-        <strong>What is happening?</strong>
-        <p style="margin: 4px 0 0 0; font-size: 0.95rem;">
-          Your application has been received and verified. The admission committee is currently assigning entry-test centers, session timings, and roll numbers.
-        </p>
-      </div>
-
-      {% if application %}
-        <div style="background: var(--slate-50); border: 1px solid var(--line); border-radius: 6px; padding: 20px; margin-bottom: 24px;">
-          <h3 style="margin-top: 0; font-size: 1rem; color: var(--navy);">Application Overview</h3>
-          <dl class="profile-list" style="margin: 0;">
-            <div>
-              <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Application ID</dt>
-              <dd style="font-weight: 700;">{{ application.application_id|default:application.pk }}</dd>
-            </div>
-            <div>
-              <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Program Reg ID</dt>
-              <dd style="font-weight: 700;">{{ application.program_registration_id|default:'Pending' }}</dd>
-            </div>
-            <div>
-              <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Program</dt>
-              <dd style="font-weight: 600;">{{ application.program.name }}</dd>
-            </div>
-            <div>
-              <dt style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Status</dt>
-              <dd style="font-weight: 600;">{{ application.get_application_status_display|default:application.status }}</dd>
-            </div>
-          </dl>
+<div class="max-w-3xl mx-auto py-8">
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10 text-center">
+        
+        <div class="mb-8 border-b border-outline-variant pb-8">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Entry Test & Roll Slip</span>
+            
+            {% if has_application %}
+                <div class="w-20 h-20 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center mx-auto mb-6 mt-4">
+                    <span class="material-symbols-outlined text-[40px]">pending_actions</span>
+                </div>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-4">Test Schedule & Roll Slip Pending</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">
+                    Your application has been received. Your roll number and entry test details will appear here once your application is processed.
+                </p>
+            {% else %}
+                <div class="w-20 h-20 bg-surface-variant text-outline rounded-full flex items-center justify-center mx-auto mb-6 mt-4">
+                    <span class="material-symbols-outlined text-[40px]">search_off</span>
+                </div>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-4">No Active Application Found</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">
+                    You have not submitted an application for any degree program yet.
+                </p>
+            {% endif %}
         </div>
-      {% endif %}
 
-      <div style="margin-bottom: 24px;">
-        <h4 style="margin: 0 0 8px 0; color: var(--navy); font-size: 0.95rem;">What should you do next?</h4>
-        <ul style="margin: 0; padding-left: 20px; color: var(--slate-700); font-size: 0.9rem; line-height: 1.6;">
-          <li>Make sure all your academic documents are uploaded in the Academic Documents section.</li>
-          <li>Check back 48-72 hours before the scheduled test date for your downloadable roll slip.</li>
-          <li>You can also track your application status using the public Track Application tool.</li>
-        </ul>
-      </div>
+        {% if has_application %}
+            
+            <div class="bg-tertiary-container/30 border border-tertiary-container rounded-md p-6 mb-8 text-left flex items-start gap-4">
+                <span class="material-symbols-outlined text-tertiary text-[28px] mt-1">info</span>
+                <div>
+                    <strong class="font-title-md text-title-md text-on-tertiary-container block mb-1">What is happening?</strong>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Your application has been received and verified. The admission committee is currently assigning entry-test centers, session timings, and roll numbers.</p>
+                </div>
+            </div>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <a class="button button--primary" href="{% url 'students:registered_programs' %}">View Registered Programs</a>
-        <a class="button button--secondary" href="{% url 'students:dashboard' %}">Return to Dashboard</a>
-      </div>
+            {% if application %}
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-md shadow-sm p-6 mb-8 text-left">
+                    <h3 class="font-title-md text-title-md text-primary mb-4">Application Overview</h3>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Application ID</dt>
+                            <dd class="font-title-md text-title-md text-on-surface font-bold">{{ application.application_id|default:application.pk }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program Reg ID</dt>
+                            <dd class="font-title-md text-title-md text-on-surface font-bold">{{ application.program_registration_id|default:'Pending' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program</dt>
+                            <dd class="font-title-md text-title-md text-on-surface">{{ application.program.name }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Status</dt>
+                            <dd class="font-title-md text-title-md text-secondary font-bold">{{ application.get_application_status_display|default:application.status }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            {% endif %}
 
-    {% else %}
-      <h1 style="font-size: 1.8rem; margin: 12px 0; color: var(--navy);">No Active Application Found</h1>
-      <p class="lead" style="margin: 16px 0; color: var(--slate-700);">
-        You have not submitted an application for any degree program yet.
-      </p>
-      
-      <div style="background: var(--slate-50); border: 1px solid var(--line); border-radius: 6px; padding: 20px; margin-bottom: 24px;">
-        <h4 style="margin: 0 0 8px 0; color: var(--navy); font-size: 0.95rem;">How to get your Roll Slip:</h4>
-        <ol style="margin: 0; padding-left: 20px; color: var(--slate-700); font-size: 0.9rem; line-height: 1.6;">
-          <li>Browse our undergraduate and graduate degree programs.</li>
-          <li>Submit an application with your preferred campus and qualification details.</li>
-          <li>Your entry test venue and roll slip will be generated automatically once your application is processed.</li>
-        </ol>
-      </div>
+            <div class="bg-surface-container-low border border-outline-variant rounded-md p-6 mb-8 text-left">
+                <h4 class="font-title-md text-title-md text-primary mb-3">What should you do next?</h4>
+                <ul class="list-disc pl-5 font-body-sm text-body-sm text-on-surface-variant space-y-2">
+                    <li>Make sure all your academic documents are uploaded in the Academic Documents section.</li>
+                    <li>Check back 48-72 hours before the scheduled test date for your downloadable roll slip.</li>
+                    <li>You can also track your application status using the public Track Application tool.</li>
+                </ul>
+            </div>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <a class="button button--primary" href="{% url 'admissions:programs' %}">Explore Degree Programs</a>
-        <a class="button button--secondary" href="{% url 'students:dashboard' %}">Go to Dashboard</a>
-      </div>
-    {% endif %}
-  </div>
-</section>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm" href="{% url 'students:registered_programs' %}">
+                    View Registered Programs
+                </a>
+                <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:dashboard' %}">
+                    Return to Dashboard
+                </a>
+            </div>
+
+        {% else %}
+            
+            <div class="bg-surface-container-low border border-outline-variant rounded-md p-6 mb-8 text-left">
+                <h4 class="font-title-md text-title-md text-primary mb-3">How to get your Roll Slip:</h4>
+                <ol class="list-decimal pl-5 font-body-sm text-body-sm text-on-surface-variant space-y-2">
+                    <li>Browse our undergraduate and graduate degree programs.</li>
+                    <li>Submit an application with your preferred campus and qualification details.</li>
+                    <li>Your entry test venue and roll slip will be generated automatically once your application is processed.</li>
+                </ol>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm" href="{% url 'admissions:programs' %}">
+                    Explore Degree Programs
+                </a>
+                <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:dashboard' %}">
+                    Go to Dashboard
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

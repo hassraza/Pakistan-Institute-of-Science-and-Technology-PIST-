@@ -1,1 +1,63 @@
-{% extends 'students/base_student.html' %}{% block title %}Apply | {{ program.name }}{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><form class="auth-card" method="post"><p class="eyebrow">Program application</p><h1>{{ program.name }}</h1><p class="muted">{{ program.department.name }} · {{ program.campus.name|default:program.department.campus.name }}</p>{% csrf_token %}{% if form.non_field_errors %}<div class="notice notice--error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}</div>{% endfor %}<p class="muted">Your five required academic documents and profile information must be complete before submission. The next step is a review page.</p><button class="button" type="submit">Review application</button><a class="button button--secondary" href="{% url 'admissions:program_detail' program.slug %}">Cancel</a></form></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Apply | {{ program.name }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="mb-8 border-b border-outline-variant pb-6">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Program Application</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-2">{{ program.name }}</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">domain</span> {{ program.department.name }} &bull; {{ program.campus.name|default:program.department.campus.name }}</p>
+        </div>
+
+        <form class="space-y-6" method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-error-container text-on-error-container border border-error/20 rounded p-4 mb-6">
+                    <p class="font-body-sm text-body-sm">{{ form.non_field_errors }}</p>
+                </div>
+            {% endif %}
+
+            <div class="space-y-5">
+                {% for field in form %}
+                    <div class="flex flex-col space-y-1">
+                        <label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="text-xs text-on-surface-variant mt-1">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="text-error text-xs mt-1" id="{{ field.id_for_label }}-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="bg-surface-container-low border-l-4 border-l-secondary rounded-sm p-4 mt-6">
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Your required academic documents and profile information must be complete before submission. The next step is a review page.</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-outline-variant mt-8">
+                <button class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm flex items-center justify-center gap-2" type="submit">
+                    Review Application <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </button>
+                <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'admissions:program_detail' program.slug %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'h-12', 'px-3', 'bg-surface-container-lowest', 'border', 'border-outline-variant', 'rounded-sm', 'text-on-surface', 'focus:outline-none', 'focus:border-primary-container', 'focus:ring-2', 'focus:ring-primary-container/20', 'transition-all', 'font-body-md');
+        });
+    });
+</script>
+{% endblock %}

@@ -1,1 +1,75 @@
-{% extends 'students/base_student.html' %}{% block title %}Application details | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><div class="auth-card"><p class="eyebrow">Application details</p><h1>{{ application.program.name }}</h1><dl class="profile-list"><div><dt>Student ID</dt><dd>{{ application.student.student_id }}</dd></div><div><dt>Application ID</dt><dd>{{ application.application_id|default:application.pk }}</dd></div><div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id|default:'Pending' }}</dd></div><div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div><div><dt>Campus</dt><dd>{{ application.campus.name }}</dd></div><div><dt>Eligibility status</dt><dd>{{ application.get_eligibility_status_display }}</dd></div><div><dt>Application status</dt><dd>{{ application.get_application_status_display }}</dd></div><div><dt>Roll number</dt><dd>{{ application.roll_number|default:'Not yet assigned' }}</dd></div><div><dt>Test date</dt><dd>{{ application.test_date|default:'To be announced' }}</dd></div><div><dt>Test venue</dt><dd>{{ application.test_venue|default:'To be announced' }}</dd></div></dl>{% if application.roll_number %}<a class="button" href="{% url 'students:application_roll_slip' application.pk %}">View roll slip</a>{% endif %}<a class="button button--secondary" href="{% url 'students:registered_programs' %}">Back to registered programs</a></div></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Application details | PIST{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="mb-8 border-b border-outline-variant pb-6">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Application Details</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">{{ application.program.name }}</h1>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-md shadow-sm p-6 md:p-8 mb-8">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Student ID</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.student.student_id }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Application ID</dt>
+                    <dd class="font-title-md text-title-md text-primary font-bold">{{ application.application_id|default:application.pk }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3 md:col-span-2">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Program Registration ID</dt>
+                    <dd class="font-title-md text-title-md text-primary font-bold">{{ application.program_registration_id|default:'Pending' }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Department</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.program.department.name }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Campus</dt>
+                    <dd class="font-title-md text-title-md text-on-surface">{{ application.campus.name }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Eligibility Status</dt>
+                    <dd class="font-title-md text-title-md {% if application.eligibility_status == 'Eligible' %}text-secondary{% else %}text-error{% endif %} font-bold flex items-center gap-1">
+                        {% if application.eligibility_status == 'Eligible' %}
+                            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                        {% endif %}
+                        {{ application.get_eligibility_status_display }}
+                    </dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Application Status</dt>
+                    <dd class="font-title-md text-title-md text-on-surface font-bold">{{ application.get_application_status_display }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Roll Number</dt>
+                    <dd class="font-title-md text-title-md {% if application.roll_number %}text-secondary font-bold{% else %}text-on-surface{% endif %}">{{ application.roll_number|default:'Not yet assigned' }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3 md:col-span-2">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Test Date</dt>
+                    <dd class="font-title-md text-title-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-outline">calendar_month</span> {{ application.test_date|default:'To be announced' }}</dd>
+                </div>
+                <div class="border-b border-surface-variant pb-3 md:col-span-2">
+                    <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Test Venue</dt>
+                    <dd class="font-title-md text-title-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-outline">location_on</span> {{ application.test_venue|default:'To be announced' }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-outline-variant justify-center">
+            {% if application.roll_number %}
+                <a class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm flex items-center justify-center gap-2" href="{% url 'students:application_roll_slip' application.pk %}">
+                    <span class="material-symbols-outlined text-[20px]">confirmation_number</span> View Roll Slip
+                </a>
+            {% endif %}
+            <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:registered_programs' %}">
+                Back to Registered Programs
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

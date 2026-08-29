@@ -217,3 +217,296 @@ class StudentDashboardTests(TestCase):
         self.student.save(update_fields=['date_of_birth'])
         response = self.client.get(reverse('students:profile'))
         self.assertContains(response, '>20<')
+
+
+class AcademicDocumentTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username='doc@example.com', email='doc@example.com', password='AyeshaStrong!29')
+        self.student = StudentProfile.objects.create(
+            user=self.user, student_id=generate_student_id(), full_name='Doc Student',
+            cnic='12345-1234567-1', date_of_birth='2000-01-15', phone='03001234567',
+        )
+        self.other_user = get_user_model().objects.create_user(username='other_doc@example.com', email='other_doc@example.com', password='AyeshaStrong!29')
+        self.other_student = StudentProfile.objects.create(
+            user=self.other_user, student_id=generate_student_id(), full_name='Other Doc Student',
+            cnic='12345-1234567-2', date_of_birth='2000-01-15', phone='03001234568',
+        )
+        self.client.force_login(self.user)
+
+    def test_documents_page_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse('students:documents'))
+        self.assertRedirects(response, reverse('students:login') + '?next=/student/documents/')
+
+    def test_student_can_upload_and_view_document(self):
+        pdf_file = SimpleUploadedFile('matric_result.pdf', b'%PDF-1.4 test content', content_type='application/pdf')
+        response = self.client.post(reverse('students:document_upload'), {
+            'document_type': AcademicDocument.DocumentType.MATRIC_RESULT,
+            'file': pdf_file,
+        })
+        self.assertRedirects(response, reverse('students:documents'))
+        document = AcademicDocument.objects.get(student=self.student)
+        self.assertEqual(document.document_type, AcademicDocument.DocumentType.MATRIC_RESULT)
+        self.assertEqual(document.file_name, 'matric_result.pdf')
+
+        # Test view document
+        view_response = self.client.get(reverse('students:document_view', kwargs={'doc_id': document.id}))
+        self.assertEqual(view_response.status_code, 200)
+
+    def test_invalid_file_type_rejected(self):
+        txt_file = SimpleUploadedFile('malicious.exe', b'bad content', content_type='application/x-msdownload')
+        response = self.client.post(reverse('students:document_upload'), {
+            'document_type': AcademicDocument.DocumentType.FSC_RESULT,
+            'file': txt_file,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(AcademicDocument.objects.filter(student=self.student).exists())
+
+    def test_cross_student_document_isolation(self):
+        pdf_file = SimpleUploadedFile('other_result.pdf', b'%PDF-1.4 other content', content_type='application/pdf')
+        other_doc = AcademicDocument.objects.create(
+            student=self.other_student,
+            document_type=AcademicDocument.DocumentType.CNIC_BFORM,
+            file=pdf_file,
+            file_name='other_result.pdf',
+        )
+        # Attempt to view other student's document
+        response = self.client.get(reverse('students:document_view', kwargs={'doc_id': other_doc.id}))
+        self.assertEqual(response.status_code, 404)
+
+        # Attempt to delete other student's document
+        delete_response = self.client.post(reverse('students:document_delete', kwargs={'doc_id': other_doc.id}))
+        self.assertEqual(delete_response.status_code, 404)
+        self.assertTrue(AcademicDocument.objects.filter(pk=other_doc.pk).exists())
+
+    def test_student_can_delete_own_document(self):
+        pdf_file = SimpleUploadedFile('to_delete.pdf', b'%PDF-1.4 content', content_type='application/pdf')
+        doc = AcademicDocument.objects.create(
+            student=self.student,
+            document_type=AcademicDocument.DocumentType.OTHER,
+            file=pdf_file,
+            file_name='to_delete.pdf',
+        )
+        response = self.client.post(reverse('students:document_delete', kwargs={'doc_id': doc.id}))
+        self.assertRedirects(response, reverse('students:documents'))
+        self.assertFalse(AcademicDocument.objects.filter(pk=doc.pk).exists())
+
+
+class StudentProgramRegistrationTests(TestCase):
+    def setUp(self):
+        from admissions.models import Campus, Department, PISTApplicant, Program, ProgramEligibility, Qualification, TestCenter, TestSession
+        from datetime import time
+
+        self.campus = Campus.objects.create(name='PIST Islamabad Main Campus', city='Islamabad', code='ISB', address='H-12')
+        self.department = Department.objects.create(campus=self.campus, code='CS', name='Department of Computer Science', slug='cs')
+        self.program = Program.objects.create(
+            department=self.department, campus=self.campus, name='Bachelor of Science in Computer Science',
+            code='BSCS-ISB', slug='bscs-isb', admissions_open=True, eligibility_percentage=60,
+        )
+        self.qualification = Qualification.objects.create(name='Intermediate (Pre-Engineering)', qualification_group_code='PRE_ENGINEERING')
+        ProgramEligibility.objects.create(program=self.program, qualification=self.qualification, minimum_percentage=60)
+        self.center = TestCenter.objects.create(campus=self.campus, name='Islamabad Test Center', address='H-12', city='Islamabad', building='Academic Block A', hall='Hall 3')
+        self.session = TestSession.objects.create(test_center=self.center, program=self.program, test_date=date(2026, 9, 10), reporting_time=time(8, 30), start_time=time(9), building='Academic Block A', hall='Hall 3')
+
+        self.user = get_user_model().objects.create_user(username='reg@example.com', email='reg@example.com', password='AyeshaStrong!29')
+        self.student = StudentProfile.objects.create(
+            user=self.user, student_id=generate_student_id(), full_name='Reg Student',
+            cnic='12345-1234567-1', date_of_birth='2000-01-15', phone='03001234567', address='Islamabad',
+        )
+        # Upload 5 required documents
+        for doc_type, _ in AcademicDocument.DocumentType.choices:
+            AcademicDocument.objects.create(
+                student=self.student,
+                document_type=doc_type,
+                file=SimpleUploadedFile(f'{doc_type}.pdf', b'%PDF-1.4 test', content_type='application/pdf'),
+                file_name=f'{doc_type}.pdf',
+            )
+
+        self.other_user = get_user_model().objects.create_user(username='other_reg@example.com', email='other_reg@example.com', password='AyeshaStrong!29')
+        self.other_student = StudentProfile.objects.create(
+            user=self.other_user, student_id=generate_student_id(), full_name='Other Reg Student',
+            cnic='12345-1234567-2', date_of_birth='2000-01-15', phone='03001234568', address='Lahore',
+        )
+        self.client.force_login(self.user)
+
+    def test_apply_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse('students:apply_program', kwargs={'program_slug': self.program.slug}))
+        self.assertRedirects(response, reverse('students:login') + f'?next=/student/programs/{self.program.slug}/apply/')
+
+    def test_program_registration_flow_and_unique_id_generation(self):
+        from admissions.models import PISTApplicant
+
+        # Step 1: Form check
+        response = self.client.post(reverse('students:apply_program', kwargs={'program_slug': self.program.slug}), {
+            'qualification': self.qualification.pk,
+            'percentage': 75,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Check your application')
+
+        # Step 2: Confirm submit
+        submit_response = self.client.post(reverse('students:submit_program_application', kwargs={'program_slug': self.program.slug}), {
+            'confirm': '1',
+            'qualification': self.qualification.pk,
+            'percentage': 75,
+        })
+        self.assertEqual(submit_response.status_code, 200)
+        self.assertContains(submit_response, 'Application Submitted Successfully')
+
+        # Verify application in database
+        app = PISTApplicant.objects.get(student=self.student, program=self.program)
+        self.assertTrue(app.program_registration_id.startswith('CS26-'))
+        self.assertTrue(app.application_id.startswith('APP-2026-'))
+        self.assertEqual(app.application_status, PISTApplicant.ApplicationStatus.SUBMITTED)
+
+    def test_duplicate_registration_rejected(self):
+        from admissions.models import PISTApplicant
+        PISTApplicant.objects.create(
+            student=self.student, application_id='APP-2026-DUP', program_registration_id='CS26-0001',
+            full_name=self.student.full_name, cnic=self.student.cnic, email=self.user.email, phone=self.student.phone,
+            address=self.student.address, matric_marks=800, matric_total=1000, fsc_marks=800, fsc_total=1000,
+            campus=self.campus, program=self.program, source_application_id='APP-2026-DUP',
+        )
+        response = self.client.get(reverse('students:apply_program', kwargs={'program_slug': self.program.slug}))
+        self.assertEqual(response.status_code, 302)
+
+    def test_admissions_closed_rejected(self):
+        self.program.admissions_open = False
+        self.program.save(update_fields=['admissions_open'])
+        response = self.client.post(reverse('students:apply_program', kwargs={'program_slug': self.program.slug}), {
+            'qualification': self.qualification.pk,
+            'percentage': 75,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Admissions are closed for this program.')
+
+    def test_ineligible_student_rejected(self):
+        response = self.client.post(reverse('students:apply_program', kwargs={'program_slug': self.program.slug}), {
+            'qualification': self.qualification.pk,
+            'percentage': 50,  # Below 60% requirement
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'minimum of 60.00%')
+
+    def test_cross_student_application_detail_isolation(self):
+        from admissions.models import PISTApplicant
+        other_app = PISTApplicant.objects.create(
+            student=self.other_student, application_id='APP-2026-OTHER-DETAIL', program_registration_id='CS26-0002',
+            full_name=self.other_student.full_name, cnic=self.other_student.cnic, email=self.other_user.email,
+            phone=self.other_student.phone, address=self.other_student.address, matric_marks=800, matric_total=1000,
+            fsc_marks=800, fsc_total=1000, campus=self.campus, program=self.program, source_application_id='APP-2026-OTHER-DETAIL',
+        )
+        # Logged in as self.user, cannot view other_app
+        response = self.client.get(reverse('students:application_detail', kwargs={'application_uuid': other_app.pk}))
+        self.assertEqual(response.status_code, 404)
+
+
+class AcademicRecordTests(TestCase):
+    def setUp(self):
+        from admissions.models import Campus, Department, Program, ProgramEligibility, Qualification, TestType
+
+        self.campus = Campus.objects.create(name='PIST Islamabad Main Campus', city='Islamabad', code='ISB', address='H-12')
+        self.department = Department.objects.create(campus=self.campus, code='CS', name='Department of Computer Science', slug='cs')
+        self.program = Program.objects.create(
+            department=self.department, campus=self.campus, name='Bachelor of Science in Computer Science',
+            code='BSCS-ISB', slug='bscs-isb', admissions_open=True, eligibility_percentage=60,
+        )
+        self.qualification = Qualification.objects.create(name='Intermediate (Pre-Engineering)', qualification_group_code='PRE_ENGINEERING')
+        ProgramEligibility.objects.create(program=self.program, qualification=self.qualification, minimum_percentage=60)
+        self.test_type = TestType.objects.create(name='USAT')
+
+        self.user = get_user_model().objects.create_user(username='acad@example.com', email='acad@example.com', password='AyeshaStrong!29')
+        self.student = StudentProfile.objects.create(
+            user=self.user, student_id=generate_student_id(), full_name='Acad Student',
+            cnic='12345-1234567-1', date_of_birth='2000-01-15', phone='03001234567',
+        )
+        self.other_user = get_user_model().objects.create_user(username='other_acad@example.com', email='other_acad@example.com', password='AyeshaStrong!29')
+        self.other_student = StudentProfile.objects.create(
+            user=self.other_user, student_id=generate_student_id(), full_name='Other Acad Student',
+            cnic='12345-1234567-2', date_of_birth='2000-01-15', phone='03001234568',
+        )
+        self.client.force_login(self.user)
+
+    def test_matric_record_saves_and_computes_percentage(self):
+        from .models import MatricRecord
+        response = self.client.post(reverse('students:matric_edit'), {
+            'board': 'FBISE Islamabad',
+            'group': 'Science',
+            'passing_year': 2022,
+            'obtained_marks': 935,
+            'total_marks': 1100,
+        })
+        self.assertRedirects(response, reverse('students:academic_record'))
+        record = MatricRecord.objects.get(student=self.student)
+        self.assertEqual(record.board, 'FBISE Islamabad')
+        self.assertEqual(float(record.percentage), 85.0)
+
+    def test_intermediate_record_saves_and_computes_percentage(self):
+        from .models import IntermediateRecord
+        response = self.client.post(reverse('students:intermediate_edit'), {
+            'board': 'FBISE Islamabad',
+            'group': IntermediateRecord.Group.PRE_ENGINEERING,
+            'passing_year': 2024,
+            'obtained_marks': 880,
+            'total_marks': 1100,
+        })
+        self.assertRedirects(response, reverse('students:academic_record'))
+        record = IntermediateRecord.objects.get(student=self.student)
+        self.assertEqual(record.group, IntermediateRecord.Group.PRE_ENGINEERING)
+        self.assertEqual(float(record.percentage), 80.0)
+
+    def test_test_score_creation_and_certificate_upload(self):
+        from .models import StudentTestScore
+        cert_file = SimpleUploadedFile('usat_cert.pdf', b'%PDF-1.4 certificate', content_type='application/pdf')
+        response = self.client.post(reverse('students:test_score_add'), {
+            'test_type': self.test_type.pk,
+            'score': 85,
+            'total_score': 100,
+            'test_date': '2025-10-15',
+            'result_certificate': cert_file,
+        })
+        self.assertRedirects(response, reverse('students:academic_record'))
+        score = StudentTestScore.objects.get(student=self.student)
+        self.assertEqual(float(score.percentage), 85.0)
+        self.assertTrue(score.result_certificate)
+
+    def test_cross_student_test_score_isolation(self):
+        from .models import StudentTestScore
+        other_score = StudentTestScore.objects.create(
+            student=self.other_student,
+            test_type=self.test_type,
+            score=70,
+            total_score=100,
+            test_date='2025-05-10',
+        )
+        # Attempt edit other student's test score
+        self.assertEqual(self.client.get(reverse('students:test_score_edit', kwargs={'score_id': other_score.id})).status_code, 404)
+        # Attempt delete other student's test score
+        self.assertEqual(self.client.post(reverse('students:test_score_delete', kwargs={'score_id': other_score.id})).status_code, 404)
+
+    def test_eligibility_preview_integration(self):
+        from .models import IntermediateRecord
+        # Create intermediate record with 55% (ineligible for 60% requirement)
+        IntermediateRecord.objects.create(
+            student=self.student,
+            board='FBISE Islamabad',
+            group=IntermediateRecord.Group.PRE_ENGINEERING,
+            passing_year=2024,
+            obtained_marks=550,
+            total_marks=1000,
+        )
+        response = self.client.get(reverse('students:academic_record') + f'?program={self.program.slug}')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Not Eligible')
+        self.assertContains(response, 'Your FSc percentage is 55.00%. This program requires at least 60.00%.')
+
+        # Update marks to 700/1000 (70% - eligible)
+        record = IntermediateRecord.objects.get(student=self.student)
+        record.obtained_marks = 700
+        record.save()
+        response_eligible = self.client.get(reverse('students:academic_record') + f'?program={self.program.slug}')
+        self.assertContains(response_eligible, 'Eligible')
+
+
+

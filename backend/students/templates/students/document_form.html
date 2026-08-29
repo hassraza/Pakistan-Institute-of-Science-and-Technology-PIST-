@@ -1,1 +1,72 @@
-{% extends 'students/base_student.html' %}{% block title %}{{ title }} | PIST{% endblock %}{% block content %}<section class="auth-layout auth-layout--single"><form class="auth-card" method="post" enctype="multipart/form-data"><p class="eyebrow">Student records</p><h1>{{ title }}</h1><p class="muted">Accepted formats: PDF, JPG, JPEG, or PNG. Maximum size: 5 MB.</p>{% csrf_token %}{% if form.non_field_errors %}<div class="notice notice--error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<span class="error" id="{{ field.id_for_label }}-error">{{ error }}</span>{% endfor %}</div>{% endfor %}<button class="button" type="submit">Save document</button> <a class="button button--secondary" href="{% url 'students:documents' %}">Cancel</a></form></section>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}{{ title }} | PIST{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="mb-8 border-b border-outline-variant pb-6 text-center">
+            <span class="material-symbols-outlined text-primary text-[48px] mb-4">upload_file</span>
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Student Records</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">{{ title }}</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Accepted formats: PDF, JPG, JPEG, or PNG. Maximum size: 5 MB.</p>
+        </div>
+
+        <form class="space-y-6" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-error-container text-on-error-container border border-error/20 rounded p-4 mb-6">
+                    <p class="font-body-sm text-body-sm">{{ form.non_field_errors }}</p>
+                </div>
+            {% endif %}
+
+            <div class="space-y-5">
+                {% for field in form %}
+                    <div class="flex flex-col space-y-1">
+                        <label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="text-xs text-on-surface-variant mt-1">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="text-error text-xs mt-1" id="{{ field.id_for_label }}-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-outline-variant mt-8">
+                <button class="w-full sm:w-auto bg-primary text-on-primary font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 shadow-sm" type="submit">
+                    Save Document
+                </button>
+                <a class="w-full sm:w-auto bg-surface-container border border-outline-variant text-on-surface font-title-md text-title-md py-3 px-8 rounded-sm hover:bg-surface-variant transition-all text-center focus:outline-none focus:ring-2 focus:ring-outline focus:ring-offset-2" href="{% url 'students:documents' %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(input => {
+            input.classList.add('w-full', 'h-12', 'px-3', 'bg-surface-container-lowest', 'border', 'border-outline-variant', 'rounded-sm', 'text-on-surface', 'focus:outline-none', 'focus:border-primary-container', 'focus:ring-2', 'focus:ring-primary-container/20', 'transition-all', 'font-body-md');
+        });
+        
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.classList.add('block', 'w-full', 'text-sm', 'text-on-surface-variant',
+              'file:mr-4', 'file:py-2', 'file:px-4',
+              'file:rounded-sm', 'file:border-0',
+              'file:text-sm', 'file:font-bold',
+              'file:bg-secondary/10', 'file:text-secondary',
+              'hover:file:bg-secondary/20', 'mt-1'
+            );
+        });
+    });
+</script>
+{% endblock %}

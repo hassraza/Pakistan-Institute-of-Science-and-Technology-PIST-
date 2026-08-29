@@ -1,1 +1,88 @@
-{% extends 'students/base_student.html' %}{% block title %}Create student account | PIST{% endblock %}{% block content %}<section class="auth-layout"><div class="auth-intro"><p class="eyebrow">PIST student portal</p><h1>Start your student account.</h1><p>Keep one secure profile for your university journey. Your permanent Student ID is created after registration.</p></div><form class="auth-card" method="post" enctype="multipart/form-data" novalidate><h2>Create account</h2><p class="muted">Fields marked optional can be completed later.</p>{% csrf_token %}{% if form.non_field_errors %}<div class="notice notice--error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}{% if field.name != 'website' %}<div class="field"><label for="{{ field.id_for_label }}">{% if field.name == 'terms' %}I agree to the <a href="{% url 'students:terms' %}">Terms of Service</a> and <a href="{% url 'students:privacy' %}">Privacy Policy</a>{% else %}{{ field.label }}{% endif %}</label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<span class="error" id="{{ field.id_for_label }}-error">{{ error }}</span>{% endfor %}</div>{% endif %}{% endfor %}{{ form.website }}<ul class="password-rules"><li>At least 8 characters</li><li>Not a common or entirely numeric password</li><li>Not too similar to your name or email</li></ul><button class="button" type="submit">Create account</button><p class="form-foot">Already registered? <a href="{% url 'students:login' %}">Sign in</a></p></form></section>{% endblock %}{% block extra_js %}<script>document.querySelectorAll('input[type=password]').forEach(function(input){var button=document.createElement('button');button.type='button';button.className='password-toggle';button.textContent='Show';input.parentNode.appendChild(button);button.addEventListener('click',function(){var visible=input.type==='text';input.type=visible?'password':'text';button.textContent=visible?'Show':'Hide';});});</script>{% endblock %}
+{% extends 'students/base_student.html' %}
+{% block title %}Create student account | PIST{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[calc(100vh-160px)] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-2xl bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+        
+        <div class="flex flex-col items-center mb-8 text-center border-b border-outline-variant pb-6">
+            <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-2">PIST Student Portal</span>
+            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Create your account</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 max-w-md mx-auto">Keep one secure profile for your university journey. Your permanent Student ID is created after registration.</p>
+        </div>
+
+        <form class="space-y-6" method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-error-container text-on-error-container border border-error/20 rounded p-4 mb-6">
+                    <p class="font-body-sm text-body-sm">{{ form.non_field_errors }}</p>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for field in form %}
+                    {% if field.name != 'website' and field.name != 'terms' %}
+                    <div class="flex flex-col space-y-1 {% if field.name == 'password' or field.name == 'email' %}md:col-span-2{% endif %}">
+                        <label class="font-label-md text-label-md text-on-surface" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="text-xs text-on-surface-variant mt-1">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="text-error text-xs mt-1" id="{{ field.id_for_label }}-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                {{ form.website }}
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-outline-variant">
+                <ul class="text-xs text-on-surface-variant list-disc pl-5 space-y-1 mb-6">
+                    <li>At least 8 characters</li>
+                    <li>Not a common or entirely numeric password</li>
+                    <li>Not too similar to your name or email</li>
+                </ul>
+            </div>
+            
+            {% for field in form %}
+                {% if field.name == 'terms' %}
+                <div class="flex items-start gap-2 mb-6">
+                    <div class="mt-1">{{ field }}</div>
+                    <label class="text-sm text-on-surface" for="{{ field.id_for_label }}">
+                        I agree to the <a class="text-secondary hover:underline" href="{% url 'students:terms' %}">Terms of Service</a> and <a class="text-secondary hover:underline" href="{% url 'students:privacy' %}">Privacy Policy</a>
+                    </label>
+                    {% for error in field.errors %}
+                        <span class="text-error text-xs block mt-1" id="{{ field.id_for_label }}-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            <button class="w-full bg-primary text-on-primary font-title-md text-title-md py-3 rounded-sm hover:bg-primary-container transition-all focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-2 flex justify-center items-center mt-4" type="submit">
+                Create Account
+            </button>
+            
+            <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-6">
+                Already registered? <a class="text-secondary hover:underline font-bold" href="{% url 'students:login' %}">Sign in</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    // Style Django generated form fields to match Tailwind design
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'px-3', 'py-2', 'bg-surface-container-lowest', 'border', 'border-outline-variant', 'rounded-sm', 'text-on-surface', 'focus:outline-none', 'focus:border-primary-container', 'focus:ring-2', 'focus:ring-primary-container/20', 'transition-all', 'font-body-md', 'text-body-md');
+        });
+        
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(input => {
+            input.classList.add('form-checkbox', 'h-4', 'w-4', 'text-primary-container', 'border-outline-variant', 'rounded-sm', 'focus:ring-primary-container', 'transition-colors');
+        });
+    });
+</script>
+{% endblock %}

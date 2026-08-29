@@ -2,55 +2,190 @@
 {% block title %}{{ program.name }} | {{ program.department.campus.code }} | PIST{% endblock %}
 {% block meta_description %}{{ program.name }} at {{ program.department.campus.name }}. Eligibility, requirements, and admission information for PIST.{% endblock %}
 {% block content %}
-<section class="container section narrow-copy">
-  <div class="page-header">
-    <div>
-      <span class="eyebrow">Program Detail</span>
-      <h1>{{ program.name }}</h1>
-      <p class="lead">{{ program.department.name }} • {{ program.department.campus.name }}</p>
-    </div>
-    <span class="status status--{% if program.admissions_open %}open{% else %}closed{% endif %}">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
-  </div>
-  <div class="program-cta">
-    {% if student_application %}<span class="status status--open">Application Already Submitted</span> <a class="text-link" href="{% url 'students:application_detail' student_application.pk %}">View application</a>
-    {% elif not request.user.is_authenticated %}<a class="button button--primary" href="{% url 'students:login' %}?next={{ request.path|urlencode }}">Login to Apply</a>
-    {% elif program.admissions_open %}<a class="button button--primary" href="{% url 'students:apply_program' program.slug %}">Apply for This Program</a>
-    {% else %}<span class="status status--closed">Admissions Closed</span>{% endif %}
-  </div>
-
-  <div class="detail-grid">
-    <div class="detail-card">
-      <h2>Program Overview</h2>
-      <p>{{ program.description|default:'This page is driven by the Program, Department, and Campus models so each offering can be managed independently.' }}</p>
-      <dl class="definition-list">
-        <div><dt>Department</dt><dd>{{ program.department.name }}</dd></div>
-        <div><dt>Campus</dt><dd>{{ program.campus.name|default:program.department.campus.name }}</dd></div>
-        <div><dt>Degree</dt><dd>{{ program.degree_level }}</dd></div>
-        <div><dt>Duration</dt><dd>{{ program.duration }}</dd></div>
-        <div><dt>Eligibility</dt><dd>{{ program.eligibility_percentage }}% minimum</dd></div>
-        <div><dt>Required Test</dt><dd>{% if program.test_requirements.all %}{% for requirement in program.test_requirements.all %}{{ requirement.test_type.name }}{% if not forloop.last %} OR {% endif %}{% endfor %}{% else %}{{ program.required_test_type }}{% endif %}</dd></div>
-      </dl>
-    </div>
-    <div class="detail-card">
-      <h2>Admission Requirements</h2>
-      {% if program.eligibility_rules.all %}<ul>{% for rule in program.eligibility_rules.all %}<li>{{ rule.qualification.name }} — minimum {{ rule.minimum_percentage }}%</li>{% endfor %}</ul>{% else %}<p>{{ program.eligibility_text|default:'Minimum eligibility is configured from the database and is checked in the Student Portal before you can submit an application.' }}</p>{% endif %}
-      {% if program.application_deadline %}
-        <p><strong>Application deadline:</strong> {{ program.application_deadline }}</p>
-      {% else %}
-        <p><strong>Application deadline:</strong> To be configured</p>
-      {% endif %}
-      <p><strong>Roll number pattern:</strong> PIST-{{ program.department.campus.code }}-{{ program.code }}-YYYY-XXXX</p>
-    </div>
-    <div class="detail-card">
-      <h2>Career Opportunities</h2>
-      <p>{{ career_opportunities|linebreaksbr }}</p>
-      <h2 style="margin-top: 18px;">Admission Procedure</h2>
-      <ol class="timeline" style="padding-left: 18px;">
-        {% for step in procedure_steps %}
-          <li>{{ step }}</li>
-        {% endfor %}
-      </ol>
+<main>
+<!-- Hero Section -->
+<section class="bg-surface-container py-lg relative overflow-hidden border-b border-outline-variant">
+  <div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-12 gap-gutter relative z-10">
+    <div class="md:col-span-8 flex flex-col justify-center">
+      <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">{{ program.degree_level }} Program</span>
+      <h1 class="font-display-lg text-display-lg text-primary mb-sm">{{ program.name }}</h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-lg">
+        {{ program.department.name }} • {{ program.department.campus.name }}
+      </p>
+      <div class="flex flex-wrap gap-md">
+        <div class="flex items-center gap-xs">
+          <span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+          <div class="flex flex-col">
+            <span class="font-label-md text-label-md text-on-surface-variant">Duration</span>
+            <span class="font-title-md text-title-md text-primary">{{ program.duration }}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-xs">
+          <span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+          <div class="flex flex-col">
+            <span class="font-label-md text-label-md text-on-surface-variant">Degree Level</span>
+            <span class="font-title-md text-title-md text-primary">{{ program.degree_level }}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-xs">
+          <span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+          <div class="flex flex-col">
+            <span class="font-label-md text-label-md text-on-surface-variant">Campus</span>
+            <span class="font-title-md text-title-md text-primary">{{ program.campus.name|default:program.department.campus.name }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- Content Grid -->
+<div class="max-w-container-max mx-auto px-gutter py-xl grid grid-cols-1 md:grid-cols-12 gap-gutter">
+  <!-- Left Column: Main Content -->
+  <div class="md:col-span-8 space-y-xl">
+    
+    <!-- Overview -->
+    <section>
+      <h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Program Overview</h2>
+      <p class="font-body-md text-body-md text-on-surface mb-sm">
+        {{ program.description|default:'This page is driven by the Program, Department, and Campus models so each offering can be managed independently. The BS Computer Science program at PIST offers a comprehensive curriculum that balances theoretical foundations with practical application.' }}
+      </p>
+    </section>
+    
+    <!-- Requirements -->
+    <section>
+      <h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Admission Requirements</h2>
+      <div class="bg-surface border border-outline-variant rounded p-md">
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+            <div>
+              <h3 class="font-title-md text-title-md text-primary">Eligibility Percentage</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">Minimum {{ program.eligibility_percentage }}% required.</p>
+            </div>
+          </li>
+          {% if program.eligibility_rules.all %}
+            {% for rule in program.eligibility_rules.all %}
+              <li class="flex items-start gap-sm">
+                <span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+                <div>
+                  <h3 class="font-title-md text-title-md text-primary">{{ rule.qualification.name }}</h3>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Minimum {{ rule.minimum_percentage }}%</p>
+                </div>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li class="flex items-start gap-sm">
+                <span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+                <div>
+                  <h3 class="font-title-md text-title-md text-primary">General Eligibility</h3>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">{{ program.eligibility_text|default:'Minimum eligibility is configured from the database and is checked in the Student Portal before you can submit an application.' }}</p>
+                </div>
+              </li>
+          {% endif %}
+          <li class="flex items-start gap-sm">
+            <span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+            <div>
+              <h3 class="font-title-md text-title-md text-primary">Required Test</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">
+                {% if program.test_requirements.all %}
+                  {% for requirement in program.test_requirements.all %}
+                    {{ requirement.test_type.name }}{% if not forloop.last %} OR {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {{ program.required_test_type }}
+                {% endif %}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Admission Procedure -->
+    <section>
+      <h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Admission Procedure</h2>
+      <div class="bg-surface border border-outline-variant rounded p-md">
+        <ul class="space-y-sm">
+          {% for step in procedure_steps %}
+            <li class="flex items-start gap-sm">
+              <span class="material-symbols-outlined text-secondary mt-1">arrow_right</span>
+              <div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ step }}</p>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+    
+    <!-- Career Opportunities -->
+    <section>
+      <h2 class="font-headline-lg text-headline-lg text-primary mb-md pb-xs border-b border-outline-variant">Career Opportunities</h2>
+      <div class="bg-surface border border-outline-variant rounded p-md font-body-sm text-body-sm text-on-surface-variant">
+         {{ career_opportunities|linebreaksbr }}
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Right Column: Sidebar -->
+  <div class="md:col-span-4">
+    <div class="sticky top-24 space-y-md">
+      
+      <!-- Admissions Action Card -->
+      <div class="bg-surface border border-outline-variant rounded p-md shadow-sm">
+        <div class="flex items-center gap-xs mb-sm">
+          <div class="w-2 h-2 rounded-full {% if program.admissions_open %}bg-secondary{% else %}bg-error{% endif %}"></div>
+          <span class="font-label-md text-label-md {% if program.admissions_open %}text-secondary{% else %}text-error{% endif %} uppercase tracking-wider">
+            {% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}
+          </span>
+        </div>
+        <h3 class="font-title-lg text-title-lg text-primary mb-xs">Fall 2026 Intake</h3>
+        
+        {% if program.application_deadline %}
+           <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Deadline: {{ program.application_deadline }}</p>
+        {% else %}
+           <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Deadline: To be configured</p>
+        {% endif %}
+        
+        {% if student_application %}
+            <a href="{% url 'students:application_detail' student_application.pk %}" class="w-full bg-secondary text-white font-title-md text-title-md py-sm rounded hover:opacity-90 transition-opacity mb-sm flex justify-center items-center gap-xs">
+                View Application
+            </a>
+        {% elif not request.user.is_authenticated %}
+            <a href="{% url 'students:login' %}?next={{ request.path|urlencode }}" class="w-full bg-tertiary-fixed text-primary font-title-md text-title-md py-sm rounded hover:opacity-90 transition-opacity mb-sm flex justify-center items-center gap-xs">
+                Login to Apply <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </a>
+        {% elif program.admissions_open %}
+            <a href="{% url 'students:apply_program' program.slug %}" class="w-full bg-tertiary-fixed text-primary font-title-md text-title-md py-sm rounded hover:opacity-90 transition-opacity mb-sm flex justify-center items-center gap-xs font-bold">
+                Apply for This Program <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </a>
+        {% endif %}
+        <p class="font-label-md text-label-md text-on-surface-variant text-center mt-2">Roll number pattern: PIST-{{ program.department.campus.code }}-{{ program.code }}-YYYY-XXXX</p>
+      </div>
+      
+      <!-- Contact Department -->
+      <div class="bg-primary text-on-primary rounded p-md">
+        <h3 class="font-title-lg text-title-lg mb-sm">{{ program.department.name }}</h3>
+        <div class="space-y-sm font-body-sm text-body-sm">
+          <div class="flex items-start gap-xs">
+            <span class="material-symbols-outlined text-[20px]" data-icon="location_on">location_on</span>
+            <span>PIST {{ program.department.campus.name }}</span>
+          </div>
+          <div class="flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[20px]" data-icon="call">call</span>
+            <span>+92 51 1234567 Ext 201</span>
+          </div>
+          <div class="flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+            <span>admissions@pist.edu.pk</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</main>
 {% endblock %}

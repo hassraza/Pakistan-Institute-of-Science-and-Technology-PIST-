@@ -1,38 +1,72 @@
 {% extends 'base.html' %}
 {% block title %}{{ department.name }} | PIST{% endblock %}
 {% block content %}
-<section class="container section">
-  <div class="section-heading">
-    <div>
-      <span class="eyebrow">Academics</span>
-      <h1>{{ department.name }}</h1>
-      <p class="lead">{{ department.campus.name }}</p>
-    </div>
-  </div>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
   
-  <div class="panel" style="margin-bottom: 40px; padding: 24px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px;">
-    <h2 style="margin-top: 0;">About the Department</h2>
-    <p>{{ department.description|default:'A leading department focused on academic excellence, practical research, and professional development.' }}</p>
-    <div style="margin-top: 16px;">
-      <a class="text-link" href="{% url 'admissions:campus_detail' department.campus.code %}">View campus details</a>
+  <!-- Hero Section -->
+  <section class="bg-surface-container py-12 px-8 rounded-md border border-outline-variant mb-xl">
+    <div class="flex flex-wrap items-center gap-4 mb-4">
+      <span class="font-label-md text-label-md bg-secondary/10 text-secondary px-3 py-1 rounded-sm uppercase tracking-widest font-bold">Academic Department</span>
     </div>
-  </div>
+    <h1 class="font-display-lg text-display-lg text-primary mb-2">{{ department.name }}</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-6">
+      {{ department.campus.name }}
+    </p>
+    
+    <div class="bg-white border border-outline-variant rounded p-6 shadow-sm">
+      <h2 class="text-xl font-bold text-primary mb-3">About the Department</h2>
+      <p class="text-on-surface-variant leading-relaxed">
+        {{ department.description|default:'A leading department focused on academic excellence, practical research, and professional development.' }}
+      </p>
+      <div class="mt-4 pt-4 border-t border-surface-variant">
+        <a class="text-primary font-bold hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:campus_detail' department.campus.code %}">View campus details <span class="material-symbols-outlined text-[16px]">location_city</span></a>
+      </div>
+    </div>
+  </section>
 
-  <h2>Programs Offered</h2>
-  <div class="card-grid card-grid--two">
-    {% for program in department.programs.all %}
-      <article class="program-card">
-        <div class="program-card__meta">
-          <span class="badge badge--muted">{{ program.degree_level }}</span>
-          <span class="badge badge--{% if program.admissions_open %}success{% else %}muted{% endif %}">{% if program.admissions_open %}Admissions Open{% else %}Admissions Closed{% endif %}</span>
+  <!-- Programs Section -->
+  <section>
+    <div class="flex justify-between items-end mb-8">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-[12px] uppercase">Curriculum</span>
+        <h2 class="text-3xl font-bold text-primary mt-2">Programs Offered</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% for program in department.programs.all %}
+        <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="bg-surface-container text-on-surface-variant font-label-md text-label-md px-2 py-1 rounded-sm">{{ program.degree_level }}</span>
+              {% if program.admissions_open %}
+                <span class="text-secondary font-bold text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check_circle</span> Admissions Open</span>
+              {% else %}
+                <span class="text-error font-bold text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">cancel</span> Admissions Closed</span>
+              {% endif %}
+            </div>
+            <a href="{% url 'admissions:program_detail' program.slug %}" class="block hover:text-secondary transition-colors group">
+               <h3 class="text-xl font-bold text-primary mb-2 group-hover:text-secondary transition-colors">{{ program.name }}</h3>
+            </a>
+            <div class="flex items-center gap-4 text-sm text-on-surface-variant mb-6">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> {{ program.duration }}</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">rule</span> Min {{ program.eligibility_percentage }}%</span>
+            </div>
+          </div>
+          <div class="border-t border-surface-variant pt-4 flex gap-4">
+            <a class="text-center text-primary font-bold text-sm border border-primary px-4 py-2 rounded-sm hover:bg-surface-container-low transition-colors" href="{% url 'admissions:program_detail' program.slug %}">View Details</a>
+            {% if program.admissions_open %}
+               <a class="text-center bg-tertiary-container text-primary font-bold text-sm px-4 py-2 rounded-sm hover:bg-tertiary-fixed transition-colors" href="{% url 'students:apply_program' program.slug %}">Apply Now</a>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <div class="col-span-full bg-surface-variant p-10 rounded-md text-center">
+          <p class="font-body-lg text-body-lg text-on-surface-variant">No programs are currently listed for this department.</p>
         </div>
-        <h3 style="margin: 12px 0 4px 0; font-size: 1.25rem;">{{ program.name }}</h3>
-        <p class="meta">{{ program.duration }} • Minimum {{ program.eligibility_percentage }}%</p>
-        {% include 'partials/program_card_actions.html' %}
-      </article>
-    {% empty %}
-      <p>No programs are currently listed for this department.</p>
-    {% endfor %}
-  </div>
-</section>
+      {% endfor %}
+    </div>
+  </section>
+
+</main>
 {% endblock %}

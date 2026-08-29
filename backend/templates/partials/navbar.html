@@ -1,32 +1,48 @@
-<header class="site-header">
-  <div class="container site-header__inner">
-    <a class="brand" href="{% url 'admissions:home' %}">
-      <span class="brand__mark">PIST</span>
-      <span class="brand__text">
-        <strong>Pakistan Institute of Science and Technology</strong>
-        <small>Islamabad · Lahore · Karachi</small>
-      </span>
-    </a>
-    <button class="menu-toggle" type="button" aria-label="Toggle navigation" data-menu-toggle>Menu</button>
-    <nav class="site-nav" data-site-nav>
-      <a href="{% url 'admissions:about' %}">About</a>
-      <a href="{% url 'admissions:campuses' %}">Campuses</a>
-      <a href="{% url 'admissions:departments' %}">Departments</a>
-      <a href="{% url 'admissions:programs' %}">Programs</a>
-      <a href="{% url 'admissions:admission_procedure' %}">Admissions</a>
-      <a href="{% url 'admissions:research' %}">Research</a>
-      <a href="{% url 'admissions:student_life' %}">Student Life</a>
-      <a href="{% url 'admissions:contact' %}">Contact</a>
-      <a href="{% url 'admissions:track_application' %}">Track Application</a>
-      <span class="site-nav__account">
-        {% if user.is_authenticated and user.student_profile %}
-          <a class="button button--primary" href="{% url 'students:dashboard' %}">Student Portal</a>
-        {% else %}
-          <a href="{% url 'students:dashboard' %}">Student Portal</a>
-          <a href="{% url 'students:login' %}">Login</a>
-          <a class="button button--primary" href="{% url 'students:register' %}">Create Account</a>
-        {% endif %}
-      </span>
-    </nav>
+<!-- Top Utility Bar -->
+<div class="utility-bar py-2 px-gutter w-full z-50 relative">
+  <div class="max-w-container-max mx-auto flex flex-wrap justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[16px]">campaign</span>
+      <span>Admissions Open Fall 2027</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a class="hover:underline transition-all" href="{% url 'students:dashboard' %}">Student/Faculty Portals</a>
+      <a class="gold-cta px-4 py-1 rounded font-bold hover:brightness-110 transition-all shadow-sm" href="{% url 'admissions:programs' %}">Apply Now</a>
+      <div class="flex items-center gap-1 cursor-pointer hover:opacity-80">
+        <span class="material-symbols-outlined text-[16px]">search</span>
+        <span>Search</span>
+      </div>
+    </div>
   </div>
-</header>
+</div>
+<!-- TopNavBar JSON Component -->
+<nav class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-40 transition-all duration-300">
+  <div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
+    <!-- Brand Logo -->
+    <a class="flex items-center gap-3" href="{% url 'admissions:home' %}">
+      <img alt="PIST University Logo" class="h-12 w-12 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8whpHVniO4GUmQGsqhLQqn4IqLfSNSA1PgXGzlvF3S8mIg3UC9pi9v6BZbZQt4yL4a0L51HUKB93UJrwV72ZqLIw6pJxxakZz_HZZzhv5al8Uzmj9J4HLnjZ5jxb7-fYBZhBpnlzeIn6CtDsMNTsXJ_jKQNtH6nSkspzsslMX44gKUdVATn7UzWrx1RYq6ghXNy2hHBwQPvXvyh64cFRLk1e7juyvAlk6NmUCVR1pM3dLcJdfZF07LQ"/>
+      <span class="font-title-lg text-title-lg font-bold text-primary dark:text-inverse-primary hidden sm:block">PIST</span>
+    </a>
+    <!-- Navigation Links -->
+    <div class="hidden md:flex items-center gap-8">
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:about' %}">About</a>
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:admission_procedure' %}">Admissions</a>
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:programs' %}">Academics</a>
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:research' %}">Research</a>
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:student_life' %}">Campus Life</a>
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container transition-all px-3 py-2 rounded-md" href="{% url 'admissions:contact' %}">Contact</a>
+    </div>
+    <!-- Actions (Mobile & Desktop) -->
+    <div class="flex items-center gap-4">
+      {% if user.is_authenticated and user.student_profile %}
+        <a class="hidden md:block gold-cta px-4 py-2 rounded-sm font-label-md text-label-md shadow-sm hover:brightness-110 transition-all" href="{% url 'students:dashboard' %}">Student Portal</a>
+      {% else %}
+        <a class="hidden md:block text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="{% url 'students:login' %}">Login</a>
+        <a class="hidden md:block gold-cta px-4 py-2 rounded-sm font-label-md text-label-md shadow-sm hover:brightness-110 transition-all" href="{% url 'students:register' %}">Create Account</a>
+      {% endif %}
+      <button class="md:hidden text-on-surface p-2">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </div>
+</nav>

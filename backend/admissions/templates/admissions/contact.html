@@ -1,36 +1,50 @@
 {% extends 'base.html' %}
 {% block title %}Contact PIST{% endblock %}
 {% block content %}
-<section class="container section">
-  <div class="section-heading">
-    <div>
-      <span class="eyebrow">Connect with us</span>
-      <h1>Contact PIST</h1>
-      <p class="lead">Reach out to our campus admission offices for guidance and support.</p>
-    </div>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
+  <div class="max-w-4xl mx-auto text-center mb-12">
+    <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">Connect with us</span>
+    <h1 class="font-display-lg text-display-lg text-primary mb-xs">Contact PIST</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">
+      Reach out to our campus admission offices for guidance and support.
+    </p>
   </div>
 
-  <div class="card-grid card-grid--two" style="margin-top: 32px;">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
     {% for campus in campuses %}
-      <article class="panel" style="padding: 24px; background: var(--pearl); border: 1px solid var(--line); border-radius: 8px;">
-        <span class="badge badge--muted">{{ campus.code }}</span>
-        <h2 style="margin: 12px 0 8px 0;">{{ campus.name }}</h2>
-        <p style="margin-top: 0;"><strong>City:</strong> {{ campus.city }}</p>
-        <p><strong>Address:</strong> {{ campus.address }}</p>
-        <div style="margin-top: 24px; display: flex; gap: 12px;">
-          <a class="button button--primary" href="mailto:admissions@pist.edu.pk">Email Admissions</a>
-          <a class="button button--secondary" href="{% url 'admissions:campus_detail' campus.code %}">View Campus</a>
+      <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div>
+          <span class="inline-block bg-surface-container text-on-surface-variant text-xs font-bold px-2 py-1 rounded mb-4">{{ campus.code }}</span>
+          <h2 class="text-xl font-bold text-primary mb-2">{{ campus.name }}</h2>
+          <div class="flex items-start gap-2 mb-2 text-on-surface-variant font-body-sm text-body-sm">
+             <span class="material-symbols-outlined text-[16px] mt-0.5 text-primary">location_city</span>
+             <span>{{ campus.city }}</span>
+          </div>
+          <div class="flex items-start gap-2 mb-6 text-on-surface-variant font-body-sm text-body-sm">
+             <span class="material-symbols-outlined text-[16px] mt-0.5 text-primary">location_on</span>
+             <span>{{ campus.address }}</span>
+          </div>
+        </div>
+        <div class="border-t border-surface-variant pt-4 flex gap-4 flex-wrap">
+          <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="mailto:admissions@pist.edu.pk">Email Admissions <span class="material-symbols-outlined text-[16px]">mail</span></a>
+          <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:campus_detail' campus.code %}">View Campus <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
         </div>
       </article>
     {% empty %}
-      <p>Campus contact information is currently unavailable.</p>
+      <div class="col-span-full bg-surface-variant p-10 rounded-md text-center">
+        <p class="font-body-lg text-body-lg text-on-surface-variant">Campus contact information is currently unavailable.</p>
+      </div>
     {% endfor %}
   </div>
 
-  <div class="panel" style="margin-top: 48px; padding: 32px; text-align: center; background: var(--emerald); color: white; border-radius: 8px;">
-    <h2 style="margin-top: 0;">General Inquiries</h2>
-    <p style="max-width: 600px; margin: 0 auto 24px auto;">For general questions regarding the university, programs, or admission procedures that are not specific to a campus, please reach out to our central admissions desk.</p>
-    <a class="button button--secondary" href="mailto:info@pist.edu.pk" style="background: white; color: var(--emerald); border: none;">info@pist.edu.pk</a>
+  <div class="bg-primary text-on-primary rounded-md p-12 text-center max-w-4xl mx-auto shadow-lg">
+    <h2 class="text-3xl font-bold mb-4">General Inquiries</h2>
+    <p class="text-on-primary/90 text-lg mb-8 max-w-2xl mx-auto">
+      For general questions regarding the university, programs, or admission procedures that are not specific to a campus, please reach out to our central admissions desk.
+    </p>
+    <a class="inline-flex items-center gap-2 bg-white text-primary font-bold px-8 py-4 rounded-sm hover:bg-surface transition-colors shadow-sm" href="mailto:info@pist.edu.pk">
+      <span class="material-symbols-outlined">mail</span> info@pist.edu.pk
+    </a>
   </div>
-</section>
+</main>
 {% endblock %}

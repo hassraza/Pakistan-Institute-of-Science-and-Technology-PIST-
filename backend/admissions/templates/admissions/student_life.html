@@ -1,30 +1,55 @@
 {% extends 'base.html' %}
 {% block title %}Student Life | PIST{% endblock %}
 {% block content %}
-<section class="container section">
-  <div class="page-header" style="text-align: center; margin-bottom: 48px;">
-    <span class="eyebrow">Campus Experience</span>
-    <h1>Student Life at PIST</h1>
-    <p class="lead" style="max-width: 800px; margin: 0 auto;">Beyond academics, PIST offers a vibrant campus life that fosters personal growth, leadership, and lifelong friendships.</p>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
+  <div class="max-w-4xl mx-auto text-center mb-16">
+    <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">Campus Experience</span>
+    <h1 class="font-display-lg text-display-lg text-primary mb-xs">Student Life at PIST</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">
+      Beyond academics, PIST offers a vibrant campus life that fosters personal growth, leadership, and lifelong friendships.
+    </p>
   </div>
 
-  <div class="card-grid card-grid--two">
-    <article class="panel" style="padding: 32px; background: white; border: 1px solid var(--line); border-radius: 8px;">
-      <h2 style="margin-top: 0; color: var(--emerald);">Societies &amp; Clubs</h2>
-      <p>From the Computer Science Society to the Debating Club, our student-run organizations provide platforms to pursue passions, develop new skills, and organize national-level events and competitions.</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
+      <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-6">
+        <span class="material-symbols-outlined">groups</span>
+      </div>
+      <h2 class="text-2xl font-bold text-primary mb-4">Societies & Clubs</h2>
+      <p class="text-on-surface-variant leading-relaxed">
+        From the Computer Science Society to the Debating Club, our student-run organizations provide platforms to pursue passions, develop new skills, and organize national-level events and competitions.
+      </p>
     </article>
-    <article class="panel" style="padding: 32px; background: white; border: 1px solid var(--line); border-radius: 8px;">
-      <h2 style="margin-top: 0; color: var(--navy);">Sports &amp; Athletics</h2>
-      <p>Our campuses feature modern sports complexes, including cricket grounds, football fields, and indoor gymnasiums. We encourage physical fitness and host annual inter-departmental and inter-university tournaments.</p>
+
+    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
+      <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-6">
+        <span class="material-symbols-outlined">sports_basketball</span>
+      </div>
+      <h2 class="text-2xl font-bold text-primary mb-4">Sports & Athletics</h2>
+      <p class="text-on-surface-variant leading-relaxed">
+        Our campuses feature modern sports complexes, including cricket grounds, football fields, and indoor gymnasiums. We encourage physical fitness and host annual inter-departmental and inter-university tournaments.
+      </p>
     </article>
-    <article class="panel" style="padding: 32px; background: white; border: 1px solid var(--line); border-radius: 8px;">
-      <h2 style="margin-top: 0; color: var(--emerald);">Hostel Accommodations</h2>
-      <p>For out-of-city students, PIST provides secure and comfortable on-campus hostel facilities. The hostels offer mess services, common rooms, and high-speed internet, ensuring a conducive living environment.</p>
+
+    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
+      <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-6">
+        <span class="material-symbols-outlined">night_shelter</span>
+      </div>
+      <h2 class="text-2xl font-bold text-primary mb-4">Hostel Accommodations</h2>
+      <p class="text-on-surface-variant leading-relaxed">
+        For out-of-city students, PIST provides secure and comfortable on-campus hostel facilities. The hostels offer mess services, common rooms, and high-speed internet, ensuring a conducive living environment.
+      </p>
     </article>
-    <article class="panel" style="padding: 32px; background: white; border: 1px solid var(--line); border-radius: 8px;">
-      <h2 style="margin-top: 0; color: var(--navy);">Student Support Services</h2>
-      <p>We prioritize student well-being through dedicated counseling centers, career placement offices, and academic advisory services to support students throughout their university journey.</p>
+
+    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
+      <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-6">
+        <span class="material-symbols-outlined">support_agent</span>
+      </div>
+      <h2 class="text-2xl font-bold text-primary mb-4">Student Support Services</h2>
+      <p class="text-on-surface-variant leading-relaxed">
+        We prioritize student well-being through dedicated counseling centers, career placement offices, and academic advisory services to support students throughout their university journey.
+      </p>
     </article>
   </div>
-</section>
+</main>
 {% endblock %}

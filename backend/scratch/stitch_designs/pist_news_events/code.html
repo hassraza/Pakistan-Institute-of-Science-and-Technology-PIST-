@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>News &amp; Events - Pakistan Institute of Science and Technology (PIST)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- Utility Bar (Design System Mandate) -->
+<div class="bg-primary-container w-full">
+<div class="max-w-container-max mx-auto px-gutter py-xs flex justify-end items-center gap-md">
+<a class="font-label-md text-label-md text-on-primary hover:text-tertiary-fixed transition-colors" href="#">Faculty</a>
+<a class="font-label-md text-label-md text-on-primary hover:text-tertiary-fixed transition-colors" href="#">Students</a>
+<a class="font-label-md text-label-md text-on-primary hover:text-tertiary-fixed transition-colors" href="#">Alumni</a>
+<button class="text-on-primary flex items-center hover:text-tertiary-fixed transition-colors focus:outline-none focus:ring-2 focus:ring-tertiary-fixed rounded">
+<span class="material-symbols-outlined text-[16px]">search</span>
+</button>
+</div>
+</div>
+<!-- TopNavBar (JSON Blueprint) -->
+<header class="bg-surface border-b border-outline-variant w-full docked top-0 z-50">
+<div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
+<!-- Brand Logo -->
+<div class="font-title-lg text-title-lg font-bold text-primary">
+                PIST
+            </div>
+<!-- Navigation Links (Web) -->
+<nav class="hidden md:flex items-center gap-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-2" href="#">About</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-2" href="#">Admissions</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-2" href="#">Academics</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-2" href="#">Research</a>
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary font-bold pb-1 py-2" href="#">Campus Life</a> <!-- Active state deduced from News/Events -->
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-2" href="#">Contact</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="hidden md:block font-label-md text-label-md text-primary border border-primary px-4 py-2 rounded hover:bg-surface-container-low transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                    Portals
+                </button>
+<button class="font-label-md text-label-md bg-tertiary-container text-primary px-4 py-2 rounded hover:bg-tertiary-fixed-dim transition-colors focus:outline-none focus:ring-2 focus:ring-primary shadow-sm font-bold">
+                    Apply Now
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-xl">
+<!-- Page Header -->
+<div class="mb-xl text-center md:text-left">
+<h1 class="font-display-lg text-display-lg text-primary mb-sm">News &amp; Events</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">Stay updated with the latest academic announcements, research breakthroughs, and campus events at the Pakistan Institute of Science and Technology.</p>
+</div>
+<!-- Featured Section (Bento Grid Style) -->
+<section class="mb-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Major Feature -->
+<div class="lg:col-span-8 relative group overflow-hidden rounded-lg bg-surface border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<div class="bg-cover bg-center w-full h-[400px] lg:h-full absolute inset-0 z-0" data-alt="A striking architectural photograph of the main campus plaza at the Pakistan Institute of Science and Technology. The scene captures students walking beneath modern, brutalist structures during golden hour. Soft, warm light hits the concrete facades, creating a sense of academic prestige and forward-thinking institutional design. The composition is highly structured and clean, emphasizing a corporate modern aesthetic with deep navy shadows." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBv9wOYBXzKDxsrkStRjOMj_tGrlwL0sfhb1O5UbYwu2h1ubjEDF_JKjKnm15X1gOjxWgsccpvvLYgz4fPC5iONpg9sb_epUXmGKTNG3xdTLemjW_Q1atCjVMPPWOgqbyCJZ2jM4HuEwU5GiNoLFbMCJiIUEO61VVP6YylWlA9TKTAAzrKDGRz-D3fZeXDSR7CoUzByl2NbV-qmSG_aJIT1MH_gUfGqWIGgUjJ-gQ_XzD82qL58WqOo3Q')"></div>
+<!-- Gradient overlay for text legibility -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent z-10"></div>
+<div class="relative z-20 h-full flex flex-col justify-end p-lg">
+<span class="inline-block bg-tertiary-container text-primary font-label-md text-label-md px-2 py-1 rounded-sm w-max mb-sm font-bold uppercase tracking-wider">Major Announcement</span>
+<h2 class="font-headline-lg text-headline-lg text-on-primary mb-xs">Convocation 2027: Honoring Excellence in Research</h2>
+<p class="font-body-md text-body-md text-on-primary-container mb-md max-w-2xl">Join us as we celebrate the graduating class of 2027. This year's ceremony highlights groundbreaking contributions in artificial intelligence and sustainable engineering.</p>
+<a class="inline-flex items-center text-on-primary font-title-md text-title-md hover:text-tertiary-fixed transition-colors" href="#">
+                            Read Full Story <span class="material-symbols-outlined ml-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Secondary Features -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- Feature 1 -->
+<div class="flex-1 bg-surface border border-outline-variant rounded-lg p-md flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div>
+<span class="text-secondary font-label-md text-label-md uppercase tracking-wider mb-xs block">Research Breakthrough</span>
+<h3 class="font-title-lg text-title-lg text-primary mb-xs group-hover:text-secondary-fixed-variant transition-colors">New Quantum Computing Lab Opens</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">PIST inaugurates a state-of-the-art facility dedicated to advancing quantum algorithm research in partnership with global tech leaders.</p>
+</div>
+<div class="mt-sm pt-sm border-t border-surface-variant text-on-surface-variant font-label-md text-label-md flex justify-between items-center">
+<span>Oct 24, 2024</span>
+<span class="material-symbols-outlined">newspaper</span>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="flex-1 bg-primary text-on-primary rounded-lg p-md flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div>
+<span class="text-tertiary-fixed font-label-md text-label-md uppercase tracking-wider mb-xs block">Upcoming Seminar</span>
+<h3 class="font-title-lg text-title-lg text-on-primary mb-xs">The Future of Sustainable Urban Grids</h3>
+<p class="font-body-sm text-body-sm text-on-primary-container line-clamp-3">Guest lecture by Dr. A. Khan outlining the next decade of smart city infrastructure challenges and solutions.</p>
+</div>
+<div class="mt-sm pt-sm border-t border-primary-fixed-variant text-on-primary-container font-label-md text-label-md flex justify-between items-center">
+<span>Nov 02, 2024</span>
+<span class="material-symbols-outlined">event</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Two Column Layout: News & Events -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Latest News Column -->
+<section class="lg:col-span-7">
+<div class="flex items-center justify-between border-b-2 border-primary pb-sm mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary">Latest News</h2>
+<a class="font-label-md text-label-md text-primary hover:underline flex items-center" href="#">View All News <span class="material-symbols-outlined ml-1 text-[16px]">chevron_right</span></a>
+</div>
+<div class="space-y-md">
+<!-- News Card 1 -->
+<article class="flex flex-col sm:flex-row gap-md bg-surface border border-outline-variant rounded hover:shadow-sm transition-shadow p-sm group">
+<div class="w-full sm:w-1/3 h-48 sm:h-auto rounded overflow-hidden flex-shrink-0">
+<img alt="Students in lab" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A brightly lit, modern laboratory at the Pakistan Institute of Science and Technology. Students in white coats are analyzing data on sleek computer monitors. The space features clean lines, white surfaces, and subtle blue lighting accents, reflecting a high-end, institutional research environment focused on precision and innovation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpoVzFSGYRVHFpKOgu6oNCxxfEiv5m9-sgCA5JLBbiWUNjivmv6Z4gpLpbGIGqkikhJIymE49leQiHV_BqMts5n4kPAq_MVIfpNl6i_AuN2KoRi9OGUnuwyQqc_Ks0J6DoYgRhZEQZTcUvbj9RL0VU04SkCkg1Ary8xl7aQJwrlnLP1uHfL7qKuNwlzVdWf_fEHxrMEkbalh9CGBnPT9lV4iWeVWNOGrGjnB6F66x7vAnFjeBQORFRKg"/>
+</div>
+<div class="flex flex-col justify-between py-xs pr-xs">
+<div>
+<span class="font-label-md text-label-md text-secondary block mb-1">Academics</span>
+<h3 class="font-title-lg text-title-lg text-primary mb-2 group-hover:text-secondary-fixed-variant transition-colors">Revised Curriculum for Engineering Faculty Approved</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-sm">The Academic Council has finalized the new syllabus structure focusing heavily on hands-on project experience and interdisciplinary studies.</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<time class="font-label-md text-label-md text-outline">October 20, 2024</time>
+<a class="font-label-md text-label-md text-primary font-bold hover:underline" href="#">Read More</a>
+</div>
+</div>
+</article>
+<!-- News Card 2 -->
+<article class="flex flex-col sm:flex-row gap-md bg-surface border border-outline-variant rounded hover:shadow-sm transition-shadow p-sm group">
+<div class="w-full sm:w-1/3 h-48 sm:h-auto rounded overflow-hidden flex-shrink-0 bg-surface-container-high flex items-center justify-center">
+<!-- Placeholder for text-only news -->
+<span class="material-symbols-outlined text-[48px] text-outline-variant">article</span>
+</div>
+<div class="flex flex-col justify-between py-xs pr-xs">
+<div>
+<span class="font-label-md text-label-md text-secondary block mb-1">Campus Life</span>
+<h3 class="font-title-lg text-title-lg text-primary mb-2 group-hover:text-secondary-fixed-variant transition-colors">Annual Sports Gala Dates Announced</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-sm">Registration is now open for the inter-departmental sports competitions. The gala will feature over 15 different athletic events.</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<time class="font-label-md text-label-md text-outline">October 18, 2024</time>
+<a class="font-label-md text-label-md text-primary font-bold hover:underline" href="#">Read More</a>
+</div>
+</div>
+</article>
+<!-- News Card 3 -->
+<article class="flex flex-col sm:flex-row gap-md bg-surface border border-outline-variant rounded hover:shadow-sm transition-shadow p-sm group">
+<div class="w-full sm:w-1/3 h-48 sm:h-auto rounded overflow-hidden flex-shrink-0">
+<img alt="Signing ceremony" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A formal academic signing ceremony in a wood-paneled boardroom. University officials in sharp navy suits are shaking hands across a polished table. Soft, professional lighting illuminates the scene, projecting an aura of institutional stability, authoritative partnerships, and corporate modernism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdlbhzLFcTKvswlZ7NmAtrSF1yzZ866qLOxou5eGKU1dNPGUh6CgFjnK5LjreTbk2QeTXX8FFbRRx1xljYHPWZb27oO9Hh4Tki3Cb82PKyK4cPVb_YmDaVOY8DUKLwxyAATNTcmphOAlfn46WKq9Cqoi9dvI-epRrQ0Opps-dvENv1MyC-iFOx-Y_NrCLGGfSteAjEaHPaWxDGJ6NrsroO3A1jJTQ_PaZ1EPVqcVL37086OHSA3gwV0Q"/>
+</div>
+<div class="flex flex-col justify-between py-xs pr-xs">
+<div>
+<span class="font-label-md text-label-md text-secondary block mb-1">Admissions</span>
+<h3 class="font-title-lg text-title-lg text-primary mb-2 group-hover:text-secondary-fixed-variant transition-colors">International Student Scholarship Program Expanded</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-sm">PIST is increasing its financial aid pool to support exceptional international candidates applying for postgraduate programs.</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<time class="font-label-md text-label-md text-outline">October 15, 2024</time>
+<a class="font-label-md text-label-md text-primary font-bold hover:underline" href="#">Read More</a>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Events Calendar Column -->
+<aside class="lg:col-span-5">
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-lg sticky top-28">
+<div class="flex items-center justify-between border-b-2 border-primary pb-sm mb-md">
+<h2 class="font-headline-md text-headline-md text-primary">Upcoming Events</h2>
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+</div>
+<div class="space-y-sm">
+<!-- Event Item 1 -->
+<div class="bg-surface border border-outline-variant rounded p-sm flex gap-md hover:border-primary transition-colors cursor-pointer group">
+<div class="flex flex-col items-center justify-center bg-primary text-on-primary rounded w-16 h-16 flex-shrink-0">
+<span class="font-label-md text-label-md uppercase">Nov</span>
+<span class="font-title-lg text-title-lg font-bold">12</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-primary group-hover:text-secondary-fixed-variant transition-colors mb-1">AI in Healthcare Symposium</h4>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm mb-1">
+<span class="material-symbols-outlined text-[14px] mr-1">schedule</span> 09:00 AM - 04:00 PM
+                                </div>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] mr-1">location_on</span> Main Auditorium
+                                </div>
+</div>
+</div>
+<!-- Event Item 2 -->
+<div class="bg-surface border border-outline-variant rounded p-sm flex gap-md hover:border-primary transition-colors cursor-pointer group">
+<div class="flex flex-col items-center justify-center bg-surface-container-highest text-on-surface rounded w-16 h-16 flex-shrink-0">
+<span class="font-label-md text-label-md uppercase">Nov</span>
+<span class="font-title-lg text-title-lg font-bold">18</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-primary group-hover:text-secondary-fixed-variant transition-colors mb-1">Fall Semester Career Fair</h4>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm mb-1">
+<span class="material-symbols-outlined text-[14px] mr-1">schedule</span> 10:00 AM - 03:00 PM
+                                </div>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] mr-1">location_on</span> Student Center Plaza
+                                </div>
+</div>
+</div>
+<!-- Event Item 3 -->
+<div class="bg-surface border border-outline-variant rounded p-sm flex gap-md hover:border-primary transition-colors cursor-pointer group">
+<div class="flex flex-col items-center justify-center bg-surface-container-highest text-on-surface rounded w-16 h-16 flex-shrink-0">
+<span class="font-label-md text-label-md uppercase">Dec</span>
+<span class="font-title-lg text-title-lg font-bold">05</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-primary group-hover:text-secondary-fixed-variant transition-colors mb-1">Departmental Research Showcase</h4>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm mb-1">
+<span class="material-symbols-outlined text-[14px] mr-1">schedule</span> 01:00 PM - 05:00 PM
+                                </div>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] mr-1">location_on</span> Engineering Block B
+                                </div>
+</div>
+</div>
+</div>
+<button class="w-full mt-md bg-surface border border-primary text-primary font-label-md text-label-md py-2 rounded hover:bg-surface-container-low transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                        View Full Calendar
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer (JSON Blueprint) -->
+<footer class="bg-primary text-on-primary full-width mt-auto border-t border-primary-fixed-variant">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<!-- Brand & Copyright -->
+<div class="flex flex-col gap-sm md:col-span-1">
+<div class="font-headline-md text-headline-md text-on-primary">
+                    PIST
+                </div>
+<p class="font-body-sm text-body-sm text-on-primary/80 mt-auto">
+                    © 2024 Pakistan Institute of Science and Technology. All rights reserved.
+                </p>
+</div>
+<!-- Links Column 1 -->
+<div class="flex flex-col gap-xs md:col-span-1">
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Campus Address</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Admissions</a>
+</div>
+<!-- Links Column 2 -->
+<div class="flex flex-col gap-xs md:col-span-1">
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Alumni</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Research</a>
+</div>
+<!-- Links Column 3 -->
+<div class="flex flex-col gap-xs md:col-span-1">
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-on-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-tertiary rounded w-max" href="#">Careers</a>
+</div>
+</div>
+</footer>
+</body></html>

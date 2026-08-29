@@ -1,40 +1,39 @@
-<footer class="site-footer">
-  <div class="container site-footer__grid">
-    <div>
-      <h3>PIST</h3>
-      <p>Pakistan Institute of Science and Technology. Undergraduate admissions and student services for the Fall 2026 intake.</p>
-    </div>
-    <div>
-      <h4>Explore</h4>
-      <ul>
-        <li><a href="{% url 'admissions:programs' %}">Programs</a></li>
-        <li><a href="{% url 'admissions:campuses' %}">Campuses</a></li>
-        {% for campus in active_campuses %}
-          <li><a href="{% url 'admissions:campus_detail' campus.code %}">{{ campus.name }}</a></li>
-        {% endfor %}
-        <li><a href="{% url 'admissions:admission_procedure' %}">Admissions</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Student Portal</h4>
-      <ul>
-        {% if user.is_authenticated and user.student_profile %}
-          <li><a href="{% url 'students:dashboard' %}">Student Portal</a></li>
-        {% else %}
-          <li><a href="{% url 'students:dashboard' %}">Student Portal</a></li>
-          <li><a href="{% url 'students:login' %}">Login</a></li>
-          <li><a href="{% url 'students:register' %}">Create Account</a></li>
-        {% endif %}
-        <li><a href="{% url 'admissions:track_application' %}">Track Application</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Important</h4>
-      <ul>
-        <li><a href="{% url 'admissions:about' %}">About PIST</a></li>
-        <li><a href="{% url 'admissions:contact' %}">Contact</a></li>
-        <li><a href="{% url 'university_admin:login' %}">University Admin</a></li>
-      </ul>
-    </div>
-  </div>
+<!-- Footer JSON Component -->
+<footer class="bg-primary dark:bg-primary-container full-width mt-xl">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="col-span-1 md:col-span-1 flex flex-col gap-4">
+<span class="font-headline-md text-headline-md text-on-primary">PIST</span>
+<p class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 max-w-sm mt-2">
+                         Pakistan Institute of Science and Technology. Dedicated to research, education, and public service.
+                     </p>
+</div>
+<div class="col-span-1 flex flex-col gap-3">
+<h4 class="font-title-md text-title-md text-on-primary mb-2">Academics</h4>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:admission_procedure' %}">Admissions</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:research' %}">Research</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:departments' %}">Departments</a>
+</div>
+<div class="col-span-1 flex flex-col gap-3">
+<h4 class="font-title-md text-title-md text-on-primary mb-2">Community</h4>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:student_life' %}">Campus Life</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Alumni</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Careers</a>
+</div>
+<div class="col-span-1 flex flex-col gap-3">
+<h4 class="font-title-md text-title-md text-on-primary mb-2">Information</h4>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:campuses' %}">Campus Address</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-all" href="{% url 'admissions:contact' %}">Contact Us</a>
+</div>
+</div>
+<div class="border-t border-on-primary/20 max-w-container-max mx-auto px-gutter py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-sm text-body-sm text-on-primary/70">
+                    © 2026 Pakistan Institute of Science and Technology. All rights reserved.
+                </p>
+<div class="flex gap-4">
+<a aria-label="Social Link" class="text-on-primary/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+</div>
+</div>
 </footer>

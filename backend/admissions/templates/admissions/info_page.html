@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="container section narrow-copy">
-  <span class="eyebrow">{{ page_title }}</span>
-  <h1>{{ headline }}</h1>
-  <p class="lead">{{ body }}</p>
-</section>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
+  <div class="max-w-4xl mx-auto text-center mb-12">
+    <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">{{ page_title }}</span>
+    <h1 class="font-display-lg text-display-lg text-primary mb-xs">{{ headline }}</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">
+      {{ body }}
+    </p>
+  </div>
+</main>
 {% endblock %}

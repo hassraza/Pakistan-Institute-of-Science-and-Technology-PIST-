@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIST - Application Form</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .stepper-line {
+            width: 2px;
+            height: 100%;
+            background-color: #c4c6cf;
+            position: absolute;
+            left: 50%;
+            top: 24px;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        @media (min-width: 768px) {
+            .stepper-line {
+                width: 100%;
+                height: 2px;
+                left: 24px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        .file-upload-dashed {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%2374777f' stroke-width='1' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md text-body-md">
+<!-- Utility Bar (Anchored) -->
+<div class="bg-primary-container text-on-primary-container font-label-md text-label-md py-2 px-gutter hidden md:block border-b border-primary/20">
+<div class="max-w-container-max mx-auto flex justify-end gap-md items-center">
+<a class="hover:text-on-primary transition-colors" href="#">Faculty &amp; Staff</a>
+<a class="hover:text-on-primary transition-colors" href="#">Current Students</a>
+<a class="hover:text-on-primary transition-colors" href="#">Alumni</a>
+<div class="w-px h-4 bg-on-primary-container/30"></div>
+<a class="hover:text-on-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">login</span>
+                Portal Login
+            </a>
+</div>
+</div>
+<!-- TopNavBar -->
+<nav class="bg-surface border-b border-outline-variant max-w-container-max mx-auto px-gutter flex items-center justify-between h-20 top-0 z-50">
+<div class="flex items-center gap-md">
+<a class="font-title-lg text-title-lg font-bold text-primary flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">school</span>
+                PIST
+            </a>
+<div class="hidden md:flex gap-md ml-lg h-20 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md uppercase tracking-wider" href="#">About</a>
+<a class="text-primary border-b-2 border-primary font-bold font-label-md text-label-md uppercase tracking-wider h-full flex items-center mt-[2px]" href="#">Admissions</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md uppercase tracking-wider" href="#">Academics</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md uppercase tracking-wider" href="#">Research</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md uppercase tracking-wider" href="#">Campus Life</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="hidden md:flex items-center border border-outline-variant rounded bg-surface-container-lowest overflow-hidden h-10 w-64 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<input class="w-full border-none focus:ring-0 font-body-sm text-body-sm px-3 bg-transparent text-on-surface placeholder:text-outline h-full" placeholder="Search institutional resources..." type="text"/>
+<button class="px-3 text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low h-full border-l border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</button>
+</div>
+<a class="hidden md:flex bg-tertiary-container text-on-tertiary-container hover:bg-tertiary hover:text-on-tertiary font-label-md text-label-md uppercase tracking-wider px-sm h-10 items-center justify-center rounded transition-colors whitespace-nowrap" href="#">
+                Apply Now
+            </a>
+<button class="md:hidden text-on-surface-variant p-2">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-lg md:py-xl min-h-[calc(100vh-280px)]">
+<div class="mb-lg border-b border-outline-variant pb-md">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Undergraduate Application 2024</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Please complete all required fields accurately. This form will be saved automatically as you progress.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Sidebar / Stepper -->
+<aside class="lg:col-span-3">
+<div class="sticky top-24">
+<h3 class="font-title-md text-title-md text-primary mb-md border-b border-outline-variant pb-2">Application Steps</h3>
+<ul class="relative flex flex-col gap-0 border-l border-outline-variant ml-3">
+<li class="relative pl-6 pb-6">
+<span class="absolute left-[-13px] top-1 w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-[12px] font-bold ring-4 ring-surface">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<div class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Step 1</div>
+<div class="font-title-md text-title-md text-on-surface">Personal Information</div>
+</li>
+<li class="relative pl-6 pb-6">
+<span class="absolute left-[-13px] top-1 w-6 h-6 rounded-full bg-surface-container-highest border-2 border-primary text-primary flex items-center justify-center text-[12px] font-bold ring-4 ring-surface">2</span>
+<div class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Step 2 (Current)</div>
+<div class="font-title-md text-title-md text-primary">Academic Background</div>
+</li>
+<li class="relative pl-6 pb-6">
+<span class="absolute left-[-13px] top-1 w-6 h-6 rounded-full bg-surface-container-high border-2 border-outline-variant text-outline flex items-center justify-center text-[12px] font-bold ring-4 ring-surface">3</span>
+<div class="font-label-md text-label-md text-outline font-bold uppercase tracking-wider">Step 3</div>
+<div class="font-title-md text-title-md text-outline">Documents Upload</div>
+</li>
+<li class="relative pl-6 pb-6">
+<span class="absolute left-[-13px] top-1 w-6 h-6 rounded-full bg-surface-container-high border-2 border-outline-variant text-outline flex items-center justify-center text-[12px] font-bold ring-4 ring-surface">4</span>
+<div class="font-label-md text-label-md text-outline font-bold uppercase tracking-wider">Step 4</div>
+<div class="font-title-md text-title-md text-outline">Program Selection</div>
+</li>
+<li class="relative pl-6">
+<span class="absolute left-[-13px] top-1 w-6 h-6 rounded-full bg-surface-container-high border-2 border-outline-variant text-outline flex items-center justify-center text-[12px] font-bold ring-4 ring-surface">5</span>
+<div class="font-label-md text-label-md text-outline font-bold uppercase tracking-wider">Step 5</div>
+<div class="font-title-md text-title-md text-outline">Review &amp; Submit</div>
+</li>
+</ul>
+<div class="mt-xl bg-surface-container-low p-md rounded border border-outline-variant">
+<h4 class="font-title-md text-title-md text-primary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">help</span>
+                            Need Assistance?
+                        </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Contact the admissions office for help with your application.</p>
+<a class="font-label-md text-label-md text-primary flex items-center gap-1 hover:underline" href="mailto:admissions@pist.edu.pk">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+                            admissions@pist.edu.pk
+                        </a>
+</div>
+</div>
+</aside>
+<!-- Form Area -->
+<div class="lg:col-span-9 bg-surface-container-lowest border border-outline-variant rounded p-md md:p-lg shadow-sm">
+<div class="mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Academic Background</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Provide details of your previous educational qualifications starting from the most recent.</p>
+</div>
+<form>
+<!-- Institution Section -->
+<div class="mb-xl">
+<h3 class="font-title-lg text-title-lg text-primary border-b border-outline-variant pb-2 mb-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+                            Secondary Education (HSSC/A-Levels)
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="board">Board / University *</label>
+<select class="border border-outline-variant rounded h-12 px-3 bg-surface focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all text-on-surface font-body-md w-full" id="board">
+<option disabled="" selected="" value="">Select Board/University</option>
+<option value="fbise">Federal Board (FBISE)</option>
+<option value="bise_lhr">BISE Lahore</option>
+<option value="cambridge">Cambridge Assessment International Education</option>
+<option value="other">Other</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="inst_name">Institution Name *</label>
+<input class="border border-outline-variant rounded h-12 px-3 bg-surface focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all text-on-surface font-body-md w-full placeholder:text-outline" id="inst_name" placeholder="e.g., Army Public School &amp; College" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="passing_year">Passing Year *</label>
+<input class="border border-outline-variant rounded h-12 px-3 bg-surface focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all text-on-surface font-body-md w-full placeholder:text-outline" id="passing_year" max="2024" min="2000" placeholder="YYYY" type="number"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="group">Study Group *</label>
+<select class="border border-outline-variant rounded h-12 px-3 bg-surface focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all text-on-surface font-body-md w-full" id="group">
+<option disabled="" selected="" value="">Select Group</option>
+<option value="pre_eng">Pre-Engineering</option>
+<option value="pre_med">Pre-Medical</option>
+<option value="ics">ICS</option>
+<option value="commerce">Commerce</option>
+<option value="arts">Arts/Humanities</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Grades Section -->
+<div class="mb-xl bg-surface p-md rounded border border-outline-variant">
+<h3 class="font-title-md text-title-md text-primary mb-md">Marks / Grades Information</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="total_marks">Total Marks *</label>
+<input class="border border-outline-variant rounded h-10 px-3 bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all text-on-surface font-body-md w-full" id="total_marks" placeholder="1100" type="number"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider" for="obtained_marks">Obtained Marks *</label>
+<input class="border border-outline-variant rounded h-10 px-3 bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all text-on-surface font-body-md w-full" id="obtained_marks" placeholder="e.g., 950" type="number"/>
+</div>
+<div class="flex flex-col gap-1 justify-end">
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Calculated Percentage</div>
+<div class="h-10 border border-transparent bg-surface-container flex items-center px-3 rounded font-title-md text-primary-fixed-variant">
+                                    -- %
+                                </div>
+</div>
+</div>
+<div class="mt-4 flex items-start gap-2">
+<input class="mt-1 border-outline-variant rounded text-primary focus:ring-primary" id="awaiting_result" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer" for="awaiting_result">I am currently waiting for my final result (Result Awaiting Candidate).</label>
+</div>
+</div>
+<!-- File Upload Section -->
+<div class="mb-xl">
+<h3 class="font-title-md text-title-md text-primary mb-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">upload_file</span>
+                            Upload Transcript / Marksheet
+                        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Please upload a clear scanned copy of your official transcript. Accepted formats: PDF, JPG, PNG (Max size: 5MB).</p>
+<div class="file-upload-dashed bg-surface hover:bg-surface-container-low transition-colors rounded-lg p-xl flex flex-col items-center justify-center text-center cursor-pointer min-h-[200px]">
+<span class="material-symbols-outlined text-[48px] text-outline mb-2">cloud_upload</span>
+<div class="font-title-md text-title-md text-primary mb-1">Click to upload or drag and drop</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">PDF, PNG, or JPG up to 5MB</div>
+<!-- Hidden File Input -->
+<input accept=".pdf,.png,.jpg,.jpeg" class="hidden" type="file"/>
+<button class="mt-md bg-surface-container border border-outline-variant text-on-surface font-label-md text-label-md px-4 py-2 rounded uppercase tracking-wider hover:bg-outline-variant transition-colors" type="button">
+                                Browse Files
+                            </button>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row justify-between items-center pt-md border-t border-outline-variant gap-4">
+<button class="w-full sm:w-auto border border-outline-variant text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md uppercase tracking-wider px-lg h-12 rounded flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            Previous Step
+                        </button>
+<div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+<button class="w-full sm:w-auto bg-surface-container-low text-primary border border-primary/20 hover:bg-surface-container transition-colors font-label-md text-label-md uppercase tracking-wider px-lg h-12 rounded flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                Save Draft
+                            </button>
+<button class="w-full sm:w-auto bg-primary text-on-primary hover:bg-primary/90 transition-colors font-label-md text-label-md uppercase tracking-wider px-lg h-12 rounded flex items-center justify-center gap-2" type="submit">
+                                Next Step
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary text-on-primary font-body-sm text-body-sm full-width mt-xl">
+<div class="max-w-container-max mx-auto px-gutter py-lg grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="col-span-1 md:col-span-1">
+<div class="font-headline-md text-headline-md text-on-primary mb-md font-bold">PIST</div>
+<p class="text-on-primary/80 mb-sm">Pakistan Institute of Science and Technology. Fostering excellence in research and education.</p>
+<div class="font-label-md text-label-md text-tertiary-fixed font-bold">© 2024 Pakistan Institute of Science and Technology. All rights reserved.</div>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm border-b border-on-primary/20 pb-2">Institution</h4>
+<ul class="flex flex-col gap-2">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Campus Address</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Admissions</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Careers</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm border-b border-on-primary/20 pb-2">Academics</h4>
+<ul class="flex flex-col gap-2">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Departments</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Research</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Library</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-primary mb-sm border-b border-on-primary/20 pb-2">Legal</h4>
+<ul class="flex flex-col gap-2">
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-on-primary/80 hover:text-on-primary hover:underline transition-all" href="#">Alumni</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

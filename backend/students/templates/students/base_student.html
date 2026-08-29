@@ -1,30 +1,246 @@
 {% load static %}
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="light">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Student Portal | PIST{% endblock %}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/student.css' %}"><style>.profile-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:24px}.profile-grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px}.profile-grid .portal-panel:last-child{grid-column:2}.profile-photo-panel{display:flex;align-items:center;flex-direction:column;gap:16px;text-align:center}.profile-photo,.dashboard-avatar{object-fit:cover;border-radius:50%;border:3px solid #d1fae5}.profile-photo{width:150px;height:150px}.dashboard-avatar{width:64px;height:64px}.avatar-placeholder{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;background:#d1fae5;color:#047857;font-size:3rem;font-weight:800}.profile-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 24px}.profile-list div{border-bottom:1px solid #edf2f7;padding-bottom:10px}.profile-list dt{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.07em}.profile-list dd{margin:3px 0 0;font-weight:600}.metric{display:block;font-size:2rem;margin:5px 0}.progress{height:8px;background:#e2e8f0;border-radius:999px;margin-top:12px;overflow:hidden}.progress span{display:block;height:100%;background:var(--emerald)}.quick-actions{margin-top:24px}.action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.action-link{display:flex;flex-direction:column;gap:4px;padding:16px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--emerald);border-radius:6px;color:var(--navy)}.action-link span{color:var(--muted);font-size:.88rem}.action-link--disabled{border-left-color:#cbd5e1;color:#64748b;background:#f8fafc}.notice--pending{background:#fffbeb;border:1px solid #fde68a;color:#92400e;margin-top:20px}.student-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 22px;background:#0f172a;color:#fff}.student-brand{display:flex;align-items:center;gap:10px;color:#fff}.student-brand span{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#059669;font-weight:800;border-radius:8px}.student-header nav{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center}.student-header nav a{color:rgba(255,255,255,.88);font-size:.9rem}.student-header nav a.is-active{color:#fff;font-weight:700}.student-public-link{color:#a7f3d0;font-size:.85rem;font-weight:600;white-space:nowrap}.student-header__meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}@media(max-width:700px){.profile-heading{display:block}.profile-heading .button{margin-top:12px}.profile-grid{grid-template-columns:1fr}.profile-grid .portal-panel:last-child{grid-column:auto}.profile-list,.action-grid{grid-template-columns:1fr}}</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Portal | PIST{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary-container": "#cea72c",
+                        "inverse-surface": "#2e3132",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#adc8f5",
+                        "secondary-fixed": "#afeee9",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#02504c",
+                        "surface-tint": "#455f87",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#93d2cc",
+                        "on-primary-fixed": "#001b3b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#0f2d52",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#755b00",
+                        "primary": "#001835",
+                        "on-primary-container": "#7b95c0",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-surface-variant": "#43474e",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2d476e",
+                        "surface": "#f8f9fa",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-container-high": "#e7e8e9",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#2d6c68",
+                        "on-background": "#191c1d",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "secondary": "#286864",
+                        "inverse-primary": "#adc8f5",
+                        "secondary-container": "#acebe6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "8px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
-<body>
-<header class="student-header">
-  <a class="student-brand" href="{% url 'students:dashboard' %}"><span>PIST</span><strong>Student Portal</strong></a>
-  {% if user.is_authenticated %}
-  <nav>
-    <a class="{% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}" href="{% url 'students:dashboard' %}">Dashboard</a>
-    <a class="{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'profile_edit' %}is-active{% endif %}" href="{% url 'students:profile' %}">My profile</a>
-    <a class="{% if request.resolver_match.url_name == 'academic_record' or 'score' in request.resolver_match.url_name or 'matric' in request.resolver_match.url_name or 'intermediate' in request.resolver_match.url_name %}is-active{% endif %}" href="{% url 'students:academic_record' %}">Academic Information</a>
-    <a class="{% if 'document' in request.resolver_match.url_name %}is-active{% endif %}" href="{% url 'students:documents' %}">Academic Documents</a>
-    <a class="{% if 'registered' in request.resolver_match.url_name or 'application' in request.resolver_match.url_name %}is-active{% endif %}" href="{% url 'students:registered_programs' %}">Registered Programs</a>
-    {% if portal_roll_slip_application %}<a class="{% if request.resolver_match.url_name == 'application_roll_slip' %}is-active{% endif %}" href="{% url 'students:application_roll_slip' portal_roll_slip_application.pk %}">Entry Test / Roll Slip</a>{% endif %}
-    <a href="{% url 'students:logout' %}">Log out</a>
-  </nav>
-  {% endif %}
-  <a class="student-public-link" href="{% url 'admissions:home' %}">Back to PIST Website</a>
-</header>
-<main class="student-main">{% if messages %}{% for message in messages %}<div class="notice notice--success">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
-{% block extra_js %}{% endblock %}
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col antialiased">
+    
+    <!-- Top Navbar -->
+    <header class="bg-primary text-on-primary h-16 flex items-center justify-between px-gutter sticky top-0 z-50 border-b border-primary-container shadow-sm">
+        <div class="flex items-center gap-md">
+            <button class="lg:hidden text-on-primary hover:text-secondary-container transition-colors" id="mobile-menu-btn">
+                <span class="material-symbols-outlined text-[24px]">menu</span>
+            </button>
+            <a class="flex items-center gap-2" href="{% url 'students:dashboard' %}">
+                <span class="material-symbols-outlined text-secondary-container text-[28px] fill">school</span>
+                <span class="font-title-lg text-title-lg font-bold">PIST Student Portal</span>
+            </a>
+        </div>
+        <div class="flex items-center gap-md">
+            <a href="{% url 'admissions:home' %}" class="hidden sm:flex items-center gap-1 text-on-primary/80 hover:text-on-primary font-label-md text-label-md uppercase tracking-wider transition-colors">
+                <span class="material-symbols-outlined text-[18px]">public</span>
+                Main Website
+            </a>
+            <div class="w-px h-6 bg-on-primary/20 hidden sm:block"></div>
+            {% if user.is_authenticated %}
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-sm">
+                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                    </div>
+                    <span class="hidden md:block font-title-md text-title-md">{{ user.first_name|default:user.username }}</span>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="flex flex-1 max-w-[1600px] w-full mx-auto relative">
+        
+        <!-- Sidebar Navigation -->
+        {% if user.is_authenticated %}
+        <aside class="w-64 bg-surface border-r border-outline-variant flex-shrink-0 hidden lg:flex flex-col fixed lg:sticky top-16 h-[calc(100vh-4rem)] z-40 transition-transform -translate-x-full lg:translate-x-0" id="sidebar">
+            <div class="p-md flex flex-col flex-1 overflow-y-auto">
+                <nav class="space-y-2">
+                    <a href="{% url 'students:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if request.resolver_match.url_name == 'dashboard' %}fill{% endif %}">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                    
+                    <div class="pt-4 pb-2">
+                        <span class="px-3 font-label-md text-label-md text-outline uppercase tracking-wider">My Profile</span>
+                    </div>
+                    <a href="{% url 'students:profile' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'profile_edit' %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'profile_edit' %}fill{% endif %}">person</span>
+                        <span>Personal Details</span>
+                    </a>
+                    <a href="{% url 'students:academic_record' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'academic_record' or 'score' in request.resolver_match.url_name or 'matric' in request.resolver_match.url_name or 'intermediate' in request.resolver_match.url_name %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if request.resolver_match.url_name == 'academic_record' or 'score' in request.resolver_match.url_name or 'matric' in request.resolver_match.url_name or 'intermediate' in request.resolver_match.url_name %}fill{% endif %}">school</span>
+                        <span>Academic Info</span>
+                    </a>
+                    <a href="{% url 'students:documents' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if 'document' in request.resolver_match.url_name %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if 'document' in request.resolver_match.url_name %}fill{% endif %}">folder_open</span>
+                        <span>Documents</span>
+                    </a>
+
+                    <div class="pt-4 pb-2">
+                        <span class="px-3 font-label-md text-label-md text-outline uppercase tracking-wider">Admissions</span>
+                    </div>
+                    <a href="{% url 'students:registered_programs' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if 'registered' in request.resolver_match.url_name or 'application' in request.resolver_match.url_name and 'roll_slip' not in request.resolver_match.url_name %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if 'registered' in request.resolver_match.url_name or 'application' in request.resolver_match.url_name and 'roll_slip' not in request.resolver_match.url_name %}fill{% endif %}">app_registration</span>
+                        <span>Applications</span>
+                    </a>
+                    
+                    {% if portal_roll_slip_application %}
+                    <a href="{% url 'students:application_roll_slip' portal_roll_slip_application.pk %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'application_roll_slip' %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-[20px] {% if request.resolver_match.url_name == 'application_roll_slip' %}fill{% endif %}">confirmation_number</span>
+                        <span>Entry Test / Roll Slip</span>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            <div class="p-md border-t border-outline-variant">
+                <a href="{% url 'students:logout' %}" class="flex items-center gap-3 px-3 py-2 rounded-md text-error hover:bg-error-container hover:text-on-error-container transition-colors w-full">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Mobile Sidebar Overlay -->
+        <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-scrim/50 z-30 hidden lg:hidden"></div>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-gutter lg:p-xl w-full max-w-full overflow-x-hidden">
+            {% if messages %}
+                <div class="mb-md space-y-2">
+                {% for message in messages %}
+                    <div class="bg-secondary-container text-on-secondary-container p-4 rounded-md flex items-start gap-3 border border-secondary/20 shadow-sm">
+                        <span class="material-symbols-outlined text-secondary shrink-0">check_circle</span>
+                        <div class="font-body-sm text-body-sm pt-0.5">{{ message }}</div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+    <!-- Mobile Sidebar Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-sidebar-overlay');
+
+            if (btn && sidebar && overlay) {
+                function toggleMenu() {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+
+                btn.addEventListener('click', toggleMenu);
+                overlay.addEventListener('click', toggleMenu);
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
