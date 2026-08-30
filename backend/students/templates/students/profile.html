@@ -15,7 +15,7 @@
                 <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profile
             </a>
             <a class="bg-surface-container border border-outline-variant text-on-surface font-bold px-6 py-2 rounded-sm hover:bg-surface-variant transition-colors shadow-sm whitespace-nowrap flex items-center gap-2" href="{% url 'students:password_change' %}">
-                <span class="material-symbols-outlined text-[18px]">key</span> Change Password
+                <span class="material-symbols-outlined text-[18px]">key</span> Change password
             </a>
         </div>
     </div>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="border-b border-surface-variant pb-2">
                         <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Date of Birth</dt>
-                        <dd class="font-title-md text-title-md text-on-surface">{{ profile.date_of_birth }} <span class="text-on-surface-variant font-body-sm text-body-sm font-normal ml-1">({{ age }} yrs)</span></dd>
+                        <dd class="font-title-md text-title-md text-on-surface">{{ profile.date_of_birth }} <span class="text-on-surface-variant font-body-sm text-body-sm font-normal ml-1">(<span>{{ age }}</span> yrs)</span></dd>
                     </div>
                     <div class="border-b border-surface-variant pb-2">
                         <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Phone</dt>
@@ -96,7 +96,7 @@
                     </div>
                     <div class="border-b border-surface-variant pb-2">
                         <dt class="font-label-md text-label-md text-outline uppercase tracking-wider mb-1">Password</dt>
-                        <dd class="font-title-md text-title-md text-on-surface"><a class="text-primary hover:text-secondary hover:underline transition-colors" href="{% url 'students:password_change' %}">Change Password</a></dd>
+                        <dd class="font-title-md text-title-md text-on-surface"><a class="text-primary hover:text-secondary hover:underline transition-colors" href="{% url 'students:password_change' %}">Change password</a></dd>
                     </div>
                 </dl>
             </article>

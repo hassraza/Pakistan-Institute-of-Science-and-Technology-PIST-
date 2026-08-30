@@ -37,7 +37,7 @@
             <div class="flex justify-between items-end mb-6">
                 <div>
                     <span class="font-label-md text-label-md text-secondary tracking-widest uppercase block mb-1">Your Journey</span>
-                    <h2 class="font-title-lg text-title-lg text-primary">Application Progress</h2>
+                    <h2 class="font-title-lg text-title-lg text-primary">Application progress</h2>
                 </div>
                 <span class="font-body-sm text-body-sm text-on-surface-variant font-bold">{{ onboarding_progress|length }} steps</span>
             </div>
@@ -82,7 +82,7 @@
 
             <div class="bg-white border border-outline-variant rounded-md shadow-sm p-6 flex flex-col h-[140px]">
                 <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block mb-2">Academic Documents</span>
-                <strong class="block font-display-sm text-[32px] font-bold text-primary leading-none mb-auto">{{ uploaded_document_count }} <span class="text-xl text-outline font-normal">/ {{ document_type_count }}</span></strong>
+                <strong class="block font-display-sm text-[32px] font-bold text-primary leading-none mb-auto">{{ uploaded_document_count }} / {{ document_type_count }}</strong>
                 <a class="font-label-md text-label-md text-primary font-bold hover:text-secondary transition-colors uppercase tracking-wider" href="{% url 'students:documents' %}">Manage Documents <span class="material-symbols-outlined text-[12px] align-middle">arrow_forward</span></a>
             </div>
 
@@ -157,7 +157,7 @@
             <a href="{% url 'admissions:programs' %}" class="bg-white border-l-4 border-l-primary border-y border-r border-outline-variant p-4 rounded-md shadow-sm hover:shadow-md transition-shadow group flex items-start gap-3">
                 <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors mt-0.5">school</span>
                 <div>
-                    <strong class="block font-title-md text-title-md text-primary mb-1">Register for a Program</strong>
+                    <strong class="block font-title-md text-title-md text-primary mb-1">Register for a program</strong>
                     <span class="font-body-sm text-body-sm text-on-surface-variant">Explore available programs and submit an application.</span>
                 </div>
             </a>
