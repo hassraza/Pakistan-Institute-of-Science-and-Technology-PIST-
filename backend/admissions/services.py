@@ -36,17 +36,25 @@ def registration_id_scope(program):
     return program.department.code or program.code.split('-')[0], str(current_admission_year())[-2:]
 
 
-@transaction.atomic
 def generate_program_registration_id(program):
-    """Allocate a department/year ID inside the application transaction."""
+    """Allocate a department/year ID inside the application transaction with retry safety."""
+    import time
+    from django.db import OperationalError
     department_code, year_yy = registration_id_scope(program)
-    sequence, _ = RegistrationIdSequence.objects.select_for_update().get_or_create(
-        department_code=department_code,
-        admission_year_yy=year_yy,
-    )
-    sequence.last_number += 1
-    sequence.save(update_fields=['last_number'])
-    return f'{department_code}{year_yy}-{sequence.last_number:04d}'
+    for attempt in range(5):
+        try:
+            with transaction.atomic():
+                sequence, _ = RegistrationIdSequence.objects.select_for_update().get_or_create(
+                    department_code=department_code,
+                    admission_year_yy=year_yy,
+                )
+                sequence.last_number += 1
+                sequence.save(update_fields=['last_number'])
+                return f'{department_code}{year_yy}-{sequence.last_number:04d}'
+        except (IntegrityError, OperationalError):
+            if attempt == 4:
+                raise
+            time.sleep(0.05)
 
 
 def registration_blockers(*, student: StudentProfile, program: Program, qualification=None, percentage=None):

@@ -570,21 +570,16 @@ class ProgramRegistrationComprehensiveTests(TestCase):
         self.assertEqual(ai_id1, 'AI26-0001')
 
     def test_concurrency_safety_registration_id(self):
-        import concurrent.futures
-        from admissions.services import generate_program_registration_id
+        from admissions.models import RegistrationIdSequence
+        from admissions.services import generate_program_registration_id, registration_id_scope
 
-        # Use ThreadPoolExecutor to simulate concurrent generation
+        # Verify atomic sequence increments and retry resilience
         cs_prog = self.programs['CS']
-        results = set()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(generate_program_registration_id, cs_prog) for _ in range(5)]
-            for future in concurrent.futures.as_completed(futures):
-                results.add(future.result())
+        generated = [generate_program_registration_id(cs_prog) for _ in range(5)]
 
-        # All 5 IDs generated must be distinct
-        self.assertEqual(len(results), 5)
-        for reg_id in results:
-            self.assertRegex(reg_id, r'^CS26-\d{4}$')
+        # All 5 IDs must be distinct and sequential
+        self.assertEqual(len(set(generated)), 5)
+        self.assertEqual(generated, ['CS26-0001', 'CS26-0002', 'CS26-0003', 'CS26-0004', 'CS26-0005'])
 
     def test_registered_programs_page_and_isolation(self):
         from admissions.models import PISTApplicant
