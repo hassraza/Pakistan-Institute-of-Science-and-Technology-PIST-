@@ -8,23 +8,13 @@ def merge_and_delete_legacy_campuses(apps, schema_editor):
     PISTApplicant = apps.get_model('admissions', 'PISTApplicant')
     TestCenter = apps.get_model('admissions', 'TestCenter')
 
-    # Ensure canonical campuses exist
-    isb, _ = Campus.objects.get_or_create(code='ISB', defaults={
-        'name': 'Pakistan Institute of Science and Technology — Islamabad Main Campus',
-        'city': 'Islamabad', 'address': 'Plot H-12, Sector H-12, Islamabad, Islamabad Capital Territory, Pakistan',
-        'is_main_campus': True, 'is_active': True,
-    })
-    lhr, _ = Campus.objects.get_or_create(code='LHR', defaults={
-        'name': 'Pakistan Institute of Science and Technology — Lahore Campus',
-        'city': 'Lahore', 'address': 'Raiwind Road, Lahore, Punjab, Pakistan',
-        'is_main_campus': False, 'is_active': True,
-    })
-    khi, _ = Campus.objects.get_or_create(code='KHI', defaults={
-        'name': 'Pakistan Institute of Science and Technology — Karachi Campus',
-        'city': 'Karachi', 'address': 'PECHS Block 6, Karachi, Sindh, Pakistan',
-        'is_main_campus': False, 'is_active': True,
-    })
+    legacy_campuses = list(Campus.objects.exclude(code__in=['ISB', 'LHR', 'KHI']))
+    if not legacy_campuses:
+        return
 
+    isb = Campus.objects.filter(code='ISB').first()
+    lhr = Campus.objects.filter(code='LHR').first()
+    khi = Campus.objects.filter(code='KHI').first()
     campuses = {'ISB': isb, 'LHR': lhr, 'KHI': khi}
 
     # Find legacy/duplicate campuses

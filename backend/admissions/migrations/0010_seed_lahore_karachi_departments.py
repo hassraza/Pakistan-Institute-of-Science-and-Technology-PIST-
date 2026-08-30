@@ -7,6 +7,11 @@ def seed_lahore_karachi_departments(apps, schema_editor):
     Department = apps.get_model('admissions', 'Department')
     Program = apps.get_model('admissions', 'Program')
 
+    lhr = Campus.objects.filter(code='LHR').first()
+    khi = Campus.objects.filter(code='KHI').first()
+    if not lhr or not khi:
+        return
+
     DEPARTMENT_LIST = [
         ('Department of Computer Science', 'CS'),
         ('Department of Software Engineering', 'SE'),
