@@ -108,15 +108,17 @@ def department_detail(request, department_slug):
 
 
 def programs(request):
-    program_qs = Program.objects.select_related('department', 'department__campus', 'campus', 'required_qualification').prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type')
+    program_qs = Program.objects.select_related(
+        'department', 'department__campus', 'campus', 'required_qualification'
+    ).prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type')
     
-    campus_code = request.GET.get('campus', '')
-    department_code = request.GET.get('department', '')
-    status_filter = request.GET.get('status', '')
+    campus_code = request.GET.get('campus', '').strip()
+    department_code = request.GET.get('department', '').strip()
+    status_filter = request.GET.get('status', '').strip()
     search_query = request.GET.get('q', '').strip()
     
     if campus_code:
-        program_qs = program_qs.filter(campus__code=campus_code)
+        program_qs = program_qs.filter(Q(campus__code=campus_code) | Q(department__campus__code=campus_code))
     if department_code:
         program_qs = program_qs.filter(department__code=department_code)
     if status_filter == 'open':
@@ -124,12 +126,16 @@ def programs(request):
     elif status_filter == 'closed':
         program_qs = program_qs.filter(admissions_open=False)
     if search_query:
-        program_qs = program_qs.filter(name__icontains=search_query)
+        program_qs = program_qs.filter(
+            Q(name__icontains=search_query) |
+            Q(department__name__icontains=search_query) |
+            Q(department__code__icontains=search_query) |
+            Q(code__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
         
     active_campuses = Campus.objects.filter(is_active=True).order_by('name')
     active_departments = Department.objects.filter(is_active=True).order_by('name')
-    if campus_code:
-        active_departments = active_departments.filter(campus__code=campus_code)
         
     context = {
         'programs': program_qs,

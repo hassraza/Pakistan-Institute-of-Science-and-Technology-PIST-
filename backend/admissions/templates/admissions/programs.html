@@ -15,9 +15,9 @@
     <!-- Sidebar Filter -->
     <aside class="w-full md:w-64 flex-shrink-0">
       <div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT p-md sticky top-32">
-        <h2 class="font-title-lg text-title-lg text-primary mb-md border-b border-outline-variant pb-xs">Filters</h2>
+        <h2 class="font-title-lg text-title-lg text-primary mb-md border-b border-outline-variant pb-xs">Search Departments by:</h2>
         
-        <form method="get" action="{% url 'admissions:programs' %}" class="flex flex-col gap-6">
+        <form method="get" action="{% url 'admissions:programs' %}" class="flex flex-col gap-5">
           
           <div>
             <label for="campus" class="font-title-md text-title-md text-on-surface mb-2 block">Campus</label>
@@ -53,10 +53,12 @@
             <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Computer Science" class="w-full border-outline-variant rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-sm p-2 bg-surface">
           </div>
 
-          <div class="flex flex-col gap-3 pt-2">
-            <button type="submit" class="bg-primary text-white font-bold py-2 rounded-sm hover:bg-primary-container transition-colors w-full text-center">Apply Filters</button>
+          <div class="flex flex-col gap-3 pt-3">
+            <button type="submit" class="bg-primary text-white font-bold py-2.5 px-4 rounded-sm hover:bg-primary-container transition-colors w-full flex items-center justify-center gap-2 shadow-sm text-center">
+              <span class="material-symbols-outlined text-[18px]">search</span> Search
+            </button>
             {% if campus_code or department_code or status_filter or search_query %}
-              <a href="{% url 'admissions:programs' %}" class="bg-surface-variant text-on-surface-variant font-bold py-2 rounded-sm hover:bg-outline-variant transition-colors w-full text-center">Clear Filters</a>
+              <a href="{% url 'admissions:programs' %}" class="bg-surface-variant text-on-surface-variant font-bold py-2 rounded-sm hover:bg-outline-variant transition-colors w-full text-center text-sm">Clear Search</a>
             {% endif %}
           </div>
         </form>
