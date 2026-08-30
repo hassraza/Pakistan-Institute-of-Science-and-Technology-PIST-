@@ -57,7 +57,7 @@
     .utility-bar { background-color: #0F2D52; color: white; font-size: 12px; font-weight: 500; letter-spacing: 0.05em; }
     .gold-cta { background-color: #C9A227; color: #0F2D52; }
   </style>
-  <link rel="stylesheet" href="{% static 'css/pist.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pist.css' %}?v={% now 'U' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -67,7 +67,7 @@
     {% block content %}{% endblock %}
   </main>
   {% include 'partials/footer.html' %}
-  <script src="{% static 'js/pist.js' %}"></script>
+  <script src="{% static 'js/pist.js' %}?v={% now 'U' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

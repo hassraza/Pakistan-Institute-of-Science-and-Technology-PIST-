@@ -622,6 +622,13 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsContainer.innerHTML = html;
   }
 
+  window.renderInitialSearchState = renderInitialState;
+  window.performSearch = performSearch;
+  window.openSearchModal = openSearchModal;
+  window.closeSearchModal = closeSearchModal;
+  window.openMobileNav = openMobileMenu;
+  window.closeMobileNav = closeMobileMenu;
+
   function updateActiveResult() {
     const items = resultsContainer ? resultsContainer.querySelectorAll('.search-result-item') : [];
     items.forEach((item, idx) => {

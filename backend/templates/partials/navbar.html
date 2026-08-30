@@ -8,7 +8,7 @@
     <div class="flex items-center gap-4 sm:gap-6">
       <a class="hover:underline transition-all hidden sm:inline" href="{% url 'students:dashboard' %}">Student Portal</a>
       <a class="gold-cta px-3 sm:px-4 py-1 rounded font-bold hover:brightness-110 transition-all shadow-sm text-xs sm:text-sm" href="{% url 'admissions:programs' %}">Apply Now</a>
-      <button id="global-search-trigger" type="button" aria-label="Open Search Modal" aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-1.5 cursor-pointer hover:text-tertiary-fixed text-white/90 hover:opacity-100 transition-all text-xs font-medium bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded focus:outline-none focus:ring-1 focus:ring-tertiary-fixed">
+      <button id="global-search-trigger" onclick="openSearchModal()" type="button" aria-label="Open Search Modal" aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-1.5 cursor-pointer hover:text-tertiary-fixed text-white/90 hover:opacity-100 transition-all text-xs font-medium bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded focus:outline-none focus:ring-1 focus:ring-tertiary-fixed" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
         <span class="material-symbols-outlined text-[16px]">search</span>
         <span>Search</span>
         <kbd class="hidden sm:inline-block text-[10px] bg-white/20 text-white/90 px-1.5 py-0.5 rounded font-mono ml-1">⌘K</kbd>
@@ -42,15 +42,15 @@
         <a class="hidden md:block gold-cta px-4 py-2 rounded-sm font-label-md text-label-md shadow-sm hover:brightness-110 transition-all" href="{% url 'students:register' %}">Create Account</a>
       {% endif %}
       <!-- Hamburger Menu Button -->
-      <button id="mobile-menu-toggle" data-menu-toggle type="button" aria-expanded="false" aria-label="Toggle Navigation" aria-controls="mobile-nav-drawer" class="md:hidden text-on-surface hover:text-primary p-2 rounded-md hover:bg-surface-container-low transition-colors flex items-center justify-center">
-        <span class="material-symbols-outlined text-[28px]">menu</span>
+      <button id="mobile-menu-toggle" onclick="toggleMobileNav()" data-menu-toggle type="button" aria-expanded="false" aria-label="Toggle Navigation" aria-controls="mobile-nav-drawer" class="md:hidden text-on-surface hover:text-primary p-2 rounded-md hover:bg-surface-container-low transition-colors flex items-center justify-center cursor-pointer" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+        <span class="material-symbols-outlined text-[30px]">menu</span>
       </button>
     </div>
   </div>
 </nav>
 
 <!-- Mobile Navigation Backdrop Overlay -->
-<div id="mobile-menu-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+<div id="mobile-menu-backdrop" onclick="closeMobileNav()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-300"></div>
 
 <!-- Mobile Navigation Slide-Over Drawer -->
 <aside id="mobile-nav-drawer" data-site-nav aria-label="Mobile Navigation" class="fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-surface dark:bg-inverse-surface border-l border-outline-variant dark:border-outline shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-6 overflow-y-auto">
@@ -61,7 +61,7 @@
         <img alt="PIST University Logo" class="h-9 w-9 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8whpHVniO4GUmQGsqhLQqn4IqLfSNSA1PgXGzlvF3S8mIg3UC9pi9v6BZbZQt4yL4a0L51HUKB93UJrwV72ZqLIw6pJxxakZz_HZZzhv5al8Uzmj9J4HLnjZ5jxb7-fYBZhBpnlzeIn6CtDsMNTsXJ_jKQNtH6nSkspzsslMX44gKUdVATn7UzWrx1RYq6ghXNy2hHBwQPvXvyh64cFRLk1e7juyvAlk6NmUCVR1pM3dLcJdfZF07LQ"/>
         <span class="font-title-lg text-title-lg font-bold text-primary dark:text-inverse-primary">PIST</span>
       </a>
-      <button id="mobile-menu-close" type="button" aria-label="Close Navigation" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-high transition-colors">
+      <button id="mobile-menu-close" onclick="closeMobileNav()" type="button" aria-label="Close Navigation" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-high transition-colors cursor-pointer" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
         <span class="material-symbols-outlined text-[24px]">close</span>
       </button>
     </div>
@@ -92,7 +92,7 @@
         <span class="material-symbols-outlined text-[20px] text-primary">info</span>
         <span>About</span>
       </a>
-      <button id="mobile-search-trigger" type="button" class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3 w-full text-left">
+      <button id="mobile-search-trigger" onclick="openSearchModal()" type="button" class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3 w-full text-left cursor-pointer" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
         <span class="material-symbols-outlined text-[20px] text-primary">search</span>
         <span>Search University...</span>
       </button>
@@ -121,7 +121,7 @@
 <!-- ============================================================ -->
 <!-- Global Interactive Search Modal Dialog                       -->
 <!-- ============================================================ -->
-<div id="search-modal-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[110] opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
+<div id="search-modal-backdrop" onclick="closeSearchModal()" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[110] opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
 
 <div id="search-modal" role="dialog" aria-modal="true" aria-label="Search University Website" class="fixed inset-0 z-[120] flex items-start justify-center p-3 sm:p-6 pt-8 sm:pt-16 opacity-0 pointer-events-none transition-all duration-200">
   <div class="w-full max-w-2xl bg-surface dark:bg-inverse-surface rounded-xl shadow-2xl border border-outline-variant dark:border-outline overflow-hidden flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-200" id="search-modal-box">
@@ -141,7 +141,7 @@
       <button id="search-input-clear" type="button" aria-label="Clear search" class="hidden text-on-surface-variant hover:text-primary p-1 mr-2 rounded">
         <span class="material-symbols-outlined text-[18px]">cancel</span>
       </button>
-      <button id="search-modal-close" type="button" aria-label="Close search" class="text-xs font-semibold px-2 py-1 bg-surface-container-high hover:bg-outline-variant rounded text-on-surface-variant transition-colors flex items-center gap-1">
+      <button id="search-modal-close" onclick="closeSearchModal()" type="button" aria-label="Close search" class="text-xs font-semibold px-2 py-1 bg-surface-container-high hover:bg-outline-variant rounded text-on-surface-variant transition-colors flex items-center gap-1 cursor-pointer">
         <span>ESC</span>
         <span class="material-symbols-outlined text-[14px]">close</span>
       </button>
@@ -159,7 +159,7 @@
 
     <!-- Results Body Container -->
     <div id="search-results-container" class="flex-1 overflow-y-auto p-3 sm:p-4 min-h-[220px] max-h-[55vh]">
-      <!-- Populated via JavaScript dynamically -->
+      <!-- Populated dynamically via JavaScript -->
     </div>
 
     <!-- Modal Footer Keyboard Navigation Guide -->
@@ -174,3 +174,93 @@
 
   </div>
 </div>
+
+<script>
+  // Global Fail-Safe Navigation & Search Functions
+  function openMobileNav() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    var backdrop = document.getElementById('mobile-menu-backdrop');
+    var toggle = document.getElementById('mobile-menu-toggle');
+    if (drawer) {
+      drawer.classList.remove('translate-x-full');
+      drawer.classList.add('translate-x-0', 'is-open');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function closeMobileNav() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    var backdrop = document.getElementById('mobile-menu-backdrop');
+    var toggle = document.getElementById('mobile-menu-toggle');
+    if (drawer) {
+      drawer.classList.remove('translate-x-0', 'is-open');
+      drawer.classList.add('translate-x-full');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  function toggleMobileNav() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if (drawer && drawer.classList.contains('is-open')) {
+      closeMobileNav();
+    } else {
+      openMobileNav();
+    }
+  }
+
+  function openSearchModal() {
+    closeMobileNav();
+    var modal = document.getElementById('search-modal');
+    var box = document.getElementById('search-modal-box');
+    var backdrop = document.getElementById('search-modal-backdrop');
+    var input = document.getElementById('global-search-input');
+    if (modal) {
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (box) {
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    document.body.classList.add('overflow-hidden');
+    setTimeout(function() {
+      if (input) {
+        input.focus();
+        if (window.renderInitialSearchState) window.renderInitialSearchState();
+      }
+    }, 60);
+  }
+
+  function closeSearchModal() {
+    var modal = document.getElementById('search-modal');
+    var box = document.getElementById('search-modal-box');
+    var backdrop = document.getElementById('search-modal-backdrop');
+    if (modal) {
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+    if (box) {
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
+    document.body.classList.remove('overflow-hidden');
+  }
+</script>
