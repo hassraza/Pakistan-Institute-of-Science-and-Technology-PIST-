@@ -4,12 +4,15 @@ import hashlib
 import uuid
 from datetime import date
 
+from functools import wraps
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView, PasswordResetView
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, OperationalError, transaction
 from django.http import FileResponse, Http404
 from django.shortcuts import redirect, render
@@ -28,8 +31,36 @@ from .services import generate_student_id
 # Applications are scoped by student relationship.
 
 
+def student_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse('students:login')}?next={request.get_full_path()}")
+        try:
+            profile = request.user.student_profile
+        except (AttributeError, ObjectDoesNotExist):
+            profile = None
+        if not profile:
+            if request.user.is_staff or request.user.is_superuser:
+                messages.info(request, 'You are currently logged in with an Admin/Staff account. The Student Portal requires a student account.')
+                return redirect('university_admin:dashboard')
+            messages.error(request, 'No student profile found for this account. Please register as a student.')
+            logout(request)
+            return redirect('students:register')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
 def _redirect_if_authenticated(request):
-    return redirect('students:dashboard') if request.user.is_authenticated else None
+    if request.user.is_authenticated:
+        try:
+            if request.user.student_profile:
+                return redirect('students:dashboard')
+        except (AttributeError, ObjectDoesNotExist):
+            if request.user.is_staff or request.user.is_superuser:
+                return redirect('university_admin:dashboard')
+            return redirect('students:register')
+    return None
 
 
 def _attempt_key(request, email):
@@ -132,7 +163,7 @@ def logout_view(request):
     return redirect('students:login')
 
 
-@login_required(login_url='students:login')
+@student_required
 def dashboard(request):
     profile = request.user.student_profile
     application = _student_application(request)
@@ -159,13 +190,13 @@ def dashboard(request):
     })
 
 
-@login_required(login_url='students:login')
+@student_required
 def profile_view(request):
     profile = request.user.student_profile
     return render(request, 'students/profile.html', {'profile': profile, 'age': _student_age(profile.date_of_birth)})
 
 
-@login_required(login_url='students:login')
+@student_required
 def profile_edit(request):
     profile = request.user.student_profile
     form = StudentProfileForm(request.POST or None, request.FILES or None, instance=profile)
@@ -176,7 +207,7 @@ def profile_edit(request):
     return render(request, 'students/profile_edit.html', {'form': form, 'profile': profile})
 
 
-@login_required(login_url='students:login')
+@student_required
 def roll_slip(request):
     application = _student_application(request)
     if not application:
@@ -186,7 +217,7 @@ def roll_slip(request):
     return redirect('admissions:roll_slip', application_uuid=application.pk)
 
 
-@login_required(login_url='students:login')
+@student_required
 def documents(request):
     student = request.user.student_profile
     uploaded = {document.document_type: document for document in AcademicDocument.objects.filter(student=student)}
@@ -197,7 +228,7 @@ def documents(request):
     return render(request, 'students/documents.html', {'document_rows': document_rows})
 
 
-@login_required(login_url='students:login')
+@student_required
 def document_upload(request):
     student = request.user.student_profile
     form = AcademicDocumentForm(request.POST or None, request.FILES or None)
@@ -226,7 +257,7 @@ def _owned_document(request, doc_id):
     return AcademicDocument.objects.filter(student=request.user.student_profile, pk=doc_id).first()
 
 
-@login_required(login_url='students:login')
+@student_required
 def document_view(request, doc_id):
     document = _owned_document(request, doc_id)
     if not document:
@@ -234,7 +265,7 @@ def document_view(request, doc_id):
     return FileResponse(document.file.open('rb'), as_attachment=False, filename=document.file_name)
 
 
-@login_required(login_url='students:login')
+@student_required
 def document_replace(request, doc_id):
     document = _owned_document(request, doc_id)
     if not document:
@@ -253,7 +284,7 @@ def document_replace(request, doc_id):
     return render(request, 'students/document_form.html', {'form': form, 'title': 'Replace academic document', 'document': document})
 
 
-@login_required(login_url='students:login')
+@student_required
 def document_delete(request, doc_id):
     document = _owned_document(request, doc_id)
     if not document:
@@ -273,7 +304,7 @@ def _owned_record(request, model, record_id=None):
     return model.objects.filter(**filters).first()
 
 
-@login_required(login_url='students:login')
+@student_required
 def academic_record(request):
     student = request.user.student_profile
     programs = Program.objects.filter(admissions_open=True).select_related('department', 'campus').order_by('name')
@@ -294,7 +325,7 @@ def academic_record(request):
     })
 
 
-@login_required(login_url='students:login')
+@student_required
 def matric_edit(request):
     student = request.user.student_profile
     record = getattr(student, 'matric_record', None)
@@ -308,7 +339,7 @@ def matric_edit(request):
     return render(request, 'students/academic_record_form.html', {'form': form, 'title': 'Matric record'})
 
 
-@login_required(login_url='students:login')
+@student_required
 def intermediate_edit(request):
     student = request.user.student_profile
     record = getattr(student, 'intermediate_record', None)
@@ -322,7 +353,7 @@ def intermediate_edit(request):
     return render(request, 'students/academic_record_form.html', {'form': form, 'title': 'Intermediate / FSc record'})
 
 
-@login_required(login_url='students:login')
+@student_required
 def test_score_add(request):
     student = request.user.student_profile
     form = StudentTestScoreForm(request.POST or None, request.FILES or None)
@@ -335,7 +366,7 @@ def test_score_add(request):
     return render(request, 'students/academic_record_form.html', {'form': form, 'title': 'Add test score'})
 
 
-@login_required(login_url='students:login')
+@student_required
 def test_score_edit(request, score_id):
     score = _owned_record(request, StudentTestScore, score_id)
     if not score:
@@ -348,7 +379,7 @@ def test_score_edit(request, score_id):
     return render(request, 'students/academic_record_form.html', {'form': form, 'title': 'Edit test score'})
 
 
-@login_required(login_url='students:login')
+@student_required
 def test_score_delete(request, score_id):
     score = _owned_record(request, StudentTestScore, score_id)
     if not score:
@@ -362,7 +393,7 @@ def test_score_delete(request, score_id):
     return render(request, 'students/test_score_delete.html', {'score': score})
 
 
-@login_required(login_url='students:login')
+@student_required
 def test_certificate_view(request, score_id):
     score = _owned_record(request, StudentTestScore, score_id)
     if not score or not score.result_certificate:
@@ -376,7 +407,7 @@ def _student_program_application(request, program):
     ).first()
 
 
-@login_required(login_url='students:login')
+@student_required
 def apply_program(request, program_slug):
     program = Program.objects.select_related('department', 'campus').prefetch_related('eligibility_rules__qualification').filter(slug=program_slug).first()
     if not program:
@@ -443,7 +474,7 @@ def _submit_program_application(request, program, form):
     return application
 
 
-@login_required(login_url='students:login')
+@student_required
 def submit_program_application(request, program_slug):
     if request.method != 'POST' or request.POST.get('confirm') != '1':
         return redirect('students:apply_program', program_slug=program_slug)
@@ -468,13 +499,13 @@ def submit_program_application(request, program_slug):
     raise Http404
 
 
-@login_required(login_url='students:login')
+@student_required
 def registered_programs(request):
     applications = PISTApplicant.objects.select_related('program', 'program__department', 'campus').filter(student=request.user.student_profile).exclude(application_status=PISTApplicant.ApplicationStatus.WITHDRAWN).order_by('-created_at')
     return render(request, 'students/registered_programs.html', {'applications': applications})
 
 
-@login_required(login_url='students:login')
+@student_required
 def application_detail(request, application_uuid):
     application = PISTApplicant.objects.select_related('program', 'program__department', 'campus', 'student').filter(student=request.user.student_profile, pk=application_uuid).first()
     if not application:
@@ -482,7 +513,7 @@ def application_detail(request, application_uuid):
     return render(request, 'students/application_detail.html', {'application': application})
 
 
-@login_required(login_url='students:login')
+@student_required
 def application_roll_slip(request, application_uuid):
     application = PISTApplicant.objects.select_related('program', 'program__department', 'campus', 'student').filter(student=request.user.student_profile, pk=application_uuid).first()
     if not application:
@@ -492,7 +523,7 @@ def application_roll_slip(request, application_uuid):
     return redirect('admissions:roll_slip', application_uuid=application.pk)
 
 
-@login_required(login_url='students:login')
+@student_required
 def password_change(request):
     form = StudentPasswordChangeForm(request.user, request.POST or None)
     if request.method == 'POST' and form.is_valid():
