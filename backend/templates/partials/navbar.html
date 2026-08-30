@@ -40,9 +40,75 @@
         <a class="hidden md:block text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="{% url 'students:login' %}">Login</a>
         <a class="hidden md:block gold-cta px-4 py-2 rounded-sm font-label-md text-label-md shadow-sm hover:brightness-110 transition-all" href="{% url 'students:register' %}">Create Account</a>
       {% endif %}
-      <button class="md:hidden text-on-surface p-2">
-        <span class="material-symbols-outlined">menu</span>
+      <!-- Hamburger Menu Button -->
+      <button id="mobile-menu-toggle" data-menu-toggle type="button" aria-expanded="false" aria-label="Toggle Navigation" aria-controls="mobile-nav-drawer" class="md:hidden text-on-surface hover:text-primary p-2 rounded-md hover:bg-surface-container-low transition-colors flex items-center justify-center">
+        <span class="material-symbols-outlined text-[28px]">menu</span>
       </button>
     </div>
   </div>
 </nav>
+
+<!-- Mobile Navigation Backdrop Overlay -->
+<div id="mobile-menu-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<!-- Mobile Navigation Slide-Over Drawer -->
+<aside id="mobile-nav-drawer" data-site-nav aria-label="Mobile Navigation" class="fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-surface dark:bg-inverse-surface border-l border-outline-variant dark:border-outline shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-6 overflow-y-auto">
+  <div>
+    <!-- Drawer Header with Logo & Close Button -->
+    <div class="flex items-center justify-between pb-4 border-b border-outline-variant dark:border-outline mb-6">
+      <a class="flex items-center gap-2" href="{% url 'admissions:home' %}">
+        <img alt="PIST University Logo" class="h-9 w-9 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8whpHVniO4GUmQGsqhLQqn4IqLfSNSA1PgXGzlvF3S8mIg3UC9pi9v6BZbZQt4yL4a0L51HUKB93UJrwV72ZqLIw6pJxxakZz_HZZzhv5al8Uzmj9J4HLnjZ5jxb7-fYBZhBpnlzeIn6CtDsMNTsXJ_jKQNtH6nSkspzsslMX44gKUdVATn7UzWrx1RYq6ghXNy2hHBwQPvXvyh64cFRLk1e7juyvAlk6NmUCVR1pM3dLcJdfZF07LQ"/>
+        <span class="font-title-lg text-title-lg font-bold text-primary dark:text-inverse-primary">PIST</span>
+      </a>
+      <button id="mobile-menu-close" type="button" aria-label="Close Navigation" class="p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-high transition-colors">
+        <span class="material-symbols-outlined text-[24px]">close</span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Links -->
+    <nav class="flex flex-col gap-2">
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:admission_procedure' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">school</span>
+        <span>Admissions</span>
+      </a>
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:programs' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">menu_book</span>
+        <span>Academics</span>
+      </a>
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:research' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">science</span>
+        <span>Research</span>
+      </a>
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:student_life' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">groups</span>
+        <span>Campus Life</span>
+      </a>
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:contact' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">contact_support</span>
+        <span>Contact</span>
+      </a>
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2.5 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:about' %}">
+        <span class="material-symbols-outlined text-[20px] text-primary">info</span>
+        <span>About</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Mobile Drawer Footer Actions -->
+  <div class="pt-6 border-t border-outline-variant dark:border-outline flex flex-col gap-3 mt-6">
+    <a class="gold-cta py-2.5 px-4 rounded-sm font-bold text-center shadow-sm hover:brightness-110 transition-all flex items-center justify-center gap-2" href="{% url 'admissions:programs' %}">
+      <span class="material-symbols-outlined text-[18px]">how_to_reg</span> Apply Now
+    </a>
+    {% if user.is_authenticated and user.student_profile %}
+      <a class="bg-primary text-white py-2.5 px-4 rounded-sm font-bold text-center shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2" href="{% url 'students:dashboard' %}">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span> Student Portal
+      </a>
+      <a class="text-center text-sm text-error font-medium py-1.5 hover:underline" href="{% url 'students:logout' %}">Logout</a>
+    {% else %}
+      <div class="grid grid-cols-2 gap-2">
+        <a class="border border-outline-variant text-center font-bold py-2 rounded-sm hover:bg-surface-container-low transition-colors text-sm" href="{% url 'students:login' %}">Login</a>
+        <a class="bg-primary text-white text-center font-bold py-2 rounded-sm hover:bg-primary-container transition-colors text-sm" href="{% url 'students:register' %}">Sign Up</a>
+      </div>
+    {% endif %}
+  </div>
+</aside>
