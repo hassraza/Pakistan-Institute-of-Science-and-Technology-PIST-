@@ -84,6 +84,23 @@ class Command(BaseCommand):
             counts['Department']['created' if created else 'updated'] += 1
             departments[code] = department
 
+        # Seed 15 departments for Lahore and 15 departments for Karachi
+        for campus_code in ('LHR', 'KHI'):
+            for name, code in DEPARTMENT_DATA[:15]:
+                dept_code = f'{code}-{campus_code}'
+                dept, created = Department.objects.update_or_create(
+                    code=dept_code,
+                    defaults={
+                        'campus': campuses[campus_code],
+                        'name': name,
+                        'slug': slugify(f'{campus_code}-{code}-{name}'),
+                        'description': f'{name} ({campuses[campus_code].city} Campus) develops professional expertise through rigorous teaching, applied research, and purpose-built facilities.',
+                        'is_active': True,
+                    },
+                )
+                counts['Department']['created' if created else 'updated'] += 1
+                departments[dept_code] = dept
+
         qualifications = {}
         for key, name in QUALIFICATIONS.items():
             qualification, created = Qualification.objects.update_or_create(
@@ -148,8 +165,8 @@ class Command(BaseCommand):
                 program, created = Program.objects.update_or_create(
                     code=code,
                     defaults={
-                        'department': base.department, 'campus': campuses[campus_code],
-                        'name': base.name, 'slug': self._program_slug(base.department, code), 'description': base.description,
+                        'department': departments.get(f"{base.department.code}-{campus_code}", base.department), 'campus': campuses[campus_code],
+                        'name': base.name, 'slug': self._program_slug(departments.get(f"{base.department.code}-{campus_code}", base.department), code), 'description': base.description,
                         'eligibility_percentage': base.eligibility_percentage, 'eligibility_text': base.eligibility_text,
                         'required_test_type': base.required_test_type, 'required_qualification': base.required_qualification,
                         'admissions_open': True, 'application_deadline': deadline,

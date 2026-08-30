@@ -134,8 +134,10 @@ def programs(request):
             Q(description__icontains=search_query)
         )
         
-    active_campuses = Campus.objects.filter(is_active=True).order_by('name')
-    active_departments = Department.objects.filter(is_active=True).order_by('name')
+    active_campuses = Campus.objects.filter(is_active=True).order_by('-is_main_campus', 'name')
+    active_departments = Department.objects.select_related('campus').filter(is_active=True).order_by('campus__city', 'name')
+    if campus_code:
+        active_departments = active_departments.filter(campus__code=campus_code)
         
     context = {
         'programs': program_qs,

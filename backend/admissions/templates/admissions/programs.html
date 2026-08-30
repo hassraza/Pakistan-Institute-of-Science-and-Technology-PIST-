@@ -34,7 +34,7 @@
             <select name="department" id="department" class="w-full border-outline-variant rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-sm p-2 bg-surface">
               <option value="">All Departments</option>
               {% for dept in active_departments %}
-                <option value="{{ dept.code }}" {% if department_code == dept.code %}selected{% endif %}>{{ dept.name }}</option>
+                <option value="{{ dept.code }}" {% if department_code == dept.code %}selected{% endif %}>{{ dept.name }} ({{ dept.campus.code }})</option>
               {% endfor %}
             </select>
           </div>
