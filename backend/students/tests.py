@@ -509,4 +509,109 @@ class AcademicRecordTests(TestCase):
         self.assertContains(response_eligible, 'Eligible')
 
 
+class ProgramRegistrationComprehensiveTests(TestCase):
+    def setUp(self):
+        from admissions.models import Campus, Department, PISTApplicant, Program, ProgramEligibility, Qualification, RegistrationIdSequence
+        from admissions.services import generate_program_registration_id
+
+        self.campus = Campus.objects.create(name='PIST Islamabad Main Campus', city='Islamabad', code='ISB', address='H-12')
+        self.qual = Qualification.objects.create(name='FSc Pre-Engineering', qualification_group_code='PRE_ENGINEERING')
+
+        self.departments = {}
+        self.programs = {}
+        for code, name in (
+            ('CS', 'Department of Computer Science'),
+            ('AI', 'Department of Artificial Intelligence'),
+            ('SE', 'Department of Software Engineering'),
+            ('DS', 'Department of Data Science'),
+            ('EE', 'Department of Electrical Engineering'),
+        ):
+            dept = Department.objects.create(campus=self.campus, code=code, name=name, slug=code.lower())
+            prog = Program.objects.create(
+                department=dept, campus=self.campus, name=f'BS {name}',
+                code=f'BS{code}-ISB', slug=f'bs{code.lower()}-isb', admissions_open=True, eligibility_percentage=60,
+            )
+            ProgramEligibility.objects.create(program=prog, qualification=self.qual, minimum_percentage=60)
+            self.departments[code] = dept
+            self.programs[code] = prog
+
+        self.user = get_user_model().objects.create_user(username='tester@example.com', email='tester@example.com', password='AyeshaStrong!29')
+        self.student = StudentProfile.objects.create(
+            user=self.user, student_id=generate_student_id(), full_name='Comprehensive Student',
+            cnic='12345-1234567-9', date_of_birth='2000-01-15', phone='03001234567', address='Islamabad',
+        )
+        for doc_type, _ in AcademicDocument.DocumentType.choices:
+            AcademicDocument.objects.create(
+                student=self.student,
+                document_type=doc_type,
+                file=SimpleUploadedFile(f'{doc_type}.pdf', b'%PDF-1.4 test', content_type='application/pdf'),
+                file_name=f'{doc_type}.pdf',
+            )
+
+    def test_department_prefix_mapping(self):
+        from admissions.services import generate_program_registration_id
+        for code in ('CS', 'AI', 'SE', 'DS', 'EE'):
+            reg_id = generate_program_registration_id(self.programs[code])
+            self.assertTrue(reg_id.startswith(f'{code}26-'), f'Expected prefix {code}26-, got {reg_id}')
+
+    def test_sequential_numbering_and_department_scoping(self):
+        from admissions.services import generate_program_registration_id
+        cs_prog = self.programs['CS']
+        id1 = generate_program_registration_id(cs_prog)
+        id2 = generate_program_registration_id(cs_prog)
+        id3 = generate_program_registration_id(cs_prog)
+        self.assertEqual(id1, 'CS26-0001')
+        self.assertEqual(id2, 'CS26-0002')
+        self.assertEqual(id3, 'CS26-0003')
+
+        # Different department starts at 0001
+        ai_prog = self.programs['AI']
+        ai_id1 = generate_program_registration_id(ai_prog)
+        self.assertEqual(ai_id1, 'AI26-0001')
+
+    def test_concurrency_safety_registration_id(self):
+        import concurrent.futures
+        from admissions.services import generate_program_registration_id
+
+        # Use ThreadPoolExecutor to simulate concurrent generation
+        cs_prog = self.programs['CS']
+        results = set()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(generate_program_registration_id, cs_prog) for _ in range(5)]
+            for future in concurrent.futures.as_completed(futures):
+                results.add(future.result())
+
+        # All 5 IDs generated must be distinct
+        self.assertEqual(len(results), 5)
+        for reg_id in results:
+            self.assertRegex(reg_id, r'^CS26-\d{4}$')
+
+    def test_registered_programs_page_and_isolation(self):
+        from admissions.models import PISTApplicant
+        app = PISTApplicant.objects.create(
+            student=self.student,
+            application_id='APP-2026-COMP01',
+            program_registration_id='CS26-0099',
+            full_name=self.student.full_name,
+            cnic=self.student.cnic,
+            email=self.user.email,
+            phone=self.student.phone,
+            address=self.student.address,
+            matric_marks=850,
+            matric_total=1100,
+            fsc_marks=920,
+            fsc_total=1100,
+            campus=self.campus,
+            program=self.programs['CS'],
+            source_application_id='APP-2026-COMP01',
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('students:registered_programs'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'CS26-0099')
+        self.assertContains(response, self.programs['CS'].name)
+        self.assertContains(response, self.departments['CS'].name)
+        self.assertContains(response, self.campus.name)
+
+
 
