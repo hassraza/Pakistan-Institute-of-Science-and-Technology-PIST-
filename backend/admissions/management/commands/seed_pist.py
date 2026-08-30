@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from admissions.models import (
-    Campus, Department, Program, Qualification, TestType,
+    Campus, Department, PISTApplicant, Program, Qualification, TestType,
     ProgramEligibility, ProgramTestRequirement, TestCenter, TestSession,
 )
 from admissions.seed_data import DEPARTMENT_DATA, MIRRORED_CODES, PROGRAM_DATA, QUALIFICATION_GROUP_CODES, QUALIFICATIONS, TEST_TYPES
@@ -57,6 +57,18 @@ class Command(BaseCommand):
             if campuses[code].is_main_campus:
                 campuses[code].is_main_campus = False
                 campuses[code].save(update_fields=['is_main_campus'])
+
+        # Clean up and merge legacy duplicate campuses (e.g. PIST Karachi / PIST Lahore / numeric codes)
+        legacy_campuses = Campus.objects.exclude(code__in=['ISB', 'LHR', 'KHI'])
+        for legacy in legacy_campuses:
+            target_code = 'LHR' if 'lahore' in legacy.name.lower() or 'lhr' in legacy.code.lower() else (
+                'KHI' if 'karachi' in legacy.name.lower() or 'khi' in legacy.code.lower() else 'ISB'
+            )
+            target_campus = campuses[target_code]
+            Department.objects.filter(campus=legacy).update(campus=target_campus)
+            PISTApplicant.objects.filter(campus=legacy).update(campus=target_campus)
+            TestCenter.objects.filter(campus=legacy).update(campus=target_campus)
+            legacy.delete()
 
         departments = {}
         for name, code in DEPARTMENT_DATA:
