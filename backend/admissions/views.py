@@ -38,7 +38,7 @@ def home(request):
     )
     departments = Department.objects.filter(is_active=True).prefetch_related('programs').order_by('name')
     department_groups = {
-        'Computing and Technology': {'Computer Science', 'Software Engineering', 'Artificial Intelligence', 'Data Science', 'Information Technology', 'Cyber Security'},
+        'Computing and Technology': {'Computer Science', 'Software Engineering'},
         'Engineering': {'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering', 'Biomedical Engineering'},
         'Health Sciences': {'Health and Medical Sciences', 'Pharmacy'},
         'Management and Business': {'Management Sciences', 'Accounting and Finance', 'Economics'},

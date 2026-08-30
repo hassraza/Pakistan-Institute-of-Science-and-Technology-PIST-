@@ -101,6 +101,23 @@ class Command(BaseCommand):
                 counts['Department']['created' if created else 'updated'] += 1
                 departments[dept_code] = dept
 
+        # Clean up legacy/merged computing departments (AI, DS, IT, CYS, or dummy departments)
+        for legacy_code in ('AI', 'DS', 'IT', 'CYS'):
+            for campus_code, cs_code in (('ISB', 'CS'), ('LHR', 'CS-LHR'), ('KHI', 'CS-KHI')):
+                target_cs = departments.get(cs_code)
+                if not target_cs:
+                    continue
+                code_to_check = legacy_code if campus_code == 'ISB' else f'{legacy_code}-{campus_code}'
+                for old_d in Department.objects.filter(code=code_to_check):
+                    Program.objects.filter(department=old_d).update(department=target_cs)
+                    old_d.delete()
+        # Clean up any dummy departments with 0 programs or invalid codes
+        valid_codes = set(departments.keys())
+        for stray_dept in Department.objects.exclude(code__in=valid_codes):
+            target_cs = departments.get(f"CS-{stray_dept.campus.code}" if stray_dept.campus.code in ('LHR', 'KHI') else 'CS')
+            if target_cs:
+                Program.objects.filter(department=stray_dept).update(department=target_cs)
+            stray_dept.delete()
         qualifications = {}
         for key, name in QUALIFICATIONS.items():
             qualification, created = Qualification.objects.update_or_create(
