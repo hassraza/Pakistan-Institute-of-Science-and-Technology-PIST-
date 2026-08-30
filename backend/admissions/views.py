@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import uuid as uuid_lib
 from io import BytesIO
@@ -36,20 +37,95 @@ def home(request):
         department_count=Count('departments', distinct=True),
         program_count=Count('programs', distinct=True),
     )
-    departments = Department.objects.filter(is_active=True).prefetch_related('programs').order_by('name')
-    department_groups = {
-        'Computing and Technology': {'Computer Science', 'Software Engineering'},
-        'Engineering': {'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering', 'Biomedical Engineering'},
-        'Health Sciences': {'Health and Medical Sciences', 'Pharmacy'},
-        'Management and Business': {'Management Sciences', 'Accounting and Finance', 'Economics'},
-        'Natural Sciences': {'Mathematics', 'Physics', 'Biotechnology', 'Environmental Sciences'},
-        'Social Sciences and Law': {'Psychology', 'Media and Communication', 'Law', 'International Relations'},
-    }
+    departments = Department.objects.select_related('campus').filter(is_active=True).prefetch_related('programs').order_by('name')
+
+    department_groups_config = [
+        ('Computing and Technology', [
+            'Department of Computer Science',
+            'Department of Software Engineering',
+        ]),
+        ('Engineering', [
+            'Department of Electrical Engineering',
+            'Department of Mechanical Engineering',
+            'Department of Civil Engineering',
+            'Department of Chemical Engineering',
+            'Department of Biomedical Engineering',
+        ]),
+        ('Health Sciences', [
+            'Department of Health and Medical Sciences',
+            'Department of Pharmacy',
+        ]),
+        ('Management and Business', [
+            'Department of Management Sciences',
+            'Department of Accounting and Finance',
+            'Department of Economics',
+        ]),
+        ('Natural Sciences', [
+            'Department of Mathematics',
+            'Department of Physics',
+            'Department of Biotechnology',
+            'Department of Environmental Sciences',
+        ]),
+        ('Social Sciences and Law', [
+            'Department of Psychology',
+            'Department of Media and Communication',
+            'Department of Law',
+            'Department of International Relations',
+        ]),
+    ]
+
+    dept_by_name = {}
+    for d in departments:
+        name = d.name.strip()
+        dept_by_name.setdefault(name, []).append(d)
+
     grouped_departments = []
-    for label, names in department_groups.items():
-        matching = [department for department in departments if department.name.removeprefix('Department of ') in names]
-        if matching:
-            grouped_departments.append({'label': label, 'departments': matching})
+    for label, names in department_groups_config:
+        group_items = []
+        for name in names:
+            campus_depts = dept_by_name.get(name, [])
+            if not campus_depts:
+                short_name = name.removeprefix('Department of ').strip()
+                for k, v in dept_by_name.items():
+                    if k.removeprefix('Department of ').strip().lower() == short_name.lower():
+                        campus_depts = v
+                        break
+            if not campus_depts:
+                continue
+
+            total_programs = sum(d.programs.count() for d in campus_depts)
+            sorted_campus_depts = sorted(campus_depts, key=lambda x: (not x.campus.is_main_campus, x.campus.name))
+            
+            campuses_info = []
+            for d in sorted_campus_depts:
+                p_count = d.programs.count()
+                campuses_info.append({
+                    'campus_code': d.campus.code,
+                    'campus_name': d.campus.name,
+                    'campus_city': d.campus.city,
+                    'is_main': d.campus.is_main_campus,
+                    'programs_count': p_count,
+                    'slug': d.slug,
+                    'url': reverse('admissions:department_detail', kwargs={'department_slug': d.slug}),
+                })
+
+            active_campus_offerings = [c for c in campuses_info if c['programs_count'] > 0]
+            is_single = (len(campuses_info) == 1) or (len(active_campus_offerings) == 1 and active_campus_offerings[0]['programs_count'] == total_programs)
+
+            group_items.append({
+                'name': name,
+                'total_programs': total_programs,
+                'campuses_count': len(campuses_info),
+                'active_campuses_count': len(active_campus_offerings),
+                'campuses': campuses_info,
+                'campuses_json': json.dumps(campuses_info),
+                'is_single_campus': is_single,
+                'single_url': active_campus_offerings[0]['url'] if active_campus_offerings else (campuses_info[0]['url'] if campuses_info else '#'),
+            })
+
+        if group_items:
+            grouped_departments.append({'label': label, 'departments': group_items})
+
     return render(
         request,
         'admissions/home.html',

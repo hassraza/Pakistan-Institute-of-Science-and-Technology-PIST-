@@ -745,7 +745,122 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ==========================================================================
-     3. Utility Handlers
+     4. Department Campus Selection Modal Handler
+     ========================================================================== */
+  const deptModal = document.getElementById('department-campus-modal');
+  const deptModalBox = document.getElementById('dept-modal-box');
+  const deptModalBackdrop = document.getElementById('department-campus-backdrop');
+  const deptModalClose = document.getElementById('dept-modal-close');
+  const deptModalCancel = document.getElementById('dept-modal-cancel');
+  const deptModalTitle = document.getElementById('dept-modal-title');
+  const deptModalSubtitle = document.getElementById('dept-modal-subtitle');
+  const deptModalCampusesList = document.getElementById('dept-modal-campuses-list');
+
+  function openDeptModal(deptName, campuses) {
+    if (!deptModal || !deptModalCampusesList) return;
+    
+    if (deptModalTitle) {
+      deptModalTitle.textContent = deptName;
+    }
+    if (deptModalSubtitle) {
+      deptModalSubtitle.textContent = `Select a campus offering ${deptName}`;
+    }
+
+    deptModalCampusesList.innerHTML = campuses.map((campus) => {
+      const isMuted = campus.programs_count === 0;
+      return `
+        <a href="${campus.url}" class="flex items-center justify-between p-3.5 rounded-lg border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all group min-h-[52px] ${isMuted ? 'opacity-60 bg-surface-container-low' : 'bg-surface hover:shadow-sm'}">
+          <div class="flex items-center gap-3">
+            <span class="p-2 rounded-md ${campus.is_main ? 'bg-secondary text-white' : 'bg-primary-fixed text-primary'} material-symbols-outlined text-[20px]">
+              ${campus.is_main ? 'domain' : 'location_city'}
+            </span>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-bold text-primary group-hover:text-secondary transition-colors">${campus.campus_name}</span>
+                ${campus.is_main ? '<span class="text-[10px] bg-secondary/15 text-secondary font-bold px-1.5 py-0.5 rounded">Main Campus</span>' : ''}
+              </div>
+              <span class="text-xs text-on-surface-variant">${campus.campus_city}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold ${campus.programs_count > 0 ? 'bg-primary text-white' : 'bg-surface-container-high text-on-surface-variant'} px-2.5 py-1 rounded-full">
+              ${campus.programs_count} ${campus.programs_count === 1 ? 'Program' : 'Programs'}
+            </span>
+            <span class="material-symbols-outlined text-on-surface-variant/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all text-[18px]">arrow_forward</span>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    deptModal.classList.remove('opacity-0', 'pointer-events-none');
+    deptModal.classList.add('opacity-100', 'pointer-events-auto');
+    if (deptModalBox) {
+      deptModalBox.classList.remove('scale-95');
+      deptModalBox.classList.add('scale-100');
+    }
+    if (deptModalBackdrop) {
+      deptModalBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+      deptModalBackdrop.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function closeDeptModal() {
+    if (!deptModal) return;
+    deptModal.classList.remove('opacity-100', 'pointer-events-auto');
+    deptModal.classList.add('opacity-0', 'pointer-events-none');
+    if (deptModalBox) {
+      deptModalBox.classList.remove('scale-100');
+      deptModalBox.classList.add('scale-95');
+    }
+    if (deptModalBackdrop) {
+      deptModalBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      deptModalBackdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  document.querySelectorAll('[data-campus-modal="true"]').forEach((item) => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isSingle = item.getAttribute('data-is-single') === 'true';
+      const singleUrl = item.getAttribute('data-single-url');
+      const deptName = item.getAttribute('data-department-name') || 'Department';
+      const campusesRaw = item.getAttribute('data-campuses');
+
+      if (isSingle && singleUrl && singleUrl !== '#') {
+        window.location.href = singleUrl;
+        return;
+      }
+
+      try {
+        const campuses = JSON.parse(campusesRaw || '[]');
+        if (campuses.length === 1 && campuses[0].url) {
+          window.location.href = campuses[0].url;
+        } else {
+          openDeptModal(deptName, campuses);
+        }
+      } catch (err) {
+        console.error('Error parsing campuses data', err);
+        if (singleUrl && singleUrl !== '#') {
+          window.location.href = singleUrl;
+        }
+      }
+    });
+  });
+
+  if (deptModalClose) deptModalClose.addEventListener('click', closeDeptModal);
+  if (deptModalCancel) deptModalCancel.addEventListener('click', closeDeptModal);
+  if (deptModalBackdrop) deptModalBackdrop.addEventListener('click', closeDeptModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && deptModal && deptModal.classList.contains('opacity-100')) {
+      closeDeptModal();
+    }
+  });
+
+  /* ==========================================================================
+     5. Utility Handlers
      ========================================================================== */
   document.querySelectorAll('[data-confirm]').forEach((element) => {
     element.addEventListener('submit', (event) => {
