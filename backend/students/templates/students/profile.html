@@ -1,13 +1,23 @@
 {% extends 'students/base_student.html' %}
 {% block title %}My profile | PIST{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto space-y-lg">
+<div class="max-w-5xl mx-auto space-y-6">
     
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center gap-2 text-xs font-medium text-on-surface-variant mb-2">
+        <a href="{% url 'students:dashboard' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <span class="text-outline-variant">/</span>
+        <span class="text-primary font-bold">Personal Details</span>
+    </nav>
+
     <!-- Profile Heading -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-outline-variant p-6 rounded-md shadow-sm">
         <div>
             <span class="font-label-md text-label-md text-secondary tracking-widest uppercase block mb-1">Student Profile</span>
-            <h1 class="font-headline-md text-headline-md text-primary mb-1">{{ profile.full_name }}</h1>
+            <h1 class="font-headline-md text-xl sm:text-headline-md text-primary mb-1">{{ profile.full_name }}</h1>
             <p class="font-body-sm text-body-sm text-on-surface-variant">Your official identity information and account details.</p>
         </div>
         <div class="flex flex-wrap gap-3">

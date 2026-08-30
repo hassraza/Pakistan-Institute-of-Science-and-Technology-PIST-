@@ -121,20 +121,20 @@
 <body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col antialiased">
     
     <!-- Top Navbar -->
-    <header class="bg-primary text-on-primary h-16 flex items-center justify-between px-gutter sticky top-0 z-50 border-b border-primary-container shadow-sm">
-        <div class="flex items-center gap-md">
-            <button class="lg:hidden text-on-primary hover:text-secondary-container transition-colors" id="mobile-menu-btn">
-                <span class="material-symbols-outlined text-[24px]">menu</span>
+    <header class="bg-primary text-on-primary h-16 flex items-center justify-between px-4 sm:px-gutter sticky top-0 z-50 border-b border-primary-container shadow-sm">
+        <div class="flex items-center gap-3 sm:gap-md">
+            <button class="lg:hidden text-on-primary hover:text-secondary-container p-1 rounded transition-colors cursor-pointer" id="mobile-menu-btn" onclick="toggleStudentSidebar()" aria-label="Toggle Portal Menu" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+                <span class="material-symbols-outlined text-[28px]">menu</span>
             </button>
             <a class="flex items-center gap-2" href="{% url 'students:dashboard' %}">
-                <span class="material-symbols-outlined text-secondary-container text-[28px] fill">school</span>
-                <span class="font-title-lg text-title-lg font-bold">PIST Student Portal</span>
+                <span class="material-symbols-outlined text-secondary-container text-[26px] sm:text-[28px] fill">school</span>
+                <span class="font-title-lg text-base sm:text-title-lg font-bold">PIST Student Portal</span>
             </a>
         </div>
-        <div class="flex items-center gap-md">
-            <a href="{% url 'admissions:home' %}" class="hidden sm:flex items-center gap-1 text-on-primary/80 hover:text-on-primary font-label-md text-label-md uppercase tracking-wider transition-colors">
-                <span class="material-symbols-outlined text-[18px]">public</span>
-                Back to PIST Website
+        <div class="flex items-center gap-3 sm:gap-md">
+            <a href="{% url 'admissions:home' %}" class="flex items-center gap-1 text-on-primary/90 hover:text-on-primary font-label-md text-xs sm:text-label-md uppercase tracking-wider transition-colors bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded">
+                <span class="material-symbols-outlined text-[16px] sm:text-[18px]">home</span>
+                <span class="hidden xs:inline">Main Site</span>
             </a>
             <div class="w-px h-6 bg-on-primary/20 hidden sm:block"></div>
             {% if user.is_authenticated %}
@@ -152,7 +152,15 @@
         
         <!-- Sidebar Navigation -->
         {% if user.is_authenticated %}
-        <aside class="w-64 bg-surface border-r border-outline-variant flex-shrink-0 hidden lg:flex flex-col fixed lg:sticky top-16 h-[calc(100vh-4rem)] z-40 transition-transform -translate-x-full lg:translate-x-0" id="sidebar">
+        <aside class="w-64 bg-surface border-r border-outline-variant flex-shrink-0 flex flex-col fixed lg:sticky top-16 h-[calc(100vh-4rem)] z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none" id="sidebar">
+            <!-- Mobile Sidebar Header with Close Button -->
+            <div class="flex lg:hidden items-center justify-between p-4 border-b border-outline-variant bg-surface-container-low">
+                <span class="font-title-md text-sm font-bold text-primary">Portal Navigation</span>
+                <button type="button" onclick="closeStudentSidebar()" aria-label="Close Menu" class="p-1 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-colors">
+                    <span class="material-symbols-outlined text-[22px]">close</span>
+                </button>
+            </div>
+
             <div class="p-md flex flex-col flex-1 overflow-y-auto">
                 <nav class="space-y-2">
                     <a href="{% url 'students:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary-container text-on-secondary-container font-bold{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{% endif %} transition-colors">
@@ -192,20 +200,24 @@
                     {% endif %}
                 </nav>
             </div>
-            <div class="p-md border-t border-outline-variant">
-                <a href="{% url 'students:logout' %}" class="flex items-center gap-3 px-3 py-2 rounded-md text-error hover:bg-error-container hover:text-on-error-container transition-colors w-full">
-                    <span class="material-symbols-outlined text-[20px]">logout</span>
+            <div class="p-md border-t border-outline-variant space-y-1">
+                <a href="{% url 'admissions:home' %}" class="flex items-center gap-3 px-3 py-2 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors w-full text-xs font-semibold">
+                    <span class="material-symbols-outlined text-[18px]">public</span>
+                    <span>PIST Main Website</span>
+                </a>
+                <a href="{% url 'students:logout' %}" class="flex items-center gap-3 px-3 py-2 rounded-md text-error hover:bg-error-container hover:text-on-error-container transition-colors w-full text-xs font-semibold">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
                     <span>Log Out</span>
                 </a>
             </div>
         </aside>
         
         <!-- Mobile Sidebar Overlay -->
-        <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-scrim/50 z-30 hidden lg:hidden"></div>
+        <div id="mobile-sidebar-overlay" onclick="closeStudentSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
         {% endif %}
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-gutter lg:p-xl w-full max-w-full overflow-x-hidden">
+        <main class="flex-1 p-4 sm:p-gutter lg:p-xl w-full max-w-full overflow-x-hidden">
             {% if messages %}
                 <div class="mb-md space-y-2">
                 {% for message in messages %}
@@ -224,21 +236,42 @@
 
     <!-- Mobile Sidebar Toggle Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('mobile-menu-btn');
+        function openStudentSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-sidebar-overlay');
-
-            if (btn && sidebar && overlay) {
-                function toggleMenu() {
-                    sidebar.classList.toggle('-translate-x-full');
-                    overlay.classList.toggle('hidden');
-                }
-
-                btn.addEventListener('click', toggleMenu);
-                overlay.addEventListener('click', toggleMenu);
+            if (sidebar) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0', 'is-open');
             }
-        });
+            if (overlay) {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100', 'pointer-events-auto');
+            }
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeStudentSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-sidebar-overlay');
+            if (sidebar) {
+                sidebar.classList.remove('translate-x-0', 'is-open');
+                sidebar.classList.add('-translate-x-full');
+            }
+            if (overlay) {
+                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function toggleStudentSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar && sidebar.classList.contains('is-open')) {
+                closeStudentSidebar();
+            } else {
+                openStudentSidebar();
+            }
+        }
     </script>
     
     {% block extra_js %}{% endblock %}

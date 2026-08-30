@@ -1,16 +1,26 @@
 {% extends 'students/base_student.html' %}
 {% block title %}Registered Programs | PIST{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto space-y-lg">
+<div class="max-w-5xl mx-auto space-y-6">
     
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center gap-2 text-xs font-medium text-on-surface-variant mb-2">
+        <a href="{% url 'students:dashboard' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <span class="text-outline-variant">/</span>
+        <span class="text-primary font-bold">Applications</span>
+    </nav>
+
     <!-- Profile Heading -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-outline-variant p-6 rounded-md shadow-sm mb-6">
         <div>
             <span class="font-label-md text-label-md text-secondary tracking-widest uppercase block mb-1">Student Applications</span>
-            <h1 class="font-headline-md text-headline-md text-primary mb-1">Registered Programs</h1>
+            <h1 class="font-headline-md text-xl sm:text-headline-md text-primary mb-1">Registered Programs</h1>
             <p class="font-body-sm text-body-sm text-on-surface-variant">Track your submitted program applications, admission review status, and entry-test schedules.</p>
         </div>
-        <a class="bg-primary text-on-primary font-bold px-6 py-2 rounded-sm hover:bg-primary-container transition-colors shadow-sm whitespace-nowrap flex items-center gap-2" href="{% url 'admissions:programs' %}">
+        <a class="bg-primary text-on-primary font-bold px-5 py-2.5 rounded-sm hover:bg-primary-container transition-colors shadow-sm whitespace-nowrap flex items-center gap-2 text-sm" href="{% url 'admissions:programs' %}">
             <span class="material-symbols-outlined text-[18px]">search</span> Browse Programs
         </a>
     </div>

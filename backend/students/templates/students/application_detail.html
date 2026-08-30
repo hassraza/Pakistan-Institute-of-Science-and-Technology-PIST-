@@ -1,12 +1,21 @@
 {% extends 'students/base_student.html' %}
 {% block title %}Application details | PIST{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto py-8">
-    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+<div class="max-w-3xl mx-auto py-4 sm:py-6">
+    
+    <!-- Top Back Navigation -->
+    <div class="mb-4">
+        <a href="{% url 'students:registered_programs' %}" class="inline-flex items-center gap-2 text-primary hover:text-secondary font-title-md text-sm font-semibold transition-colors bg-white hover:bg-surface-container-high px-3 py-2 rounded-md border border-outline-variant shadow-xs">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Back to Registered Programs</span>
+        </a>
+    </div>
+
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-6 sm:p-8 md:p-10">
         
-        <div class="mb-8 border-b border-outline-variant pb-6">
+        <div class="mb-6 sm:mb-8 border-b border-outline-variant pb-6">
             <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Application Details</span>
-            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">{{ application.program.name }}</h1>
+            <h1 class="font-headline-md text-xl sm:text-headline-md text-primary tracking-tight">{{ application.program.name }}</h1>
         </div>
 
         <div class="bg-surface-container-lowest border border-outline-variant rounded-md shadow-sm p-6 md:p-8 mb-8">

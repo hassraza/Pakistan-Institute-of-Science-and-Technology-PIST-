@@ -1,12 +1,21 @@
 {% extends 'students/base_student.html' %}
 {% block title %}Delete Document | PIST{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto py-8">
-    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+<div class="max-w-2xl mx-auto py-4 sm:py-6">
+    
+    <!-- Top Back Navigation -->
+    <div class="mb-4">
+        <a href="{% url 'students:documents' %}" class="inline-flex items-center gap-2 text-primary hover:text-secondary font-title-md text-sm font-semibold transition-colors bg-white hover:bg-surface-container-high px-3 py-2 rounded-md border border-outline-variant shadow-xs">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Back to Academic Documents</span>
+        </a>
+    </div>
+
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-6 sm:p-8 md:p-10">
         
-        <div class="mb-8 border-b border-outline-variant pb-6 text-center">
-            <span class="material-symbols-outlined text-error text-[48px] mb-4">warning</span>
-            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Delete Document?</h1>
+        <div class="mb-6 sm:mb-8 border-b border-outline-variant pb-6 text-center">
+            <span class="material-symbols-outlined text-error text-[44px] sm:text-[48px] mb-3">warning</span>
+            <h1 class="font-headline-md text-xl sm:text-headline-md text-primary tracking-tight">Delete Document?</h1>
         </div>
 
         <p class="font-body-lg text-body-lg text-on-surface-variant text-center mb-8">

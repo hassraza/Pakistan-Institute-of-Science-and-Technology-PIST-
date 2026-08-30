@@ -1,14 +1,22 @@
 {% extends 'students/base_student.html' %}
 {% block title %}{{ title }} | PIST{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto py-8">
+<div class="max-w-2xl mx-auto py-4 sm:py-6">
     
-    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-8 md:p-10">
+    <!-- Top Back Navigation -->
+    <div class="mb-4">
+        <a href="{% url 'students:documents' %}" class="inline-flex items-center gap-2 text-primary hover:text-secondary font-title-md text-sm font-semibold transition-colors bg-white hover:bg-surface-container-high px-3 py-2 rounded-md border border-outline-variant shadow-xs">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Back to Academic Documents</span>
+        </a>
+    </div>
+
+    <div class="bg-white border border-outline-variant rounded-lg shadow-sm relative z-10 flex flex-col p-6 sm:p-8 md:p-10">
         
-        <div class="mb-8 border-b border-outline-variant pb-6 text-center">
-            <span class="material-symbols-outlined text-primary text-[48px] mb-4">upload_file</span>
+        <div class="mb-6 sm:mb-8 border-b border-outline-variant pb-6 text-center">
+            <span class="material-symbols-outlined text-primary text-[44px] sm:text-[48px] mb-3">upload_file</span>
             <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-1 block">Student Records</span>
-            <h1 class="font-headline-md text-headline-md text-primary tracking-tight">{{ title }}</h1>
+            <h1 class="font-headline-md text-xl sm:text-headline-md text-primary tracking-tight">{{ title }}</h1>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Accepted formats: PDF, JPG, JPEG, or PNG. Maximum size: 5 MB.</p>
         </div>
 
