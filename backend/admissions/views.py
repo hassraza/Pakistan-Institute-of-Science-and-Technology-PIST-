@@ -228,7 +228,34 @@ def programs(request):
 
 
 def program_detail(request, program_slug):
-    program = get_object_or_404(Program.objects.select_related('department', 'department__campus', 'campus', 'required_qualification').prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type'), slug=program_slug)
+    qs = Program.objects.select_related('department', 'department__campus', 'campus', 'required_qualification').prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type')
+    
+    # 1. Direct slug or code lookup
+    program = qs.filter(Q(slug__iexact=program_slug) | Q(code__iexact=program_slug)).first()
+    
+    # 2. Intelligent fuzzy/slug normalization fallback
+    if not program:
+        clean_slug = program_slug.lower().strip()
+        # Check if contains program code like bsai, bscs, bsse, bsee, etc.
+        for code_part in clean_slug.split('-'):
+            if code_part:
+                candidate = qs.filter(Q(code__icontains=code_part) | Q(slug__icontains=code_part)).first()
+                if candidate:
+                    program = candidate
+                    break
+                    
+    # 3. If still not found, search by name keywords
+    if not program:
+        words = [w for w in program_slug.replace('-', ' ').split() if len(w) > 2 and w not in ('isb', 'lhr', 'khi', 'cs', 'department', 'of', 'in', 'and')]
+        if words:
+            q_filter = Q()
+            for w in words:
+                q_filter |= Q(name__icontains=w)
+            program = qs.filter(q_filter).first()
+
+    if not program:
+        raise Http404(f"No Program matches '{program_slug}'")
+
     career_opportunities = {
         'Computer Science': 'Software houses, fintech, product engineering, cloud operations, and graduate studies.',
         'Electrical & Mechanical Engineering': 'Industrial automation, utilities, manufacturing, maintenance, and design roles.',

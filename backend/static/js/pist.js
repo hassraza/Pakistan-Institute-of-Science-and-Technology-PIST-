@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: '4-year degree focusing on software development, algorithms, artificial intelligence, operating systems, and web technologies.',
-      url: '/programs/isb-cs-bachelor-of-science-in-computer-science/',
+      url: '/programs/bscs-isb/',
       keywords: 'cs bscs programming coding software backend frontend python java algorithms',
       icon: 'terminal'
     },
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Graduate (Masters)',
       description: '2-year advanced degree in distributed computing, machine learning research, and cloud infrastructure.',
-      url: '/programs/isb-cs-master-of-science-in-computer-science/',
+      url: '/programs/mscs-isb/',
       keywords: 'mscs graduate research distributed systems cloud ai masters',
       icon: 'terminal'
     },
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Machine learning, deep learning, computer vision, natural language processing, and robotics.',
-      url: '/programs/isb-cs-bachelor-of-science-in-artificial-intelligence/',
+      url: '/programs/bsai-isb/',
       keywords: 'ai bsai machine learning ml deep learning neural networks data neural bot',
       icon: 'psychology'
     },
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Big data analytics, statistics, predictive modeling, data visualization, and data engineering.',
-      url: '/programs/isb-cs-bachelor-of-science-in-data-science/',
+      url: '/programs/bsds-isb/',
       keywords: 'ds bsds data science analytics big data statistics visualization bi',
       icon: 'analytics'
     },
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'DevOps, software architecture, quality assurance, system design, and agile methodologies.',
-      url: '/programs/isb-se-bachelor-of-science-in-software-engineering/',
+      url: '/programs/bsse-isb/',
       keywords: 'se bsse software engineering devops architecture testing qa design',
       icon: 'code'
     },
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Graduate (Masters)',
       description: 'Advanced software design patterns, enterprise system architecture, and project management.',
-      url: '/programs/isb-se-master-of-science-in-software-engineering/',
+      url: '/programs/msse-isb/',
       keywords: 'msse masters software architect agile enterprise management',
       icon: 'code'
     },
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Ethical hacking, network defense, penetration testing, digital forensics, and cryptography.',
-      url: '/programs/isb-cs-bachelor-of-science-in-cyber-security/',
+      url: '/programs/bscys-isb/',
       keywords: 'cys bscys cyber security hacking penetration testing network defense info sec',
       icon: 'security'
     },
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Enterprise IT systems, network infrastructure, database administration, and cloud services.',
-      url: '/programs/isb-cs-bachelor-of-science-in-information-technology/',
+      url: '/programs/bsit-isb/',
       keywords: 'it bsit information technology sysadmin network database cloud',
       icon: 'dns'
     },
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Power systems, smart grid, telecommunications, embedded systems, and control engineering.',
-      url: '/programs/isb-ee-bachelor-of-science-in-electrical-engineering/',
+      url: '/programs/bsee-isb/',
       keywords: 'ee bsee electrical engineering power electronics circuit hardware ecat',
       icon: 'bolt'
     },
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Thermodynamics, CAD/CAM, robotics, materials science, and manufacturing engineering.',
-      url: '/programs/isb-me-bachelor-of-science-in-mechanical-engineering/',
+      url: '/programs/bsme-isb/',
       keywords: 'me bsme mechanical cad cam manufacturing robotics thermodynamics',
       icon: 'precision_manufacturing'
     },
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Structural engineering, transportation systems, geotechnical analysis, and construction management.',
-      url: '/programs/isb-ce-bachelor-of-science-in-civil-engineering/',
+      url: '/programs/bsce-isb/',
       keywords: 'ce bsce civil engineering construction structural survey building',
       icon: 'foundation'
     },
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate (5 Years)',
       description: '5-year professional clinical medicine and surgery training recognized by medical councils.',
-      url: '/programs/isb-hms-doctor-of-medicine-bachelor-of-medicine-bachelor-of-surgery-mbbs/',
+      url: '/programs/mbbs-isb/',
       keywords: 'mbbs doctor medicine surgery mdcat hospital medical healthcare',
       icon: 'medical_services'
     },
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate (5 Years)',
       description: 'Clinical pharmacy practice, drug formulations, pharmacology, and pharmaceutical research.',
-      url: '/programs/isb-pharm-doctor-of-pharmacy-pharmd/',
+      url: '/programs/pharmd-isb/',
       keywords: 'pharmd pharmacy medicine pharmaceutical drugs pharmacology healthcare',
       icon: 'medication'
     },
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Corporate strategy, marketing management, human resources, and entrepreneurship.',
-      url: '/programs/isb-mgt-bachelor-of-business-administration-bba/',
+      url: '/programs/bba-isb/',
       keywords: 'bba business management administration marketing finance leadership corporate',
       icon: 'business_center'
     },
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Graduate (Masters)',
       description: 'Strategic leadership, business analytics, financial decision-making, and executive consulting.',
-      url: '/programs/isb-mgt-master-of-business-administration-mba/',
+      url: '/programs/mba-isb/',
       keywords: 'mba business executive management leadership finance consulting',
       icon: 'business_center'
     },
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate',
       description: 'Auditing, corporate taxation, financial modeling, portfolio management, and banking.',
-      url: '/programs/isb-acf-bachelor-of-science-in-accounting-and-finance/',
+      url: '/programs/bsaf-isb/',
       keywords: 'acf accounting finance audit banking tax investment accounts',
       icon: 'account_balance'
     },
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       category: 'Programs',
       level: 'Undergraduate (5 Years)',
       description: '5-year comprehensive legal education covering corporate law, constitutional law, and litigation.',
-      url: '/programs/isb-law-bachelor-of-laws-llb/',
+      url: '/programs/llb-isb/',
       keywords: 'llb law legal advocate attorney constitutional lat judiciary',
       icon: 'gavel'
     },
