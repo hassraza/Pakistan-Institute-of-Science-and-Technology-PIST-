@@ -1,17 +1,17 @@
 <!-- Top Utility Bar -->
-<div class="utility-bar py-2 px-gutter w-full z-50 relative">
-  <div class="max-w-container-max mx-auto flex flex-wrap justify-between items-center gap-4">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-[16px]">campaign</span>
-      <span>Admissions Open Fall 2027</span>
+<div class="utility-bar py-1.5 sm:py-2 px-3 sm:px-gutter w-full z-50 relative">
+  <div class="max-w-container-max mx-auto flex justify-between items-center gap-2 sm:gap-4 text-[11px] sm:text-xs">
+    <div class="flex items-center gap-1.5 font-semibold tracking-wide truncate">
+      <span class="material-symbols-outlined text-[15px] text-tertiary-fixed flex-shrink-0">campaign</span>
+      <span class="truncate">Admissions Open Fall 2027</span>
     </div>
-    <div class="flex items-center gap-4 sm:gap-6">
-      <a class="hover:underline transition-all hidden sm:inline" href="{% url 'students:dashboard' %}">Student Portal</a>
-      <a class="gold-cta px-3 sm:px-4 py-1 rounded font-bold hover:brightness-110 transition-all shadow-sm text-xs sm:text-sm" href="{% url 'admissions:programs' %}">Apply Now</a>
-      <button id="global-search-trigger" onclick="openSearchModal()" type="button" aria-label="Open Search Modal" aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-1.5 cursor-pointer hover:text-tertiary-fixed text-white/90 hover:opacity-100 transition-all text-xs font-medium bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded focus:outline-none focus:ring-1 focus:ring-tertiary-fixed" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
-        <span class="material-symbols-outlined text-[16px]">search</span>
+    <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+      <a class="hover:underline transition-all text-white/95 hover:text-white px-1.5 py-0.5 rounded font-semibold text-[11px] sm:text-xs whitespace-nowrap" href="{% url 'students:dashboard' %}">Student Portal</a>
+      <a class="gold-cta px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded font-bold hover:brightness-110 transition-all shadow-sm text-[11px] sm:text-xs whitespace-nowrap" href="{% url 'admissions:programs' %}">Apply Now</a>
+      <button id="global-search-trigger" onclick="openSearchModal()" type="button" aria-label="Open Search Modal" aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-1 cursor-pointer hover:text-tertiary-fixed text-white/95 hover:opacity-100 transition-all text-[11px] sm:text-xs font-semibold bg-white/15 hover:bg-white/25 px-2 py-0.5 sm:py-1 rounded focus:outline-none whitespace-nowrap" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+        <span class="material-symbols-outlined text-[15px]">search</span>
         <span>Search</span>
-        <kbd class="hidden sm:inline-block text-[10px] bg-white/20 text-white/90 px-1.5 py-0.5 rounded font-mono ml-1">⌘K</kbd>
+        <kbd class="hidden sm:inline-block text-[10px] bg-white/20 text-white/90 px-1 py-0.2 rounded font-mono ml-0.5">⌘K</kbd>
       </button>
     </div>
   </div>
@@ -20,9 +20,9 @@
 <nav class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-40 transition-all duration-300">
   <div class="max-w-container-max mx-auto px-gutter flex items-center justify-between h-20">
     <!-- Brand Logo -->
-    <a class="flex items-center gap-3" href="{% url 'admissions:home' %}">
-      <img alt="PIST University Logo" class="h-12 w-12 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8whpHVniO4GUmQGsqhLQqn4IqLfSNSA1PgXGzlvF3S8mIg3UC9pi9v6BZbZQt4yL4a0L51HUKB93UJrwV72ZqLIw6pJxxakZz_HZZzhv5al8Uzmj9J4HLnjZ5jxb7-fYBZhBpnlzeIn6CtDsMNTsXJ_jKQNtH6nSkspzsslMX44gKUdVATn7UzWrx1RYq6ghXNy2hHBwQPvXvyh64cFRLk1e7juyvAlk6NmUCVR1pM3dLcJdfZF07LQ"/>
-      <span class="font-title-lg text-title-lg font-bold text-primary dark:text-inverse-primary hidden sm:block">PIST</span>
+    <a class="flex items-center gap-2.5 sm:gap-3" href="{% url 'admissions:home' %}">
+      <img alt="PIST University Logo" class="h-10 sm:h-12 w-10 sm:w-12 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8whpHVniO4GUmQGsqhLQqn4IqLfSNSA1PgXGzlvF3S8mIg3UC9pi9v6BZbZQt4yL4a0L51HUKB93UJrwV72ZqLIw6pJxxakZz_HZZzhv5al8Uzmj9J4HLnjZ5jxb7-fYBZhBpnlzeIn6CtDsMNTsXJ_jKQNtH6nSkspzsslMX44gKUdVATn7UzWrx1RYq6ghXNy2hHBwQPvXvyh64cFRLk1e7juyvAlk6NmUCVR1pM3dLcJdfZF07LQ"/>
+      <span class="font-title-lg text-title-lg font-bold text-primary dark:text-inverse-primary">PIST</span>
     </a>
     <!-- Navigation Links -->
     <div class="hidden md:flex items-center gap-8">
