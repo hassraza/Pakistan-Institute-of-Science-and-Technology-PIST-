@@ -92,8 +92,9 @@ def applications(request):
 
 @staff_required
 def application_detail(request, application_uuid):
+    from students.models import AcademicDocument
     applicant = get_object_or_404(
-        PISTApplicant.objects.select_related('campus', 'program__department').prefetch_related('test_scores'),
+        PISTApplicant.objects.select_related('campus', 'program__department', 'student').prefetch_related('test_scores'),
         pk=application_uuid,
     )
     form = ApplicationStatusForm(request.POST or None, instance=applicant)
@@ -101,7 +102,54 @@ def application_detail(request, application_uuid):
         form.save()
         messages.success(request, 'Application status updated successfully.')
         return redirect('university_admin:application_detail', application_uuid=applicant.pk)
-    return render(request, 'university_admin/application_detail.html', {'application': applicant, 'form': form})
+    
+    documents = []
+    if applicant.student:
+        documents = AcademicDocument.objects.filter(student=applicant.student).order_by('-uploaded_at')
+
+    return render(
+        request, 
+        'university_admin/application_detail.html', 
+        {
+            'application': applicant, 
+            'form': form,
+            'documents': documents,
+        }
+    )
+
+
+@staff_required
+def document_review_action(request, document_id):
+    from students.models import AcademicDocument
+    document = get_object_or_404(AcademicDocument.objects.select_related('student'), pk=document_id)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action', '').strip().lower()
+        rejection_reason = request.POST.get('rejection_reason', '').strip()
+
+        if action == 'approve':
+            document.verification_status = AcademicDocument.VerificationStatus.VERIFIED
+            document.rejection_reason = ''
+            document.reviewed_by = request.user
+            document.reviewed_at = timezone.now()
+            document.save()
+            messages.success(request, f'{document.get_document_type_display()} has been marked as Verified.')
+        elif action == 'reject':
+            document.verification_status = AcademicDocument.VerificationStatus.REJECTED
+            document.rejection_reason = rejection_reason or 'Document is unclear, incomplete, or invalid. Please upload a clear replacement copy.'
+            document.reviewed_by = request.user
+            document.reviewed_at = timezone.now()
+            document.save()
+            messages.warning(request, f'{document.get_document_type_display()} has been marked as Rejected (Needs Re-upload).')
+        else:
+            messages.error(request, 'Invalid review action specified.')
+
+        next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
+        if next_url:
+            return redirect(next_url)
+        return redirect('university_admin:applications')
+
+    raise Http404()
 
 
 @staff_required

@@ -240,6 +240,9 @@ def document_upload(request):
             document.file = form.cleaned_data['file']
             document.file_name = form.cleaned_data['file'].name
             document.verification_status = AcademicDocument.VerificationStatus.PENDING
+            document.rejection_reason = ''
+            document.reviewed_by = None
+            document.reviewed_at = None
             document.save()
         else:
             document = form.save(commit=False)
@@ -248,21 +251,37 @@ def document_upload(request):
             document.save()
         if old_file and old_file.name != document.file.name:
             old_file.delete(save=False)
-        messages.success(request, 'Document uploaded successfully.')
+        messages.success(request, 'Document uploaded successfully and queued for administrative review.')
         return redirect('students:documents')
     return render(request, 'students/document_form.html', {'form': form, 'title': 'Upload academic document'})
 
 
 def _owned_document(request, doc_id):
-    return AcademicDocument.objects.filter(student=request.user.student_profile, pk=doc_id).first()
+    if request.user.is_authenticated and request.user.is_staff:
+        return AcademicDocument.objects.filter(pk=doc_id).first()
+    if request.user.is_authenticated and hasattr(request.user, 'student_profile'):
+        return AcademicDocument.objects.filter(student=request.user.student_profile, pk=doc_id).first()
+    return None
 
 
-@student_required
+@login_required
 def document_view(request, doc_id):
     document = _owned_document(request, doc_id)
-    if not document:
+    if not document or not document.file:
         raise Http404
-    return FileResponse(document.file.open('rb'), as_attachment=False, filename=document.file_name)
+    import mimetypes
+    content_type, _ = mimetypes.guess_type(document.file_name or document.file.name)
+    if not content_type:
+        content_type = 'application/pdf' if document.is_pdf else ('image/png' if document.is_image else 'application/octet-stream')
+    
+    as_attachment = request.GET.get('download') == '1'
+    try:
+        response = FileResponse(document.file.open('rb'), content_type=content_type, as_attachment=as_attachment, filename=document.file_name)
+        if not as_attachment:
+            response['Content-Disposition'] = f'inline; filename="{document.file_name}"'
+        return response
+    except (FileNotFoundError, ValueError):
+        raise Http404
 
 
 @student_required
@@ -276,10 +295,13 @@ def document_replace(request, doc_id):
         document.file = form.cleaned_data['file']
         document.file_name = form.cleaned_data['file'].name
         document.verification_status = AcademicDocument.VerificationStatus.PENDING
+        document.rejection_reason = ''
+        document.reviewed_by = None
+        document.reviewed_at = None
         document.save()
-        if old_file.name != document.file.name:
+        if old_file and old_file.name != document.file.name:
             old_file.delete(save=False)
-        messages.success(request, 'Document replaced and sent for review again.')
+        messages.success(request, 'Document replaced and submitted for verification review.')
         return redirect('students:documents')
     return render(request, 'students/document_form.html', {'form': form, 'title': 'Replace academic document', 'document': document})
 

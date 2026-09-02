@@ -311,6 +311,14 @@
 
     // --- Campuses & Locations ---
     {
+      title: 'Our Campuses Across Pakistan',
+      category: 'Campuses',
+      description: 'Explore all university campuses: Islamabad Main Campus (ISB), Lahore Campus (LHR), and Karachi Campus (KHI).',
+      url: '/campuses/',
+      keywords: 'our campuses network islamabad lahore karachi locations directory map all branches',
+      icon: 'apartment'
+    },
+    {
       title: 'Islamabad Main Campus (ISB)',
       category: 'Campuses',
       description: 'Plot H-12, Sector H-12, Islamabad. Flagship university campus featuring advanced research facilities.',
@@ -404,7 +412,7 @@
 
   function openSearchModal() {
     if (!searchModal) return;
-    closeMobileMenu();
+    if (window.closeMobileNav) window.closeMobileNav();
     searchModal.classList.remove('opacity-0', 'pointer-events-none');
     searchModal.classList.add('opacity-100', 'pointer-events-auto');
     if (searchModalBox) {

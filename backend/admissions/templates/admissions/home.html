@@ -66,14 +66,14 @@
 </section>
 
 <!-- Campuses Section -->
-<section class="py-xl bg-surface">
-  <div class="max-w-container-max mx-auto px-gutter">
+<section id="campuses" class="py-xl bg-surface scroll-mt-24" aria-labelledby="campuses-heading">
+  <div class="max-w-container-max mx-auto px-gutter" id="campuses-section">
     <div class="flex justify-between items-end mb-10">
       <div>
         <span class="text-secondary font-bold tracking-widest text-[12px] uppercase">Our Network</span>
-        <h2 class="text-3xl font-bold text-primary mt-2">Campuses Across Pakistan</h2>
+        <h2 id="campuses-heading" class="text-3xl font-bold text-primary mt-2">Campuses Across Pakistan</h2>
       </div>
-      <a class="hidden md:block text-secondary font-bold hover:underline flex items-center gap-1" href="{% url 'admissions:campuses' %}">View All Campuses <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+      <a class="hidden md:flex text-secondary font-bold hover:underline items-center gap-1" href="{% url 'admissions:campuses' %}">View All Campuses <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       {% for campus in campuses %}

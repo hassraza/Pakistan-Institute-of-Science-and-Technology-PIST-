@@ -1,55 +1,279 @@
 {% extends 'base.html' %}
-{% block title %}Student Life | PIST{% endblock %}
+{% block title %}Campus Life | PIST{% endblock %}
+{% block meta_description %}Discover vibrant campus life at PIST: active student societies, sports tournaments, modern hostel facilities, cultural festivals, and comprehensive student support services.{% endblock %}
+
 {% block content %}
-<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl">
-  <div class="max-w-4xl mx-auto text-center mb-16">
-    <span class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-sm">Campus Experience</span>
-    <h1 class="font-display-lg text-display-lg text-primary mb-xs">Student Life at PIST</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant">
-      Beyond academics, PIST offers a vibrant campus life that fosters personal growth, leadership, and lifelong friendships.
-    </p>
+<!-- Hero Section -->
+<section class="bg-primary text-white py-16 border-b-4 border-secondary relative overflow-hidden">
+  <div class="max-w-container-max mx-auto px-gutter relative z-10">
+    <div class="max-w-3xl">
+      <span class="font-label-md text-tertiary-fixed tracking-widest uppercase font-bold mb-2 inline-block">Campus Experience</span>
+      <h1 class="font-display-lg text-display-lg font-bold text-white mb-4 leading-tight">Vibrant Campus Life at PIST</h1>
+      <p class="font-body-lg text-white/90 text-lg leading-relaxed mb-6">
+        Beyond world-class academics and research labs, life at PIST is powered by passionate student communities, dynamic campus traditions, championship athletics, and supportive residential communities across Islamabad, Lahore, and Karachi.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#societies" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">groups</span> Clubs & Societies
+        </a>
+        <a href="#events" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">celebration</span> Events & Festivals
+        </a>
+        <a href="#hostels" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">night_shelter</span> Hostel Life
+        </a>
+        <a href="#sports" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">sports_cricket</span> Sports & Fitness
+        </a>
+        <a href="#facilities" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2 rounded transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">domain</span> Campus Facilities
+        </a>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
-      <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-6">
-        <span class="material-symbols-outlined">groups</span>
-      </div>
-      <h2 class="text-2xl font-bold text-primary mb-4">Societies & Clubs</h2>
-      <p class="text-on-surface-variant leading-relaxed">
-        From the Computer Science Society to the Debating Club, our student-run organizations provide platforms to pursue passions, develop new skills, and organize national-level events and competitions.
-      </p>
-    </article>
+<main class="flex-grow max-w-container-max w-full mx-auto px-gutter py-xl space-y-16">
 
-    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
-      <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-6">
-        <span class="material-symbols-outlined">sports_basketball</span>
+  <!-- 1. Student Societies & Clubs -->
+  <section id="societies" class="scroll-mt-24">
+    <div class="flex justify-between items-end mb-8 border-b border-outline-variant pb-4">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-xs uppercase">Student Engagement</span>
+        <h2 class="text-3xl font-bold text-primary mt-1">Clubs & Student Societies</h2>
       </div>
-      <h2 class="text-2xl font-bold text-primary mb-4">Sports & Athletics</h2>
-      <p class="text-on-surface-variant leading-relaxed">
-        Our campuses feature modern sports complexes, including cricket grounds, football fields, and indoor gymnasiums. We encourage physical fitness and host annual inter-departmental and inter-university tournaments.
-      </p>
-    </article>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-4">
+            <span class="material-symbols-outlined">terminal</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary mb-2">PIST Computing Society (PCS)</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+            Organizes national-level hackathons, coding bootcamps, algorithmic competitions, and open-source tech meetups featuring industry tech leads.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-surface-variant text-xs text-secondary font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">verified</span> Active across all campuses
+        </div>
+      </article>
 
-    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
-      <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-6">
-        <span class="material-symbols-outlined">night_shelter</span>
-      </div>
-      <h2 class="text-2xl font-bold text-primary mb-4">Hostel Accommodations</h2>
-      <p class="text-on-surface-variant leading-relaxed">
-        For out-of-city students, PIST provides secure and comfortable on-campus hostel facilities. The hostels offer mess services, common rooms, and high-speed internet, ensuring a conducive living environment.
-      </p>
-    </article>
+      <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-4">
+            <span class="material-symbols-outlined">smart_toy</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary mb-2">Robotics & AI Guild</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+            Hands-on hardware labs, autonomous drone challenges, RoboWars competitions, and computer vision workshop series.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-surface-variant text-xs text-secondary font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">verified</span> Hardware & Innovation Hub
+        </div>
+      </article>
 
-    <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm hover:shadow-md transition-shadow">
-      <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-6">
-        <span class="material-symbols-outlined">support_agent</span>
+      <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-4">
+            <span class="material-symbols-outlined">record_voice_over</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary mb-2">Literary & Debating Society</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+            Parliamentary debate tournaments, bilingual poetry symposiums, Model United Nations (MUN), and creative writing publications.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-surface-variant text-xs text-secondary font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">verified</span> All-Pakistan Debate Winners
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 2. Events & Campus Traditions -->
+  <section id="events" class="scroll-mt-24">
+    <div class="flex justify-between items-end mb-8 border-b border-outline-variant pb-4">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-xs uppercase">Traditions & Festivals</span>
+        <h2 class="text-3xl font-bold text-primary mt-1">Campus Events & Annual Traditions</h2>
       </div>
-      <h2 class="text-2xl font-bold text-primary mb-4">Student Support Services</h2>
-      <p class="text-on-surface-variant leading-relaxed">
-        We prioritize student well-being through dedicated counseling centers, career placement offices, and academic advisory services to support students throughout their university journey.
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex items-start gap-4">
+        <div class="w-14 h-14 bg-secondary/15 text-secondary rounded-lg flex flex-col items-center justify-center shrink-0 font-bold">
+          <span class="text-xs uppercase">OCT</span>
+          <span class="text-xl leading-none">24</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-primary mb-1">PIST National TechFest & Hackathon</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-2">
+            A 48-hour continuous innovation marathon bringing together over 1,200 student coders, designers, and innovators from across Pakistan.
+          </p>
+          <span class="text-xs font-semibold bg-surface-container text-on-surface-variant px-2 py-0.5 rounded">All Campuses</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex items-start gap-4">
+        <div class="w-14 h-14 bg-primary/10 text-primary rounded-lg flex flex-col items-center justify-center shrink-0 font-bold">
+          <span class="text-xs uppercase">DEC</span>
+          <span class="text-xl leading-none">15</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-primary mb-1">Cultural Harmony & Arts Gala</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-2">
+            Celebration of regional Pakistani traditions, traditional musical performances, folk stalls, art exhibitions, and culinary festivals.
+          </p>
+          <span class="text-xs font-semibold bg-surface-container text-on-surface-variant px-2 py-0.5 rounded">Main Amphitheater</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Hostel Life & Residential Services -->
+  <section id="hostels" class="scroll-mt-24">
+    <div class="flex justify-between items-end mb-8 border-b border-outline-variant pb-4">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-xs uppercase">Residential Community</span>
+        <h2 class="text-3xl font-bold text-primary mt-1">Hostel Life & Accommodations</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-surface rounded-md border border-outline-variant p-6 flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-[20px]">security</span>
+          </div>
+          <h3 class="text-lg font-bold text-primary mb-2">Safe & Modern Facilities</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            Separate on-campus residential wings for male and female students with 24/7 electronic access control, CCTV monitoring, and dedicated resident wardens.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-surface rounded-md border border-outline-variant p-6 flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-[20px]">restaurant</span>
+          </div>
+          <h3 class="text-lg font-bold text-primary mb-2">Hygienic Dining & Mess</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            Nutritious, multi-cuisine meal plans prepared under strict quality guidelines with dedicated dining halls, snack kiosks, and student mess committees.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-surface rounded-md border border-outline-variant p-6 flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-[20px]">wifi</span>
+          </div>
+          <h3 class="text-lg font-bold text-primary mb-2">High-Speed Wi-Fi & Study Lounges</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            Round-the-clock power backup, high-speed fiber internet, quiet study rooms, and recreational common rooms equipped with indoor games.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Sports & Athletics -->
+  <section id="sports" class="scroll-mt-24">
+    <div class="flex justify-between items-end mb-8 border-b border-outline-variant pb-4">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-xs uppercase">Athletics & Fitness</span>
+        <h2 class="text-3xl font-bold text-primary mt-1">Sports & Recreation</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm">
+        <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center text-2xl mb-4">
+          <span class="material-symbols-outlined">sports_cricket</span>
+        </div>
+        <h3 class="text-xl font-bold text-primary mb-3">Outdoor Sports Grounds</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+          Full-sized floodlit cricket stadium, FIFA-standard turf football field, athletic tracks, and multi-purpose outdoor basketball and volleyball courts.
+        </p>
+        <ul class="text-xs text-on-surface-variant space-y-1.5 font-medium">
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span> Floodlit Evening Practice Matches</li>
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span> Annual Inter-Campus Sports Olympiad</li>
+        </ul>
+      </article>
+
+      <article class="bg-white rounded-md border border-outline-variant p-8 shadow-sm">
+        <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center text-2xl mb-4">
+          <span class="material-symbols-outlined">fitness_center</span>
+        </div>
+        <h3 class="text-xl font-bold text-primary mb-3">Indoor Gymnasium & Complex</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+          State-of-the-art strength training and cardio machines, indoor badminton courts, table tennis arenas, and certified fitness instructors.
+        </p>
+        <ul class="text-xs text-on-surface-variant space-y-1.5 font-medium">
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span> Dedicated Male and Female Gym Timings</li>
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span> Certified Personal Fitness Coaches</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- 5. Campus Facilities & Student Support -->
+  <section id="facilities" class="scroll-mt-24">
+    <div class="flex justify-between items-end mb-8 border-b border-outline-variant pb-4">
+      <div>
+        <span class="text-secondary font-bold tracking-widest text-xs uppercase">Infrastructure</span>
+        <h2 class="text-3xl font-bold text-primary mt-1">Campus Facilities & Well-being</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-md border border-outline-variant shadow-sm">
+        <span class="material-symbols-outlined text-primary text-3xl mb-3 block">menu_book</span>
+        <h3 class="font-bold text-primary mb-2">Central Library</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Access to over 100,000 physical volumes, IEEE/ACM digital libraries, and quiet study pods.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-md border border-outline-variant shadow-sm">
+        <span class="material-symbols-outlined text-primary text-3xl mb-3 block">medical_services</span>
+        <h3 class="font-bold text-primary mb-2">Healthcare Clinic</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">24/7 basic medical care, first-aid response, certified campus physicians, and ambulance service.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-md border border-outline-variant shadow-sm">
+        <span class="material-symbols-outlined text-primary text-3xl mb-3 block">psychology</span>
+        <h3 class="font-bold text-primary mb-2">Counseling & Wellness</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Confidential psychological counseling, academic mentorship, and stress management workshops.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-md border border-outline-variant shadow-sm">
+        <span class="material-symbols-outlined text-primary text-3xl mb-3 block">directions_bus</span>
+        <h3 class="font-bold text-primary mb-2">Transport Shuttle</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Dedicated university buses and point-to-point shuttle routes covering major city zones.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Box -->
+  <section class="bg-secondary/10 border border-secondary/20 rounded-lg p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div>
+      <h2 class="text-2xl font-bold text-primary mb-2">Ready to experience life at PIST?</h2>
+      <p class="text-sm text-on-surface-variant max-w-xl">
+        Explore academic offerings, submit your admission application, and become part of our active university community.
       </p>
-    </article>
-  </div>
+    </div>
+    <div class="flex flex-wrap gap-3 shrink-0">
+      <a href="{% url 'admissions:programs' %}" class="gold-cta font-bold text-xs px-6 py-3 rounded-sm shadow hover:brightness-110 transition-all">
+        Explore Programs
+      </a>
+      <a href="{% url 'admissions:admission_procedure' %}" class="bg-primary text-white font-bold text-xs px-6 py-3 rounded-sm shadow hover:bg-primary-container transition-all">
+        How to Apply
+      </a>
+    </div>
+  </section>
+
 </main>
 {% endblock %}
+

@@ -1,5 +1,8 @@
 {% extends 'students/base_student.html' %}
-{% block title %}Academic Documents | PIST{% endblock %}
+{% load static %}
+
+{% block title %}Academic Documents | PIST Student Portal{% endblock %}
+
 {% block content %}
 <div class="max-w-5xl mx-auto space-y-6">
     
@@ -13,8 +16,8 @@
         <span class="text-primary font-bold">Academic Documents</span>
     </nav>
 
-    <!-- Profile Heading -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-outline-variant p-6 rounded-md shadow-sm mb-6">
+    <!-- Header Banner -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-outline-variant p-6 rounded-md shadow-sm">
         <div>
             <span class="font-label-md text-label-md text-secondary tracking-widest uppercase block mb-1">Student Records</span>
             <h1 class="font-headline-md text-xl sm:text-headline-md text-primary mb-1">Academic Documents</h1>
@@ -25,50 +28,168 @@
         </a>
     </div>
 
-    <!-- Document List -->
+    <!-- Verification Process Clarity Callout Box -->
+    <div class="bg-secondary/10 border-l-4 border-secondary border-y border-r border-secondary/20 rounded-md p-4 sm:p-5 flex items-start gap-3.5 shadow-sm">
+        <span class="material-symbols-outlined text-secondary text-2xl mt-0.5 shrink-0">verified_user</span>
+        <div>
+            <h3 class="font-title-md text-sm sm:text-base font-bold text-primary mb-1">Upload Confirmation & Manual Review Pipeline</h3>
+            <p class="font-body-sm text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                <strong>Upload Confirmed:</strong> Your documents have been securely received. The Admissions Committee manually verifies all academic credentials before issuing test clearance and merit lists. No further action is required unless a document is marked <strong class="text-error font-bold">"Needs Re-upload"</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Document List Cards -->
     <div class="space-y-4">
         {% for row in document_rows %}
-            <article class="bg-white border border-outline-variant border-l-4 {% if row.document %}border-l-secondary{% else %}border-l-outline-variant{% endif %} rounded-md shadow-sm p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-md">
+            <article class="bg-white border border-outline-variant border-l-4 {% if row.document %}{% if row.document.verification_status == 'VERIFIED' %}border-l-emerald-600{% elif row.document.verification_status == 'REJECTED' %}border-l-error{% else %}border-l-amber-500{% endif %}{% else %}border-l-outline-variant{% endif %} rounded-md shadow-sm p-5 sm:p-6 transition-all hover:shadow-md">
                 
-                <div class="flex-1">
-                    <strong class="font-title-lg text-title-lg text-primary block mb-1">
-                        {% if row.document %}{{ row.document.get_document_type_display }}{% else %}{{ row.label }}{% endif %}
-                    </strong>
-                    {% if row.document %}
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px] text-outline">description</span>
-                            <span class="font-body-sm text-body-sm text-on-surface-variant font-bold">{{ row.document.file_name }}</span>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    
+                    <!-- Left: Document Details -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap mb-1">
+                            <strong class="font-title-lg text-base sm:text-title-lg text-primary">
+                                {% if row.document %}{{ row.document.get_document_type_display }}{% else %}{{ row.label }}{% endif %}
+                            </strong>
+                            {% if row.document %}
+                                <span class="text-[10px] font-mono font-bold bg-surface-container px-2 py-0.5 rounded text-on-surface-variant border border-outline-variant/60">
+                                    {{ row.document.file_extension|default:'FILE' }}
+                                </span>
+                                {% if row.document.file_size_display %}
+                                    <span class="text-[10px] text-outline font-semibold">
+                                        {{ row.document.file_size_display }}
+                                    </span>
+                                {% endif %}
+                            {% endif %}
                         </div>
-                        <small class="font-label-md text-label-md text-outline block mt-1">Uploaded on {{ row.document.uploaded_at|date:'j F Y, h:i A' }}</small>
-                    {% else %}
-                        <p class="font-body-sm text-body-sm text-error/80 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">error</span> Missing document &bull; Required for admissions eligibility review</p>
-                    {% endif %}
-                </div>
-                
-                <div class="flex-shrink-0">
-                    {% if row.document %}
-                        {% if row.document.verification_status == 'Verified' %}
-                             <span class="inline-flex items-center gap-1 font-label-md text-label-md bg-secondary/10 text-secondary px-3 py-1 rounded-sm uppercase tracking-widest font-bold"><span class="material-symbols-outlined text-[14px]">check_circle</span> Verified</span>
-                        {% elif row.document.verification_status == 'Rejected' %}
-                             <span class="inline-flex items-center gap-1 font-label-md text-label-md bg-error/10 text-error px-3 py-1 rounded-sm uppercase tracking-widest font-bold"><span class="material-symbols-outlined text-[14px]">cancel</span> Rejected</span>
+
+                        {% if row.document %}
+                            <!-- Clickable File Name (Opens Preview) -->
+                            <button 
+                                type="button" 
+                                onclick="openDocPreview({
+                                    id: '{{ row.document.pk }}',
+                                    title: '{{ row.document.get_document_type_display|escapejs }}',
+                                    fileName: '{{ row.document.file_name|escapejs }}',
+                                    fileSize: '{{ row.document.file_size_display|escapejs }}',
+                                    fileExt: '{{ row.document.file_extension|escapejs }}',
+                                    isImage: {% if row.document.is_image %}true{% else %}false{% endif %},
+                                    isPdf: {% if row.document.is_pdf %}true{% else %}false{% endif %},
+                                    fileUrl: '{% url 'students:document_view' row.document.pk %}',
+                                    downloadUrl: '{% url 'students:document_view' row.document.pk %}?download=1',
+                                    status: '{{ row.document.verification_status }}',
+                                    rejectionReason: '{{ row.document.rejection_reason|escapejs }}',
+                                    replaceUrl: '{% url 'students:document_replace' row.document.pk %}'
+                                })" 
+                                class="text-left group flex items-center gap-1.5 text-xs sm:text-sm text-on-surface-variant hover:text-secondary font-medium transition-colors cursor-pointer"
+                                title="Click to preview this document"
+                            >
+                                <span class="material-symbols-outlined text-[18px] text-outline group-hover:text-secondary transition-colors">
+                                    {% if row.document.is_pdf %}picture_as_pdf{% elif row.document.is_image %}image{% else %}description{% endif %}
+                                </span>
+                                <span class="group-hover:underline truncate max-w-md font-semibold">{{ row.document.file_name }}</span>
+                                <span class="material-symbols-outlined text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">visibility</span>
+                            </button>
+
+                            <small class="font-label-md text-label-md text-outline block mt-1.5">
+                                Uploaded on {{ row.document.uploaded_at|date:'j F Y, h:i A' }}
+                            </small>
+
+                            <!-- Rejection Reason Callout (If Rejected) -->
+                            {% if row.document.verification_status == 'REJECTED' %}
+                                <div class="mt-3 bg-error/10 border border-error/30 rounded p-3 text-xs text-error flex items-start gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-error shrink-0 mt-0.5">feedback</span>
+                                    <div class="flex-1">
+                                        <strong class="block font-bold">Resubmission Requested by Admissions Office:</strong>
+                                        <p class="mt-0.5 text-error font-medium">
+                                            {{ row.document.rejection_reason|default:"The submitted document was unclear, incomplete, or invalid. Please upload a clear replacement." }}
+                                        </p>
+                                    </div>
+                                    <a href="{% url 'students:document_replace' row.document.pk %}" class="bg-error text-white font-bold text-xs px-2.5 py-1 rounded hover:bg-error-container transition-colors shrink-0">
+                                        Re-upload Now
+                                    </a>
+                                </div>
+                            {% endif %}
                         {% else %}
-                             <span class="inline-flex items-center gap-1 font-label-md text-label-md bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-sm uppercase tracking-widest font-bold"><span class="material-symbols-outlined text-[14px]">pending</span> Pending</span>
+                            <p class="font-body-sm text-xs sm:text-sm text-error/90 flex items-center gap-1.5 mt-1">
+                                <span class="material-symbols-outlined text-[16px] text-error">warning</span>
+                                <span>Missing document &bull; Required for admissions eligibility review</span>
+                            </p>
                         {% endif %}
-                    {% else %}
-                        <span class="inline-flex items-center gap-1 font-label-md text-label-md bg-error/10 text-error px-3 py-1 rounded-sm uppercase tracking-widest font-bold"><span class="material-symbols-outlined text-[14px]">warning</span> Outstanding</span>
-                    {% endif %}
+                    </div>
+                    
+                    <!-- Middle: Status Badge -->
+                    <div class="flex-shrink-0">
+                        {% if row.document %}
+                            {% if row.document.verification_status == 'VERIFIED' or row.document.verification_status == 'Verified' %}
+                                <span class="inline-flex items-center gap-1.5 font-label-md text-xs bg-emerald-100 text-emerald-900 dark:bg-emerald-950/80 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-xs">
+                                    <span class="material-symbols-outlined text-[16px] text-emerald-600 dark:text-emerald-400">check_circle</span>
+                                    <span>Verified</span>
+                                </span>
+                            {% elif row.document.verification_status == 'REJECTED' or row.document.verification_status == 'Rejected' %}
+                                <span class="inline-flex items-center gap-1.5 font-label-md text-xs bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-200 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-xs">
+                                    <span class="material-symbols-outlined text-[16px] text-rose-600 dark:text-rose-400">error</span>
+                                    <span>Needs Re-upload</span>
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 font-label-md text-xs bg-amber-100 text-amber-950 dark:bg-amber-950/80 dark:text-amber-200 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-xs" title="Uploaded successfully. Awaiting administrative review.">
+                                    <span class="material-symbols-outlined text-[16px] text-amber-600 dark:text-amber-400 animate-spin-slow">hourglass_top</span>
+                                    <span>Uploaded — Under Review</span>
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <span class="inline-flex items-center gap-1.5 font-label-md text-xs bg-surface-container text-outline border border-outline-variant px-3 py-1.5 rounded-full uppercase tracking-wider font-bold">
+                                <span class="material-symbols-outlined text-[16px]">pending</span>
+                                <span>Not Uploaded</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Right: Actions -->
+                    <div class="flex items-center gap-2 w-full md:w-auto pt-3 md:pt-0 border-t border-outline-variant/60 md:border-t-0 md:pl-4 md:border-l">
+                        {% if row.document %}
+                            <!-- Preview Modal Trigger Button -->
+                            <button 
+                                type="button" 
+                                onclick="openDocPreview({
+                                    id: '{{ row.document.pk }}',
+                                    title: '{{ row.document.get_document_type_display|escapejs }}',
+                                    fileName: '{{ row.document.file_name|escapejs }}',
+                                    fileSize: '{{ row.document.file_size_display|escapejs }}',
+                                    fileExt: '{{ row.document.file_extension|escapejs }}',
+                                    isImage: {% if row.document.is_image %}true{% else %}false{% endif %},
+                                    isPdf: {% if row.document.is_pdf %}true{% else %}false{% endif %},
+                                    fileUrl: '{% url 'students:document_view' row.document.pk %}',
+                                    downloadUrl: '{% url 'students:document_view' row.document.pk %}?download=1',
+                                    status: '{{ row.document.verification_status }}',
+                                    rejectionReason: '{{ row.document.rejection_reason|escapejs }}',
+                                    replaceUrl: '{% url 'students:document_replace' row.document.pk %}'
+                                })"
+                                class="p-2 text-primary hover:text-secondary hover:bg-surface-container rounded-sm transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold" 
+                                title="Preview Document"
+                            >
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                <span class="hidden sm:inline">Preview</span>
+                            </button>
+
+                            <a class="p-2 text-primary hover:text-secondary hover:bg-surface-container rounded-sm transition-colors flex items-center gap-1 text-xs font-semibold" href="{% url 'students:document_replace' row.document.pk %}" title="Replace / Update Document">
+                                <span class="material-symbols-outlined text-[20px]">sync</span>
+                                <span class="hidden sm:inline">Replace</span>
+                            </a>
+
+                            <a class="p-2 text-error hover:bg-error-container rounded-sm transition-colors" href="{% url 'students:document_delete' row.document.pk %}" title="Delete Document">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </a>
+                        {% else %}
+                            <a class="bg-primary text-on-primary font-bold px-4 py-2 rounded-sm hover:bg-primary-container transition-colors text-xs sm:text-sm w-full md:w-auto text-center flex items-center justify-center gap-1.5 shadow-sm" href="{% url 'students:document_upload' %}?type={{ row.type }}">
+                                <span class="material-symbols-outlined text-[16px]">upload</span>
+                                <span>Upload Document</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                    
                 </div>
-                
-                <div class="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t border-outline-variant md:border-t-0 md:pl-4 md:border-l">
-                    {% if row.document %}
-                        <a class="text-primary hover:text-secondary transition-colors" href="{% url 'students:document_view' row.document.pk %}" title="View"><span class="material-symbols-outlined text-[20px]">visibility</span></a>
-                        <a class="text-primary hover:text-secondary transition-colors" href="{% url 'students:document_replace' row.document.pk %}" title="Replace"><span class="material-symbols-outlined text-[20px]">sync</span></a>
-                        <a class="text-error hover:text-on-error-container transition-colors" href="{% url 'students:document_delete' row.document.pk %}" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></a>
-                    {% else %}
-                        <a class="bg-primary text-on-primary font-bold px-4 py-2 rounded-sm hover:bg-primary-container transition-colors text-sm w-full md:w-auto text-center" href="{% url 'students:document_upload' %}?type={{ row.type }}">Upload Document</a>
-                    {% endif %}
-                </div>
-                
             </article>
         {% empty %}
             <div class="bg-surface-variant p-10 rounded-md border-2 border-dashed border-outline-variant text-center">
@@ -79,17 +200,279 @@
         {% endfor %}
     </div>
 
-    <!-- Guidelines -->
+    <!-- Upload Guidelines Card -->
     <div class="bg-surface-container-low border border-outline-variant rounded-md p-6 mt-8 shadow-sm">
         <h3 class="font-title-md text-title-md text-primary mb-3 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px]">info</span> Document Upload Guidelines
+            <span class="material-symbols-outlined text-[20px] text-secondary">info</span> Document Upload Guidelines & Requirements
         </h3>
         <ul class="list-disc pl-5 font-body-sm text-body-sm text-on-surface-variant space-y-2">
-            <li>Supported formats: PDF, JPG, PNG (Maximum file size: 5MB per document).</li>
-            <li>Ensure candidate name, father's name, roll number, and obtained marks are clearly visible.</li>
-            <li>Do not upload blurred, cropped, or password-protected files.</li>
+            <li><strong>Supported Formats:</strong> PDF (.pdf), JPEG (.jpg, .jpeg), PNG (.png), and WebP (.webp). Maximum file size: 5MB per document.</li>
+            <li><strong>Legibility:</strong> Ensure candidate name, father's name, roll number, and obtained marks are sharp and unobstructed.</li>
+            <li><strong>Verification Standards:</strong> The admissions board verifies transcripts against original board registers before issuing merit list positions.</li>
+            <li><strong>Prohibited:</strong> Do not submit cropped edges, blurred smartphone scans, or password-protected PDF files.</li>
         </ul>
     </div>
 
 </div>
+
+<!-- ============================================================ -->
+<!-- Interactive Document Preview Modal Component                 -->
+<!-- ============================================================ -->
+<div id="doc-preview-backdrop" onclick="closeDocPreview()" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[150] opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
+
+<div id="doc-preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-modal-title" class="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-200">
+    <div id="doc-preview-box" class="w-full max-w-4xl bg-surface rounded-xl shadow-2xl border border-outline-variant overflow-hidden flex flex-col max-h-[92vh] transform scale-95 transition-transform duration-200">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline-variant bg-surface-container-low">
+            <div class="min-w-0 flex-1 pr-4">
+                <div class="flex items-center gap-2">
+                    <h3 id="preview-modal-title" class="font-title-lg text-base sm:text-lg font-bold text-primary truncate">
+                        Document Preview
+                    </h3>
+                    <span id="preview-modal-ext" class="text-[10px] font-mono font-bold bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">
+                        PDF
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-on-surface-variant mt-0.5 truncate">
+                    <span id="preview-modal-filename" class="font-mono truncate font-medium">filename.pdf</span>
+                    <span class="text-outline-variant">&bull;</span>
+                    <span id="preview-modal-filesize" class="text-outline font-semibold">1.2 MB</span>
+                </div>
+            </div>
+
+            <!-- Modal Header Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a 
+                    id="preview-download-btn" 
+                    href="#" 
+                    download 
+                    class="bg-surface hover:bg-surface-container-high text-primary border border-outline-variant px-3 py-1.5 rounded text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Download original file"
+                >
+                    <span class="material-symbols-outlined text-[16px]">download</span>
+                    <span class="hidden sm:inline">Download</span>
+                </a>
+
+                <a 
+                    id="preview-newtab-btn" 
+                    href="#" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="bg-surface hover:bg-surface-container-high text-primary border border-outline-variant p-1.5 rounded text-xs font-bold transition-colors flex items-center cursor-pointer"
+                    title="Open in new window"
+                >
+                    <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                </a>
+
+                <button 
+                    type="button" 
+                    onclick="closeDocPreview()" 
+                    class="p-1.5 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container-high transition-colors cursor-pointer"
+                    aria-label="Close Preview"
+                >
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Optional Rejection Alert Inside Modal -->
+        <div id="preview-modal-rejection" class="hidden bg-error/10 border-b border-error/30 px-5 py-2.5 text-xs text-error flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">error</span>
+                <span><strong>Needs Re-upload:</strong> <span id="preview-rejection-text">Reason</span></span>
+            </div>
+            <a id="preview-replace-btn" href="#" class="bg-error text-white font-bold text-xs px-3 py-1 rounded hover:bg-error-container transition-colors shrink-0">
+                Re-upload
+            </a>
+        </div>
+
+        <!-- Modal Viewer Body -->
+        <div class="flex-1 overflow-auto p-4 sm:p-6 bg-surface-container-lowest flex items-center justify-center min-h-[300px] max-h-[72vh]">
+            
+            <!-- Image Viewer Container -->
+            <div id="preview-image-container" class="hidden w-full flex flex-col items-center justify-center">
+                <div class="relative max-w-full overflow-hidden flex items-center justify-center">
+                    <img 
+                        id="preview-image-elem" 
+                        src="" 
+                        alt="Document Preview" 
+                        class="max-h-[65vh] w-auto max-w-full object-contain rounded border border-outline-variant shadow-md transition-transform duration-200"
+                    />
+                </div>
+                <div class="flex items-center gap-2 mt-3">
+                    <button type="button" onclick="zoomPreview(1.2)" class="text-xs bg-surface border border-outline-variant px-2.5 py-1 rounded font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">zoom_in</span> Zoom In
+                    </button>
+                    <button type="button" onclick="zoomPreview(0.8)" class="text-xs bg-surface border border-outline-variant px-2.5 py-1 rounded font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">zoom_out</span> Zoom Out
+                    </button>
+                    <button type="button" onclick="resetPreviewZoom()" class="text-xs bg-surface border border-outline-variant px-2.5 py-1 rounded font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">restart_alt</span> Fit Screen
+                    </button>
+                </div>
+            </div>
+
+            <!-- PDF / Iframe Viewer Container -->
+            <div id="preview-pdf-container" class="hidden w-full h-full flex flex-col">
+                <iframe 
+                    id="preview-pdf-iframe" 
+                    src="" 
+                    class="w-full h-[65vh] rounded border border-outline-variant bg-white" 
+                    title="PDF Document Viewer"
+                ></iframe>
+            </div>
+
+            <!-- Fallback Container -->
+            <div id="preview-fallback-container" class="hidden text-center p-8">
+                <span class="material-symbols-outlined text-outline text-5xl mb-3">folder_zip</span>
+                <h4 class="font-title-md text-primary font-bold mb-1">Direct Preview Unavailable</h4>
+                <p class="text-xs text-on-surface-variant max-w-md mx-auto mb-4">
+                    This file format cannot be rendered directly in the browser viewer. You can download and inspect it on your device.
+                </p>
+                <a id="preview-fallback-download" href="#" download class="bg-primary text-white text-xs font-bold px-4 py-2 rounded shadow-sm hover:bg-primary-container transition-colors inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">download</span>
+                    <span>Download File</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-5 py-2.5 bg-surface-container-low border-t border-outline-variant flex items-center justify-between text-xs text-on-surface-variant">
+            <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px] text-secondary">lock</span>
+                <span>Securely stored candidate document</span>
+            </span>
+            <button type="button" onclick="closeDocPreview()" class="text-xs font-bold text-primary hover:underline cursor-pointer">
+                Close Preview (ESC)
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let currentZoom = 1.0;
+
+    function openDocPreview(doc) {
+        if (!doc || !doc.fileUrl) return;
+
+        // Populate header details
+        document.getElementById('preview-modal-title').textContent = doc.title || 'Document Preview';
+        document.getElementById('preview-modal-ext').textContent = doc.fileExt || 'FILE';
+        document.getElementById('preview-modal-filename').textContent = doc.fileName || '';
+        document.getElementById('preview-modal-filesize').textContent = doc.fileSize || '';
+
+        // Configure download & new tab buttons
+        document.getElementById('preview-download-btn').href = doc.downloadUrl || doc.fileUrl;
+        document.getElementById('preview-newtab-btn').href = doc.fileUrl;
+        document.getElementById('preview-fallback-download').href = doc.downloadUrl || doc.fileUrl;
+
+        // Rejection banner handling
+        const rejectionBanner = document.getElementById('preview-modal-rejection');
+        const rejectionText = document.getElementById('preview-rejection-text');
+        const replaceBtn = document.getElementById('preview-replace-btn');
+        if (doc.status === 'REJECTED' || doc.status === 'Rejected') {
+            rejectionBanner.classList.remove('hidden');
+            rejectionText.textContent = doc.rejectionReason || 'Please upload a clearer copy.';
+            replaceBtn.href = doc.replaceUrl || '#';
+        } else {
+            rejectionBanner.classList.add('hidden');
+        }
+
+        // Display appropriate viewer container
+        const imgContainer = document.getElementById('preview-image-container');
+        const pdfContainer = document.getElementById('preview-pdf-container');
+        const fallbackContainer = document.getElementById('preview-fallback-container');
+        const imgElem = document.getElementById('preview-image-elem');
+        const pdfIframe = document.getElementById('preview-pdf-iframe');
+
+        imgContainer.classList.add('hidden');
+        pdfContainer.classList.add('hidden');
+        fallbackContainer.classList.add('hidden');
+        resetPreviewZoom();
+
+        if (doc.isImage) {
+            imgElem.src = doc.fileUrl;
+            imgContainer.classList.remove('hidden');
+        } else if (doc.isPdf) {
+            pdfIframe.src = doc.fileUrl;
+            pdfContainer.classList.remove('hidden');
+        } else {
+            fallbackContainer.classList.remove('hidden');
+        }
+
+        // Show Modal
+        const backdrop = document.getElementById('doc-preview-backdrop');
+        const modal = document.getElementById('doc-preview-modal');
+        const box = document.getElementById('doc-preview-box');
+
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100', 'pointer-events-auto');
+
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+
+        box.classList.remove('scale-95');
+        box.classList.add('scale-100');
+
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDocPreview() {
+        const backdrop = document.getElementById('doc-preview-backdrop');
+        const modal = document.getElementById('doc-preview-modal');
+        const box = document.getElementById('doc-preview-box');
+        const imgElem = document.getElementById('preview-image-elem');
+        const pdfIframe = document.getElementById('preview-pdf-iframe');
+
+        if (modal) {
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+        if (box) {
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+        }
+        if (backdrop) {
+            backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+            backdrop.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Clear sources after close transition
+        setTimeout(() => {
+            if (imgElem) imgElem.src = '';
+            if (pdfIframe) pdfIframe.src = '';
+        }, 200);
+
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    function zoomPreview(factor) {
+        currentZoom = Math.min(Math.max(currentZoom * factor, 0.5), 3.0);
+        const imgElem = document.getElementById('preview-image-elem');
+        if (imgElem) {
+            imgElem.style.transform = `scale(${currentZoom})`;
+        }
+    }
+
+    function resetPreviewZoom() {
+        currentZoom = 1.0;
+        const imgElem = document.getElementById('preview-image-elem');
+        if (imgElem) {
+            imgElem.style.transform = 'scale(1)';
+        }
+    }
+
+    // Keyboard Accessibility (Escape to close)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('doc-preview-modal');
+            if (modal && modal.classList.contains('opacity-100')) {
+                closeDocPreview();
+            }
+        }
+    });
+</script>
 {% endblock %}

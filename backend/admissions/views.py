@@ -321,38 +321,63 @@ def track_application(request):
 
 
 def roll_slip(request, application_uuid):
+    import base64
     applicant = get_object_or_404(
-        PISTApplicant.objects.select_related('campus', 'program__department', 'student', 'test_session'),
+        PISTApplicant.objects.select_related('campus', 'program__department', 'student', 'test_session', 'test_session__test_center'),
         pk=application_uuid,
     )
     if applicant.student_id is None and not request.user.is_authenticated:
-        return render(request, 'admissions/roll_slip.html', {'application': applicant, 'roll_slip': None, 'verification_url': request.build_absolute_uri(reverse('admissions:verify_application', kwargs={'application_uuid': applicant.pk}))})
+        verification_url = request.build_absolute_uri(reverse('admissions:verify_application', kwargs={'application_uuid': applicant.pk}))
+        qr_image = qrcode.make(verification_url)
+        qr_buffer = BytesIO()
+        qr_image.save(qr_buffer, format='PNG')
+        qr_data_uri = f'data:image/png;base64,{base64.b64encode(qr_buffer.getvalue()).decode("utf-8")}'
+        return render(request, 'admissions/roll_slip.html', {
+            'application': applicant,
+            'roll_slip': None,
+            'verification_url': verification_url,
+            'qr_data_uri': qr_data_uri,
+        })
     if not request.user.is_authenticated:
         from django.contrib.auth.views import redirect_to_login
 
         return redirect_to_login(request.get_full_path(), reverse('students:login'))
     if not (request.user.is_staff or applicant.student_id == getattr(getattr(request.user, 'student_profile', None), 'pk', None)):
         return render(request, 'errors/403.html', status=403)
-    if not applicant.roll_number or not applicant.test_session_id:
-        return render(request, 'admissions/roll_slip.html', {'application': applicant, 'roll_slip': None, 'verification_url': request.build_absolute_uri(reverse('admissions:verify_application', kwargs={'application_uuid': applicant.pk}))})
-    slip, _ = RollSlip.objects.get_or_create(
-        application=applicant,
-        defaults={'roll_number': applicant.roll_number or '', 'test_session_id': applicant.test_session_id},
-    )
-    verification_url = request.build_absolute_uri(reverse('admissions:verify_roll_slip', kwargs={'qr_token': slip.qr_token}))
-    return render(request, 'admissions/roll_slip.html', {'application': applicant, 'roll_slip': slip, 'verification_url': verification_url})
+    
+    slip = None
+    if applicant.roll_number and applicant.test_session_id:
+        slip, _ = RollSlip.objects.get_or_create(
+            application=applicant,
+            defaults={'roll_number': applicant.roll_number or '', 'test_session_id': applicant.test_session_id},
+        )
+    
+    if slip:
+        verification_url = request.build_absolute_uri(reverse('admissions:verify_roll_slip', kwargs={'qr_token': slip.qr_token}))
+    else:
+        verification_url = request.build_absolute_uri(reverse('admissions:verify_application', kwargs={'application_uuid': applicant.pk}))
+    
+    qr_image = qrcode.make(verification_url)
+    qr_buffer = BytesIO()
+    qr_image.save(qr_buffer, format='PNG')
+    qr_data_uri = f'data:image/png;base64,{base64.b64encode(qr_buffer.getvalue()).decode("utf-8")}'
+
+    return render(request, 'admissions/roll_slip.html', {
+        'application': applicant,
+        'roll_slip': slip,
+        'verification_url': verification_url,
+        'qr_data_uri': qr_data_uri,
+    })
 
 
 def roll_slip_qr(request, application_uuid):
     applicant = get_object_or_404(PISTApplicant, pk=application_uuid)
-    slip = get_object_or_404(RollSlip, application=applicant)
-    if not request.user.is_authenticated:
-        from django.contrib.auth.views import redirect_to_login
-
-        return redirect_to_login(request.get_full_path(), reverse('students:login'))
-    if not (request.user.is_staff or applicant.student_id == getattr(getattr(request.user, 'student_profile', None), 'pk', None)):
-        return render(request, 'errors/403.html', status=403)
-    image = qrcode.make(request.build_absolute_uri(reverse('admissions:verify_roll_slip', kwargs={'qr_token': slip.qr_token})))
+    slip = RollSlip.objects.filter(application=applicant).first()
+    if slip:
+        verification_url = request.build_absolute_uri(reverse('admissions:verify_roll_slip', kwargs={'qr_token': slip.qr_token}))
+    else:
+        verification_url = request.build_absolute_uri(reverse('admissions:verify_application', kwargs={'application_uuid': applicant.pk}))
+    image = qrcode.make(verification_url)
     output = BytesIO()
     image.save(output, format='PNG')
     return HttpResponse(output.getvalue(), content_type='image/png')

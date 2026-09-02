@@ -10,5 +10,6 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('applications/', views.applications, name='applications'),
     path('applications/<uuid:application_uuid>/', views.application_detail, name='application_detail'),
+    path('documents/<uuid:document_id>/review/', views.document_review_action, name='document_review_action'),
     path('exports/<str:format>/', views.export_applications, name='export_applications'),
 ]

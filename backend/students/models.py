@@ -103,6 +103,15 @@ class AcademicDocument(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     verification_status = models.CharField(max_length=10, choices=VerificationStatus.choices, default=VerificationStatus.PENDING)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_academic_documents',
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ['-uploaded_at']
@@ -112,6 +121,36 @@ class AcademicDocument(models.Model):
 
     def __str__(self):
         return f'{self.get_document_type_display()} - {self.student}'
+
+    @property
+    def file_extension(self) -> str:
+        if self.file_name:
+            return Path(self.file_name).suffix.lstrip('.').upper()
+        if self.file and self.file.name:
+            return Path(self.file.name).suffix.lstrip('.').upper()
+        return ''
+
+    @property
+    def is_image(self) -> bool:
+        return self.file_extension.lower() in {'png', 'jpg', 'jpeg', 'webp'}
+
+    @property
+    def is_pdf(self) -> bool:
+        return self.file_extension.lower() == 'pdf'
+
+    @property
+    def file_size_display(self) -> str:
+        try:
+            if self.file and hasattr(self.file, 'size') and self.file.storage.exists(self.file.name):
+                size = self.file.size
+                if size < 1024:
+                    return f'{size} B'
+                if size < 1024 * 1024:
+                    return f'{size / 1024:.1f} KB'
+                return f'{size / (1024 * 1024):.1f} MB'
+        except Exception:
+            pass
+        return ''
 
 
 class MatricRecord(models.Model):

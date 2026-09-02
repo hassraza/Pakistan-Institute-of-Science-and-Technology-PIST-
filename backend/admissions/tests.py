@@ -326,6 +326,43 @@ class PublicAndAdminTests(TestCase):
         self.assertContains(response, reverse('students:login'))
         self.assertContains(response, reverse('students:register'))
 
+    def test_navbar_hierarchy_and_campus_routing(self):
+        response = self.client.get(reverse('admissions:home'))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        
+        # Verify navigation link items presence
+        self.assertIn('Admissions', content)
+        self.assertIn('Academics', content)
+        self.assertIn('Research', content)
+        self.assertIn('Our Campuses', content)
+        self.assertIn('Campus Life', content)
+        self.assertIn('Contact', content)
+        self.assertIn('About', content)
+        self.assertIn('Student Portal', content)
+
+        # Verify Our Campuses dropdown links
+        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'ISB'}), content)
+        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'LHR'}), content)
+        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'KHI'}), content)
+        self.assertIn(reverse('admissions:campuses'), content)
+
+        # Verify Campus Life routing
+        self.assertIn(reverse('admissions:student_life'), content)
+
+        # Verify Home page campuses section anchor
+        self.assertIn('id="campuses"', content)
+        self.assertIn('Campuses Across Pakistan', content)
+
+    def test_dedicated_campus_life_page(self):
+        response = self.client.get(reverse('admissions:student_life'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Vibrant Campus Life at PIST')
+        self.assertContains(response, 'Clubs & Student Societies')
+        self.assertContains(response, 'Hostel Life & Accommodations')
+        self.assertContains(response, 'Sports & Recreation')
+        self.assertContains(response, 'Campus Facilities & Well-being')
+
     def test_programs_listing_shows_login_to_apply_for_open_programs(self):
         response = self.client.get(reverse('admissions:programs'))
         self.assertContains(response, 'View Program')
@@ -344,7 +381,7 @@ class PublicAndAdminTests(TestCase):
         self.assertNotContains(programs, 'Create Account')
         self.assertContains(programs, reverse('students:dashboard'))
         portal = self.client.get(reverse('students:dashboard'))
-        self.assertContains(portal, 'Back to PIST Website')
+        self.assertContains(portal, 'PIST Main Website')
         self.assertContains(portal, reverse('admissions:home'))
 
     def test_departments_and_campuses_link_to_existing_program_filters(self):

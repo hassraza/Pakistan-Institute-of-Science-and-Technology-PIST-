@@ -14,6 +14,11 @@ class AcademicDocumentTests(TestCase):
     def setUp(self):
         self.student = self.make_student('docs@example.com', '12345-1234567-1')
         self.other = self.make_student('other-docs@example.com', '12345-1234567-2')
+        self.admin_user = get_user_model().objects.create_superuser(
+            username='admin@pist.edu.pk',
+            email='admin@pist.edu.pk',
+            password='AdminPass!123',
+        )
         self.client.force_login(self.student.user)
 
     def make_student(self, email, cnic):
@@ -76,16 +81,18 @@ class AcademicDocumentTests(TestCase):
         self.assertEqual(self.client.get(reverse('students:document_delete', kwargs={'doc_id': document.pk})).status_code, 404)
         self.assertEqual(AcademicDocument.objects.count(), 1)
 
-    def test_replace_resets_verified_status(self):
+    def test_replace_resets_verified_status_and_clears_rejection_reason(self):
         self.upload()
         document = AcademicDocument.objects.get()
-        document.verification_status = AcademicDocument.VerificationStatus.VERIFIED
-        document.save(update_fields=['verification_status'])
+        document.verification_status = AcademicDocument.VerificationStatus.REJECTED
+        document.rejection_reason = 'Blurry image'
+        document.save()
         response = self.client.post(reverse('students:document_replace', kwargs={'doc_id': document.pk}), {'file': self.image('replacement.png')})
         self.assertRedirects(response, reverse('students:documents'))
         document.refresh_from_db()
         self.assertEqual(document.verification_status, AcademicDocument.VerificationStatus.PENDING)
         self.assertEqual(document.file_name, 'replacement.png')
+        self.assertEqual(document.rejection_reason, '')
 
     def test_delete_requires_confirmation_then_removes_document(self):
         self.upload()
@@ -95,14 +102,53 @@ class AcademicDocumentTests(TestCase):
         self.assertRedirects(self.client.post(reverse('students:document_delete', kwargs={'doc_id': document.pk})), reverse('students:documents'))
         self.assertFalse(AcademicDocument.objects.exists())
 
-    def test_documents_page_shows_all_required_types(self):
+    def test_documents_page_shows_clear_status_and_preview_modal(self):
+        self.upload()
         response = self.client.get(reverse('students:documents'))
-        for _value, label in AcademicDocument.DocumentType.choices:
-            self.assertContains(response, label)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Upload Confirmed')
+        self.assertContains(response, 'Uploaded — Under Review')
+        self.assertContains(response, 'id="doc-preview-modal"')
+        self.assertContains(response, 'openDocPreview')
 
-    def test_gated_view_streams_own_file(self):
+    def test_gated_view_streams_own_file_inline(self):
         self.upload()
         document = AcademicDocument.objects.get()
         response = self.client.get(reverse('students:document_view', kwargs={'doc_id': document.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(b''.join(response.streaming_content), b'%PDF-1.7 test document')
+        self.assertEqual(response.headers.get('Content-Type'), 'application/pdf')
+        self.assertIn('inline', response.headers.get('Content-Disposition', ''))
+
+    def test_admin_can_approve_and_reject_documents(self):
+        self.upload()
+        document = AcademicDocument.objects.get()
+        
+        # Staff user logs in to admin
+        self.client.force_login(self.admin_user)
+        
+        # Admin views document
+        view_response = self.client.get(reverse('students:document_view', kwargs={'doc_id': document.pk}))
+        self.assertEqual(view_response.status_code, 200)
+        
+        # Admin approves document
+        approve_url = reverse('university_admin:document_review_action', kwargs={'document_id': document.pk})
+        approve_response = self.client.post(approve_url, {'action': 'approve'})
+        self.assertEqual(approve_response.status_code, 302)
+        document.refresh_from_db()
+        self.assertEqual(document.verification_status, AcademicDocument.VerificationStatus.VERIFIED)
+        self.assertEqual(document.reviewed_by, self.admin_user)
+        self.assertIsNotNone(document.reviewed_at)
+
+        # Admin rejects document with reason
+        reject_response = self.client.post(approve_url, {'action': 'reject', 'rejection_reason': 'Blurry photograph'})
+        self.assertEqual(reject_response.status_code, 302)
+        document.refresh_from_db()
+        self.assertEqual(document.verification_status, AcademicDocument.VerificationStatus.REJECTED)
+        self.assertEqual(document.rejection_reason, 'Blurry photograph')
+
+        # Check student portal view reflects rejected status and reason
+        self.client.force_login(self.student.user)
+        portal_response = self.client.get(reverse('students:documents'))
+        self.assertContains(portal_response, 'Needs Re-upload')
+        self.assertContains(portal_response, 'Blurry photograph')

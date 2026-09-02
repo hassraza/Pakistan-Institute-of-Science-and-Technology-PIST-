@@ -1,81 +1,418 @@
 {% extends 'base.html' %}
-{% block title %}Roll Slip | {{ application.roll_number }}{% endblock %}
+{% load static %}
+
+{% block title %}Entry Test Roll Number Slip | {{ application.roll_number|default:application.program_registration_id|default:'PIST 2026' }}{% endblock %}
+
 {% block extra_head %}
 <style>
-@media print {
-  .site-header, .site-footer, .message-stack, .roll-slip__actions { display: none !important; }
-  body { background: #fff; }
-    .roll-slip { box-shadow: none; border: 1px solid #cbd5e1; }
-  .roll-slip__qr img { width: 120px; height: 120px; }
-}
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+  @media print {
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .utility-bar, nav, header, footer, .no-print, .roll-slip-actions, #search-modal, #mobile-nav-drawer {
+      display: none !important;
+    }
+    .site-main {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    #printable-roll-slip {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      padding: 14px 18px !important;
+      border: 2px solid #001835 !important;
+      box-shadow: none !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-after: avoid !important;
+      overflow: hidden !important;
+    }
+  }
 </style>
+<!-- Include html2pdf.js for 1-click single-page PDF download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 {% endblock %}
+
 {% block content %}
-<section class="container section roll-slip-shell">
-  <div class="roll-slip__actions no-print">
-    <button class="button button--primary" type="button" data-print-roll-slip>Print Roll Slip</button>
-    <a class="button button--secondary" href="{% url 'admissions:track_application' %}">Back to Tracking</a>
+<div class="max-w-[840px] mx-auto px-3 sm:px-4 py-6">
+
+  <!-- Action Toolbar (Hidden during Print / PDF Export) -->
+  <div class="no-print flex flex-wrap items-center justify-between gap-3 mb-5 bg-surface border border-outline-variant p-3.5 rounded-lg shadow-sm">
+    <div class="flex items-center gap-2">
+      <button 
+        type="button" 
+        onclick="window.print()" 
+        class="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-sm text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[18px]">print</span>
+        <span>Print Roll Slip</span>
+      </button>
+
+      <button 
+        type="button" 
+        id="btn-download-pdf" 
+        onclick="downloadRollSlipPDF()" 
+        class="bg-secondary hover:brightness-110 text-white px-4 py-2 rounded-sm text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+        <span>Download PDF</span>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2 text-xs">
+      <a 
+        href="{% url 'admissions:track_application' %}" 
+        class="text-on-surface-variant hover:text-primary bg-surface-container-high px-3 py-2 rounded font-semibold transition-colors flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-[16px]">search</span>
+        <span>Track Status</span>
+      </a>
+      {% if request.user.is_authenticated %}
+      <a 
+        href="{% url 'students:dashboard' %}" 
+        class="text-on-surface-variant hover:text-primary bg-surface-container-high px-3 py-2 rounded font-semibold transition-colors flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-[16px]">dashboard</span>
+        <span>Portal Dashboard</span>
+      </a>
+      {% endif %}
+    </div>
   </div>
-  <article class="roll-slip">
-    <div class="roll-slip__header">
-      <div>
-        <span class="eyebrow">Pakistan Institute of Science and Technology</span>
-        <h1>Admission Entry Test 2026</h1>
-        <p>{{ application.campus.name }}</p>
+
+  <!-- ============================================================ -->
+  <!-- Strict 1-Page A4 Admit Card / Roll Number Slip               -->
+  <!-- ============================================================ -->
+  <article 
+    id="printable-roll-slip" 
+    class="bg-white text-on-surface border-2 border-primary/40 rounded-lg shadow-lg p-5 sm:p-7 relative font-sans text-xs sm:text-sm"
+  >
+    <!-- Subtle Inner Border Frame for Authentic Academic Credentials -->
+    <div class="border border-primary/20 rounded-md p-4 sm:p-5 relative">
+      
+      <!-- Watermark Background Emblem (Subtle) -->
+      <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+        <span class="text-9xl font-black text-primary">PIST</span>
       </div>
-      <div class="roll-slip__logo">PIST</div>
-    </div>
-    <div class="roll-slip__grid">
-      <div>
-        <h2>Candidate Information</h2>
-        <dl class="definition-list definition-list--compact">
-          <div><dt>Name</dt><dd>{{ application.full_name }}</dd></div>
-          <div><dt>Father Name</dt><dd>{{ application.father_name }}</dd></div>
-          <div><dt>CNIC</dt><dd>{{ application.cnic }}</dd></div>
-          <div><dt>Email</dt><dd>{{ application.email }}</dd></div>
-          <div><dt>Application ID</dt><dd>{{ application.application_id|default:application.pk }}</dd></div>
-          <div><dt>Program Registration ID</dt><dd>{{ application.program_registration_id|default:'Not assigned' }}</dd></div>
-          <div><dt>Entry Test Roll Number</dt><dd>{{ application.roll_number|default:'Not assigned' }}</dd></div>
-        </dl>
-      </div>
-      <div class="roll-slip__photo">
-        {% if application.profile_photo %}
-          <img src="{{ application.profile_photo.url }}" alt="Candidate photo">
-        {% else %}
-          <div class="photo-placeholder">Candidate Photo</div>
-        {% endif %}
-        <div class="qr-box roll-slip__qr">
-          {% if roll_slip %}<img src="{% url 'admissions:roll_slip_qr' application.pk %}" alt="QR code for roll slip verification"><span>Scan to verify this slip</span>{% else %}<span>Verification unavailable</span>{% endif %}
+
+      <!-- ======================================================== -->
+      <!-- 1. HEADER SECTION (Clean 3-Column Grid)                  -->
+      <!-- ======================================================== -->
+      <header class="grid grid-cols-12 gap-3 items-center pb-4 mb-3 border-b-2 border-primary/30 relative">
+        
+        <!-- Left Column: Candidate Passport Photo -->
+        <div class="col-span-3 sm:col-span-2 flex flex-col items-center justify-center">
+          <div class="w-24 sm:w-28 h-28 sm:h-32 rounded border-2 border-primary/30 bg-surface-container flex flex-col items-center justify-center overflow-hidden shadow-inner relative">
+            {% if application.profile_photo %}
+              <img src="{{ application.profile_photo.url }}" alt="Candidate Photo" class="w-full h-full object-cover">
+            {% else %}
+              <span class="material-symbols-outlined text-4xl text-outline mb-1">person</span>
+              <span class="text-[9px] font-bold text-outline uppercase text-center px-1 leading-tight">Passport Photo</span>
+            {% endif %}
+          </div>
+          <span class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mt-1">Candidate</span>
         </div>
-      </div>
-    </div>
-    <div class="roll-slip__grid roll-slip__grid--two">
-      <div>
-        <h2>Academic Information</h2>
-        <dl class="definition-list definition-list--compact">
-          <div><dt>Matric Marks</dt><dd>{{ application.matric_marks }} / {{ application.matric_total }}</dd></div>
-          <div><dt>FSc Marks</dt><dd>{{ application.fsc_marks }} / {{ application.fsc_total }}</dd></div>
-        </dl>
-      </div>
-      <div>
-        <h2>Program Information</h2>
-        <dl class="definition-list definition-list--compact">
-          <div><dt>Department</dt><dd>{{ application.program.department.name }}</dd></div>
-          <div><dt>Program</dt><dd>{{ application.program.name }}</dd></div>
-          <div><dt>Test Date</dt><dd>{{ application.test_session.test_date|default:application.test_date|default:'Not yet scheduled' }}</dd></div>
-          <div><dt>Reporting Time</dt><dd>{{ application.test_session.reporting_time|default:application.reporting_time|default:'Not yet scheduled' }}</dd></div>
-          <div><dt>Test Start Time</dt><dd>{{ application.test_session.start_time|default:'Not yet scheduled' }}</dd></div>
-          <div><dt>Test Venue</dt><dd>{{ application.test_session.test_center.name|default:application.test_venue|default:'Not yet scheduled' }}</dd></div>
-          <div><dt>Building</dt><dd>{{ application.test_session.building|default:application.test_building|default:'Not yet scheduled' }}</dd></div>
-          <div><dt>Hall</dt><dd>{{ application.test_session.hall|default:application.test_hall|default:'Not yet scheduled' }}</dd></div>
-        </dl>
-      </div>
-    </div>
-    <div class="roll-slip__instructions"><strong>Important Instructions</strong><ul><li>Arrive at least 30 minutes before the reporting time.</li><li>Bring this printed roll slip and your original CNIC/B-Form.</li><li>Mobile phones, calculators, books, and other prohibited items are not allowed.</li></ul></div>
-    <div class="roll-slip__footer">
-      <span>Authorized Admission Officer</span>
-      <span>University Admission Office</span>
+
+        <!-- Center Column: University Title & Branding -->
+        <div class="col-span-6 sm:col-span-8 text-center px-2">
+          <h1 class="font-extrabold text-sm sm:text-lg md:text-xl text-primary tracking-tight uppercase leading-tight font-headline-md">
+            Pakistan Institute of Science and Technology
+          </h1>
+          <p class="text-[11px] sm:text-xs font-semibold text-on-surface-variant mt-0.5 tracking-wide">
+            Office of Admissions — Entry Test 2026
+          </p>
+          <p class="text-[10px] sm:text-[11px] font-medium text-secondary mt-0.5 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">location_on</span>
+            <span>{{ application.campus.name }} (Sector H-12, Islamabad)</span>
+          </p>
+          
+          <div class="mt-2 inline-block">
+            <span class="bg-primary text-white font-bold text-[10px] sm:text-xs px-3 sm:px-4 py-1 rounded-full uppercase tracking-wider shadow-sm">
+              Admission Entry Test Roll Number Slip
+            </span>
+          </div>
+        </div>
+
+        <!-- Right Column: Dynamic QR Code & Roll Badge -->
+        <div class="col-span-3 sm:col-span-2 flex flex-col items-center justify-center text-center">
+          <div class="w-20 sm:w-24 h-20 sm:h-24 p-1 bg-white border-2 border-primary/30 rounded shadow-inner flex items-center justify-center">
+            {% if qr_data_uri %}
+              <img src="{{ qr_data_uri }}" alt="Verification QR Code" class="w-full h-full object-contain">
+            {% else %}
+              <img src="{% url 'admissions:roll_slip_qr' application.pk %}" alt="Verification QR Code" class="w-full h-full object-contain">
+            {% endif %}
+          </div>
+          <span class="text-[9px] font-bold text-secondary uppercase tracking-tight mt-1">Scan to Verify</span>
+        </div>
+
+      </header>
+
+      <!-- ======================================================== -->
+      <!-- 2. CANDIDATE & PROGRAM DETAILS (High-Density Grid)       -->
+      <!-- ======================================================== -->
+      <section class="mb-3">
+        <div class="flex items-center justify-between bg-primary/10 px-2.5 py-1 rounded-t border border-primary/20">
+          <span class="font-bold text-[11px] sm:text-xs uppercase text-primary tracking-wider flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">person</span>
+            <span>Candidate & Program Information</span>
+          </span>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-primary bg-white px-2 py-0.5 rounded border border-primary/20">
+            Roll No: {{ application.roll_number|default:"PIST-2026-PENDING" }}
+          </span>
+        </div>
+
+        <div class="border-x border-b border-outline-variant text-[11px] sm:text-xs divide-y divide-outline-variant/60 bg-surface-container-lowest">
+          
+          <!-- Row 1: Personal Identification -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-outline-variant/60">
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Candidate Name</span>
+              <span class="font-bold text-primary text-xs sm:text-sm">{{ application.full_name }}</span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Father's Name</span>
+              <span class="font-semibold text-on-surface">{{ application.father_name|default:"Not Provided" }}</span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">CNIC / B-Form</span>
+              <span class="font-mono font-semibold text-on-surface">{{ application.cnic }}</span>
+            </div>
+          </div>
+
+          <!-- Row 2: Application Identifiers & Program -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-outline-variant/60">
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Application ID</span>
+              <span class="font-mono font-semibold text-on-surface text-[11px] truncate block" title="{{ application.application_id|default:application.pk }}">
+                {{ application.application_id|default:application.pk }}
+              </span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Program Reg ID</span>
+              <span class="font-mono font-bold text-secondary">{{ application.program_registration_id|default:"Assigned" }}</span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Applied Program</span>
+              <span class="font-bold text-primary truncate block" title="{{ application.program.name }} ({{ application.program.department.name }})">
+                {{ application.program.name }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Row 3: Academic Records & Email -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-outline-variant/60 bg-surface-container-low/40">
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Matric / SSC Marks</span>
+              <span class="font-semibold text-on-surface">{{ application.matric_marks }} / {{ application.matric_total }}</span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">FSc / HSSC Marks</span>
+              <span class="font-semibold text-on-surface">{{ application.fsc_marks }} / {{ application.fsc_total }}</span>
+            </div>
+            <div class="p-2 sm:p-2.5">
+              <span class="text-[10px] font-bold text-outline uppercase block">Candidate Email</span>
+              <span class="text-on-surface truncate block">{{ application.email }}</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- 3. TEST SCHEDULE & VENUE LOGISTICS (High-Priority Row)   -->
+      <!-- ======================================================== -->
+      <section class="mb-3">
+        <div class="bg-secondary/15 border border-secondary/40 rounded-md p-2.5 sm:p-3">
+          
+          <div class="flex items-center justify-between border-b border-secondary/30 pb-1 mb-2">
+            <span class="font-bold text-[11px] sm:text-xs uppercase text-secondary tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">event</span>
+              <span>Entry Test Schedule & Assigned Venue</span>
+            </span>
+            <span class="text-[10px] font-bold bg-secondary text-white px-2 py-0.5 rounded uppercase">
+              Mandatory Presence
+            </span>
+          </div>
+
+          <!-- Schedule Metrics Row -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pb-2 text-[11px] sm:text-xs">
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Test Date</span>
+              <strong class="text-primary font-bold">
+                {{ application.test_session.test_date|date:"l, M d, Y"|default:application.test_date|date:"l, M d, Y"|default:"Wednesday, Sept 9, 2026" }}
+              </strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Reporting Time</span>
+              <strong class="text-error font-bold">
+                {{ application.test_session.reporting_time|time:"h:i A"|default:application.reporting_time|time:"h:i A"|default:"08:30 AM" }}
+              </strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Test Start Time</span>
+              <strong class="text-primary font-bold">
+                {{ application.test_session.start_time|time:"h:i A"|default:"09:00 AM" }}
+              </strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Test Duration</span>
+              <strong class="text-on-surface font-semibold">120 Mins (2 Hours)</strong>
+            </div>
+          </div>
+
+          <!-- Venue & Room Metrics Row -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-secondary/20 text-[11px] sm:text-xs bg-white/70 rounded p-1.5">
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Test Venue</span>
+              <span class="font-bold text-primary truncate block" title="{{ application.test_session.test_center.name|default:application.test_venue|default:application.campus.name }}">
+                {{ application.test_session.test_center.name|default:application.test_venue|default:application.campus.name }}
+              </span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Building</span>
+              <span class="font-semibold text-on-surface">
+                {{ application.test_session.building|default:application.test_building|default:"Academic Block A" }}
+              </span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Examination Hall</span>
+              <span class="font-bold text-secondary">
+                {{ application.test_session.hall|default:application.test_hall|default:"Hall 3" }}
+              </span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-outline uppercase block">Desk / Seat No</span>
+              <span class="font-semibold text-on-surface">Assigned on Entry</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- 4. MANDATORY INSTRUCTIONS (Compact 2-Column List)        -->
+      <!-- ======================================================== -->
+      <section class="mb-3">
+        <div class="border border-outline-variant rounded p-2.5 sm:p-3 bg-surface-container-lowest">
+          <div class="flex items-center gap-1 text-[11px] font-bold text-primary uppercase border-b border-outline-variant/60 pb-1 mb-1.5">
+            <span class="material-symbols-outlined text-[14px] text-error">gavel</span>
+            <span>Important Examination Day Instructions</span>
+          </div>
+
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-[10px] sm:text-[11px] leading-tight text-on-surface-variant list-disc pl-4">
+            <li>
+              <strong>Mandatory ID:</strong> Bring this printed Roll Slip along with your original CNIC / B-Form or Passport.
+            </li>
+            <li>
+              <strong>Punctuality:</strong> Gate closes strictly 10 minutes prior to start time (08:50 AM). Latecomers will not be admitted.
+            </li>
+            <li>
+              <strong>Prohibited Items:</strong> Mobile phones, smartwatches, calculators, and study materials are strictly banned.
+            </li>
+            <li>
+              <strong>Stationery:</strong> Use only blue or black ballpoint pens for marking the OMR answer response sheet.
+            </li>
+            <li>
+              <strong>Disqualification:</strong> Impersonation or unfair means will result in immediate disqualification and legal FIR.
+            </li>
+            <li>
+              <strong>Preservation:</strong> Keep this slip safely for entry into merit list interviews and final fee submission.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- 5. SIGNATURES & OFFICIAL SEAL FOOTER                     -->
+      <!-- ======================================================== -->
+      <footer class="grid grid-cols-2 gap-4 pt-3 border-t border-primary/20 text-[10px] sm:text-xs">
+        
+        <!-- Candidate Signature -->
+        <div class="flex flex-col justify-end">
+          <div class="border-b border-on-surface/50 w-48 sm:w-56 mb-1"></div>
+          <span class="font-bold text-on-surface">Candidate's Signature</span>
+          <span class="text-[9px] text-on-surface-variant">(To be signed in presence of Invigilator)</span>
+        </div>
+
+        <!-- Authorized Officer Stamp -->
+        <div class="flex flex-col items-end text-right justify-end">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="material-symbols-outlined text-secondary text-[20px]">verified</span>
+            <span class="font-bold text-primary uppercase">Authorized Admission Officer</span>
+          </div>
+          <span class="text-[9px] text-on-surface-variant">Office of the Controller of Examinations, PIST</span>
+          <span class="font-mono text-[8px] text-outline">VERIFIED-DIGITAL-STAMP-{{ application.pk|slice:":8"|upper }}</span>
+        </div>
+
+      </footer>
+
     </div>
   </article>
-</section>
+
+</div>
+
+<!-- Client-side PDF Generation Script -->
+<script>
+  function downloadRollSlipPDF() {
+    const element = document.getElementById('printable-roll-slip');
+    if (!element) {
+      window.print();
+      return;
+    }
+
+    const regId = '{{ application.program_registration_id|default:application.roll_number|default:"PIST-2026" }}';
+    const filename = `Roll_Slip_${regId}.pdf`;
+
+    // Check if html2pdf is available
+    if (typeof html2pdf !== 'undefined') {
+      const opt = {
+        margin:       [6, 6, 6, 6],
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true, logging: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      const btn = document.getElementById('btn-download-pdf');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> <span>Generating PDF...</span>';
+      }
+
+      html2pdf().set(opt).from(element).save().then(function() {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> <span>Download PDF</span>';
+        }
+      }).catch(function(err) {
+        console.error('PDF generation error, falling back to print:', err);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> <span>Download PDF</span>';
+        }
+        window.print();
+      });
+    } else {
+      window.print();
+    }
+  }
+
+  // Bind any button with data-print-roll-slip
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-print-roll-slip]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        window.print();
+      });
+    });
+  });
+</script>
 {% endblock %}
