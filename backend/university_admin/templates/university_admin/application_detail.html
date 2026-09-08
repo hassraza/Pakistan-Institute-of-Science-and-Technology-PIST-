@@ -3,6 +3,35 @@
 
 {% block title %}Application {{ application.pk }} | PIST Admin{% endblock %}
 
+{% block extra_head %}
+<style>
+  .admin-doc-card {
+    background: #fff;
+    border: 1px solid #fde047;
+    border-left: 5px solid #ca8a04;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .admin-doc-card--verified {
+    border-color: #86efac;
+    border-left-color: #16a34a;
+  }
+  .admin-doc-card--rejected {
+    border-color: #fca5a5;
+    border-left-color: #dc2626;
+  }
+  .admin-doc-card--pending {
+    border-color: #fde047;
+    border-left-color: #ca8a04;
+  }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <section class="panel">
   <div class="panel__heading">
@@ -13,8 +42,7 @@
       </p>
     </div>
     <div class="panel__actions">
-      <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">Print
-        Roll Slip</a>
+      <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">Print Roll Slip</a>
       <a class="button button--secondary"
         href="{% url 'university_admin:export_applications' 'csv' %}?search={{ application.pk }}">Export</a>
       <a class="button button--secondary" href="{% url 'university_admin:applications' %}">Back to List</a>
@@ -67,8 +95,7 @@
 
   <!-- Overall Application Status Form -->
   <div style="margin: 24px 0; padding: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-    <h3 style="font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px;">Update Overall Application
-      Status</h3>
+    <h3 style="font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px;">Update Overall Application Status</h3>
     <form method="post" class="status-form" data-confirm="Update the application status?"
       style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
       {% csrf_token %}
@@ -98,8 +125,7 @@
 
     <div style="display: flex; flex-direction: column; gap: 14px;">
       {% for doc in documents %}
-      <div
-        style="background: #fff; border: 1px solid {% if doc.verification_status == 'VERIFIED' %}#86efac{% elif doc.verification_status == 'REJECTED' %}#fca5a5{% else %}#fde047{% endif %}; border-left: 5px solid {% if doc.verification_status == 'VERIFIED' %}#16a34a{% elif doc.verification_status == 'REJECTED' %}#dc2626{% else %}#ca8a04{% endif %}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 12px;">
+      <div class="admin-doc-card {% if doc.verification_status == 'VERIFIED' %}admin-doc-card--verified{% elif doc.verification_status == 'REJECTED' %}admin-doc-card--rejected{% else %}admin-doc-card--pending{% endif %}">
 
         <div
           style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
@@ -124,8 +150,7 @@
             <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">
               Uploaded on {{ doc.uploaded_at|date:'j F Y, h:i A' }}
               {% if doc.reviewed_at %}
-              &bull; Reviewed on {{ doc.reviewed_at|date:'j F Y, h:i A' }} {% if doc.reviewed_by %}(by {{
-              doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}){% endif %}
+              &bull; Reviewed on {{ doc.reviewed_at|date:'j F Y, h:i A' }} {% if doc.reviewed_by %}(by {{ doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}){% endif %}
               {% endif %}
             </div>
 
@@ -162,16 +187,17 @@
         <div
           style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px; flex-wrap: wrap;">
           <!-- View / Preview Button -->
-          <button type="button" onclick="adminPreviewDoc({
-                title: '{{ doc.get_document_type_display|escapejs }}',
-                fileName: '{{ doc.file_name|escapejs }}',
-                fileSize: '{{ doc.file_size_display|escapejs }}',
-                fileExt: '{{ doc.file_extension|escapejs }}',
-                isImage: {% if doc.is_image %}true{% else %}false{% endif %},
-                isPdf: {% if doc.is_pdf %}true{% else %}false{% endif %},
-                fileUrl: '{% url 'students:document_view' doc.pk %}',
-                downloadUrl: '{% url 'students:document_view' doc.pk %}?download=1'
-              })" class="button button--secondary"
+          <button type="button"
+            class="button button--secondary"
+            data-title="{{ doc.get_document_type_display }}"
+            data-file-name="{{ doc.file_name }}"
+            data-file-size="{{ doc.file_size_display|default:'' }}"
+            data-file-ext="{{ doc.file_extension|default:'FILE' }}"
+            data-is-image="{% if doc.is_image %}true{% else %}false{% endif %}"
+            data-is-pdf="{% if doc.is_pdf %}true{% else %}false{% endif %}"
+            data-file-url="{% url 'students:document_view' doc.pk %}"
+            data-download-url="{% url 'students:document_view' doc.pk %}?download=1"
+            onclick="adminPreviewDoc(this)"
             style="min-height: 36px; padding: 0 12px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
             <span class="material-symbols-outlined" style="font-size: 18px; color: #0284c7;">visibility</span>
             <span>Preview File</span>
@@ -191,13 +217,10 @@
             <input type="hidden" name="action" value="approve">
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
             <button type="submit" class="button button--primary"
-              style="min-height: 36px; padding: 0 14px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; background: #16a34a; border-color: #15803d;"
-              {% if doc.verification_status=='VERIFIED' %}disabled
-              style="opacity: 0.6; min-height: 36px; padding: 0 14px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; background: #16a34a;"
-              {% endif %}>
+              style="min-height: 36px; padding: 0 14px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; background: #16a34a; border-color: #15803d; {% if doc.verification_status == 'VERIFIED' %}opacity: 0.6;{% endif %}"
+              {% if doc.verification_status == 'VERIFIED' %}disabled{% endif %}>
               <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
-              <span>{% if doc.verification_status == 'VERIFIED' %}Already Verified{% else %}Approve Document{% endif
-                %}</span>
+              <span>{% if doc.verification_status == 'VERIFIED' %}Already Verified{% else %}Approve Document{% endif %}</span>
             </button>
           </form>
 
@@ -366,7 +389,20 @@
 </div>
 
 <script>
-  function adminPreviewDoc(doc) {
+  function adminPreviewDoc(target) {
+    let doc = target;
+    if (target instanceof HTMLElement || (target && target.dataset)) {
+      doc = {
+        title: target.dataset.title || 'Document Preview',
+        fileName: target.dataset.fileName || '',
+        fileSize: target.dataset.fileSize || '',
+        fileExt: target.dataset.fileExt || 'FILE',
+        isImage: target.dataset.isImage === 'true',
+        isPdf: target.dataset.isPdf === 'true',
+        fileUrl: target.dataset.fileUrl || '',
+        downloadUrl: target.dataset.downloadUrl || target.dataset.fileUrl || ''
+      };
+    }
     if (!doc || !doc.fileUrl) return;
 
     document.getElementById('admin-preview-title').textContent = doc.title || 'Document Preview';
