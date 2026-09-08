@@ -113,8 +113,3 @@ PROGRAM_DATA = [
     p('BSIR-ISB', 'Bachelor of Science in International Relations', 'IR', ['any'], 55, ['pist'], '4 Years', 'Undergraduate', 'Foreign Service Assistant\nPolicy Research Analyst\nDiplomatic Affairs Officer'),
     p('MSIR-ISB', 'Master of Science in International Relations', 'IR', ['b_ir'], 55, ['pist_grad'], '2 Years', 'Graduate (Masters)', 'Foreign Policy Analyst\nInternational Development Consultant'),
 ]
-
-MIRRORED_CODES = {
-    'BSCS-ISB': 'BSCS', 'BSSE-ISB': 'BSSE', 'BSAI-ISB': 'BSAI', 'BSEE-ISB': 'BSEE',
-    'BBA-ISB': 'BBA', 'BSAF-ISB': 'BSAF', 'LLB-ISB': 'LLB',
-}

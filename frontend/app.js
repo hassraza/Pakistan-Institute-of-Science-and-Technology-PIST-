@@ -36,7 +36,27 @@ function renderProgram(program) {
   return card;
 }
 
+function renderCampusSpotlight(spotlightElem, campusData) {
+  if (!spotlightElem || !campusData) return;
+  spotlightElem.innerHTML = `
+    <div class="info-card__top">
+      <span class="badge badge--muted">${campusData.code || 'ISB'}</span>
+      <span class="badge badge--success">${campusData.is_main_campus !== false ? 'Main Campus' : 'Campus'}</span>
+    </div>
+    <h3>${campusData.name}</h3>
+    <p class="meta" style="margin-top: 0.5rem;"><strong>Location:</strong> ${campusData.address}</p>
+    <p class="meta"><strong>Scope:</strong> ${campusData.departments ? campusData.departments.length : 20} Departments · 41 Programs</p>
+    <p style="margin-top: 1rem; color: var(--text-muted, #64748b); line-height: 1.6;">
+      PIST is dedicated to technical excellence, advanced scientific research, and academic leadership located in Sector H-12, Islamabad.
+    </p>
+    <div style="margin-top: 1.5rem;">
+      <a class="button button--primary" href="#programs">Explore Programs</a>
+    </div>
+  `;
+}
+
 async function loadSiteData() {
+  const campusSpotlight = document.getElementById('campus-spotlight');
   const campusGrid = document.getElementById('campus-grid');
   const programGrid = document.getElementById('program-grid');
 
@@ -44,12 +64,14 @@ async function loadSiteData() {
     const response = await fetch(`${API_BASE}/public/site/`);
     const data = await response.json();
 
-    if (campusGrid) {
+    if (campusSpotlight && data.campuses && data.campuses.length > 0) {
+      renderCampusSpotlight(campusSpotlight, data.campuses[0]);
+    } else if (campusGrid && data.campuses) {
       campusGrid.innerHTML = '';
       data.campuses.forEach((campus) => campusGrid.appendChild(renderCampus(campus)));
     }
 
-    if (programGrid) {
+    if (programGrid && data.featured_programs) {
       programGrid.innerHTML = '';
       data.featured_programs.forEach((program) => programGrid.appendChild(renderProgram(program)));
     }

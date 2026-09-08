@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Pakistan Institute of Science and Technology | Admissions Open{% endblock %}
-{% block meta_description %}Explore PIST campuses, departments, and undergraduate admissions for a fictional university ecosystem project.{% endblock %}
+{% block meta_description %}Pakistan Institute of Science and Technology (PIST) — Islamabad H-12. Explore academic departments, degree programs, and undergraduate admissions.{% endblock %}
 {% block content %}
 <!-- Hero Section -->
 <section class="relative bg-primary-container text-white overflow-hidden min-h-[600px] flex items-center border-b-4 border-tertiary-container">
@@ -14,11 +14,11 @@
 <span class="font-label-md text-tertiary-fixed tracking-wider uppercase font-bold">Fall 2026 Admissions Open</span>
 </div>
 <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white font-bold leading-tight">
-                        Build the knowledge that moves Pakistan forward.
-                    </h1>
+    Build the knowledge that moves Pakistan forward.
+</h1>
 <p class="font-body-lg text-body-lg text-white/90 max-w-2xl leading-relaxed">
-                        Top 5 Tech University in Pakistan. Discover a multi-campus academic community dedicated to excellence in science, technology, engineering, healthcare, management, and social sciences.
-                    </p>
+    Top 5 Tech University in Pakistan. Dedicated to academic excellence and research in science, technology, engineering, healthcare, management, and social sciences at Sector H-12, Islamabad.
+</p>
 <div class="flex flex-wrap gap-4 mt-4">
 <a class="gold-cta px-8 py-4 rounded-sm font-title-md text-title-md shadow-lg hover:brightness-110 transition-all" href="{% url 'admissions:programs' %}">Explore Programs</a>
 {% if user.is_authenticated and user.student_profile %}
@@ -33,7 +33,7 @@
       <span class="text-secondary font-bold tracking-widest text-[12px] uppercase">FALL 2026 ADMISSIONS</span>
       <h2 class="text-[24px] font-bold text-primary mt-3 mb-4 leading-tight">Find your academic direction.</h2>
       <p class="text-on-surface-variant text-[15px] leading-relaxed mb-6">
-        Compare campus offerings, verify admission eligibility requirements, and track your application journey from entry test to enrollment.
+        Explore academic offerings, verify admission eligibility requirements, and track your application journey from entry test to enrollment.
       </p>
       <a class="text-secondary font-bold flex items-center gap-2 hover:underline" href="{% url 'admissions:admission_procedure' %}">
         See how admission works <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -47,15 +47,15 @@
 <section class="bg-primary text-white py-12 border-b-4 border-secondary">
   <div class="max-w-container-max mx-auto px-gutter grid grid-cols-2 md:grid-cols-4 gap-8">
     <div class="border-l-4 border-secondary pl-4">
-      <strong class="block text-4xl font-bold leading-none mb-1">{{ campus_count }}</strong>
-      <span class="block text-white/70 text-[11px] uppercase tracking-wider font-semibold">Active Campuses</span>
+      <strong class="block text-4xl font-bold leading-none mb-1">Islamabad</strong>
+      <span class="block text-white/70 text-[11px] uppercase tracking-wider font-semibold">Main Campus (H-12)</span>
     </div>
     <div class="border-l-4 border-secondary pl-4">
-      <strong class="block text-4xl font-bold leading-none mb-1">{{ department_count }}+</strong>
+      <strong class="block text-4xl font-bold leading-none mb-1">20</strong>
       <span class="block text-white/70 text-[11px] uppercase tracking-wider font-semibold">Academic Departments</span>
     </div>
     <div class="border-l-4 border-secondary pl-4">
-      <strong class="block text-4xl font-bold leading-none mb-1">{{ program_count }}</strong>
+      <strong class="block text-4xl font-bold leading-none mb-1">41</strong>
       <span class="block text-white/70 text-[11px] uppercase tracking-wider font-semibold">Degree Programs</span>
     </div>
     <div class="border-l-4 border-secondary pl-4">
@@ -65,43 +65,73 @@
   </div>
 </section>
 
-<!-- Campuses Section -->
-<section id="campuses" class="py-xl bg-surface scroll-mt-24" aria-labelledby="campuses-heading">
-  <div class="max-w-container-max mx-auto px-gutter" id="campuses-section">
-    <div class="flex justify-between items-end mb-10">
-      <div>
-        <span class="text-secondary font-bold tracking-widest text-[12px] uppercase">Our Network</span>
-        <h2 id="campuses-heading" class="text-3xl font-bold text-primary mt-2">Campuses Across Pakistan</h2>
-      </div>
-      <a class="hidden md:flex text-secondary font-bold hover:underline items-center gap-1" href="{% url 'admissions:campuses' %}">View All Campuses <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {% for campus in campuses %}
-        <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div>
-            <div class="flex justify-between items-center mb-5">
-              <span class="bg-surface-container text-on-surface-variant text-xs font-bold px-2 py-1 rounded">{{ campus.code }}</span>
-              {% if campus.admissions_open %}
-                <span class="bg-secondary/10 text-secondary text-xs font-bold px-2 py-1 rounded">Admissions Open</span>
-              {% else %}
-                <span class="bg-error/10 text-error text-xs font-bold px-2 py-1 rounded">Closed</span>
-              {% endif %}
+<!-- Dedicated "Our Campus" / "About PIST Islamabad" Spotlight Section -->
+<section id="our-campus" class="py-xl bg-surface scroll-mt-24" aria-labelledby="campus-spotlight-heading">
+  <div class="max-w-container-max mx-auto px-gutter">
+    <div class="bg-white rounded-lg border border-outline-variant p-8 md:p-12 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-8">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-secondary font-bold tracking-widest text-xs uppercase">Institutional Spotlight</span>
+            <span class="bg-primary/10 text-primary text-[11px] font-bold px-2 py-0.5 rounded">Main Campus</span>
+          </div>
+          <h2 id="campus-spotlight-heading" class="text-3xl sm:text-4xl font-bold text-primary mb-4">
+            About PIST Islamabad
+          </h2>
+          <p class="text-on-surface-variant text-base leading-relaxed mb-6 max-w-2xl">
+            Pakistan Institute of Science and Technology operates strictly from its flagship campus in Sector H-12, Islamabad. The institution features purpose-built research centers, advanced digital libraries, modern computing facilities, and state-of-the-art laboratories supporting academic inquiry across all faculties.
+          </p>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary text-2xl mt-0.5">location_on</span>
+              <div>
+                <dt class="text-xs font-bold text-outline uppercase">Location</dt>
+                <dd class="text-sm font-semibold text-primary">Plot H-12, Sector H-12, Islamabad, Islamabad Capital Territory, Pakistan</dd>
+              </div>
             </div>
-            <h3 class="text-xl font-bold text-primary mb-2">{{ campus.name }}</h3>
-            <p class="text-on-surface-variant text-sm mb-4">{{ campus.address }}</p>
-            <p class="text-sm text-on-surface-variant mb-6">{{ campus.department_count }} departments &middot; {{ campus.program_count }} programs</p>
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary text-2xl mt-0.5">domain</span>
+              <div>
+                <dt class="text-xs font-bold text-outline uppercase">Scope</dt>
+                <dd class="text-sm font-semibold text-primary">20 Departments · 41 Programs</dd>
+              </div>
+            </div>
+          </dl>
+          <div class="flex flex-wrap gap-4">
+            <a class="gold-cta px-6 py-3 rounded-sm font-bold text-sm shadow hover:brightness-110 transition-all flex items-center gap-2" href="{% url 'admissions:programs' %}">
+              <span>Explore Programs</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+            <a class="bg-surface-container hover:bg-surface-variant text-primary font-bold text-sm px-6 py-3 rounded-sm transition-colors flex items-center gap-2" href="{% url 'admissions:departments' %}">
+              <span>View All Departments</span>
+            </a>
           </div>
-          <div class="flex gap-4 border-t border-surface-variant pt-4">
-            <a class="text-secondary font-semibold text-sm hover:underline" href="{% url 'admissions:campus_detail' campus.code %}">View Campus</a>
-            <a class="text-secondary font-semibold text-sm hover:underline" href="{% url 'admissions:programs' %}?campus={{ campus.code }}">Programs</a>
+        </div>
+        <div class="lg:col-span-4 flex flex-col gap-4">
+          <div class="bg-surface-container-low p-6 rounded-md border border-outline-variant">
+            <div class="flex items-center gap-2 text-primary font-bold mb-2">
+              <span class="material-symbols-outlined text-secondary">verified</span>
+              <span>Centralized Campus</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+              All faculty members, entry test venues, admission interviews, and laboratory courses are conducted exclusively at the H-12 Campus.
+            </p>
           </div>
-        </article>
-      {% empty %}
-        <p class="col-span-full text-center text-on-surface-variant">No campuses configured yet.</p>
-      {% endfor %}
+          <div class="bg-surface-container-low p-6 rounded-md border border-outline-variant">
+            <div class="flex items-center gap-2 text-primary font-bold mb-2">
+              <span class="material-symbols-outlined text-secondary">domain_verification</span>
+              <span>Accredited Curriculum</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+              Recognized degree programs across Computing, Engineering, Health Sciences, Business, Natural Sciences, and Law.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
 
 <!-- Featured Programs Section -->
 <section class="py-xl bg-white border-t border-outline-variant">

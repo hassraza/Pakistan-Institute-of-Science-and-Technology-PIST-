@@ -37,77 +37,13 @@
       <!-- 3. Research -->
       <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md" href="{% url 'admissions:research' %}">Research</a>
 
-      <!-- 4. Our Campuses (With Interactive Dropdown) -->
-      <div class="relative group" id="campuses-dropdown-container">
-        <a 
-          id="campuses-dropdown-trigger" 
-          href="{% url 'admissions:campuses' %}" 
-          class="flex items-center gap-1 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md cursor-pointer"
-          aria-haspopup="true" 
-          aria-expanded="false"
-        >
-          <span>Our Campuses</span>
-          <span class="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180">expand_more</span>
-        </a>
+      <!-- 4. Campus Life -->
+      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md" href="{% url 'admissions:campus_life' %}">Campus Life</a>
 
-        <!-- Campuses Dropdown Menu Card -->
-        <div 
-          id="campuses-dropdown-menu" 
-          role="menu" 
-          aria-label="Campuses List" 
-          class="absolute left-0 top-full pt-2 w-80 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-all duration-200 z-50 transform origin-top -translate-y-2 group-hover:translate-y-0 group-focus-within:translate-y-0"
-        >
-          <div class="bg-surface dark:bg-inverse-surface rounded-lg shadow-xl border border-outline-variant dark:border-outline p-2 divide-y divide-outline-variant/40">
-            <div class="py-1 flex flex-col gap-1">
-              <!-- Islamabad Main Campus -->
-              <a href="{% url 'admissions:campus_detail' 'ISB' %}" class="flex items-start gap-3 p-2.5 rounded-md hover:bg-surface-container-high transition-colors group/item" role="menuitem">
-                <span class="p-1.5 rounded bg-primary/10 text-primary font-bold text-xs uppercase flex-shrink-0 mt-0.5">ISB</span>
-                <div class="min-w-0">
-                  <div class="text-xs font-bold text-on-surface group-hover/item:text-primary transition-colors flex items-center gap-1.5">
-                    <span>Islamabad Main Campus</span>
-                    <span class="text-[9px] bg-secondary/15 text-secondary font-bold px-1.5 py-0.2 rounded">Main</span>
-                  </div>
-                  <div class="text-[11px] text-on-surface-variant truncate">Plot H-12, Sector H-12, Islamabad</div>
-                </div>
-              </a>
-
-              <!-- Lahore Campus -->
-              <a href="{% url 'admissions:campus_detail' 'LHR' %}" class="flex items-start gap-3 p-2.5 rounded-md hover:bg-surface-container-high transition-colors group/item" role="menuitem">
-                <span class="p-1.5 rounded bg-primary/10 text-primary font-bold text-xs uppercase flex-shrink-0 mt-0.5">LHR</span>
-                <div class="min-w-0">
-                  <div class="text-xs font-bold text-on-surface group-hover/item:text-primary transition-colors">Lahore Campus</div>
-                  <div class="text-[11px] text-on-surface-variant truncate">Raiwind Road, Lahore</div>
-                </div>
-              </a>
-
-              <!-- Karachi Campus -->
-              <a href="{% url 'admissions:campus_detail' 'KHI' %}" class="flex items-start gap-3 p-2.5 rounded-md hover:bg-surface-container-high transition-colors group/item" role="menuitem">
-                <span class="p-1.5 rounded bg-primary/10 text-primary font-bold text-xs uppercase flex-shrink-0 mt-0.5">KHI</span>
-                <div class="min-w-0">
-                  <div class="text-xs font-bold text-on-surface group-hover/item:text-primary transition-colors">Karachi Campus</div>
-                  <div class="text-[11px] text-on-surface-variant truncate">PECHS Block 6, Karachi</div>
-                </div>
-              </a>
-            </div>
-
-            <!-- Dropdown Footer Action: View All Campuses -->
-            <div class="pt-2 pb-1 px-1">
-              <a href="{% url 'admissions:campuses' %}" class="flex items-center justify-between text-xs font-bold text-secondary hover:text-primary hover:underline px-2 py-1.5 rounded transition-colors" role="menuitem">
-                <span>View All Campuses</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Campus Life (Dedicated New Position) -->
-      <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md" href="{% url 'admissions:student_life' %}">Campus Life</a>
-
-      <!-- 6. Contact -->
+      <!-- 5. Contact -->
       <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md" href="{% url 'admissions:contact' %}">Contact</a>
 
-      <!-- 7. About -->
+      <!-- 6. About -->
       <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low dark:hover:bg-primary-container px-3 py-2 rounded-md" href="{% url 'admissions:about' %}">About</a>
     </div>
 
@@ -168,48 +104,19 @@
         <span>Research</span>
       </a>
 
-      <!-- 4. Our Campuses (Accordion Submenu) -->
-      <div class="flex flex-col">
-        <div class="flex items-center justify-between text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2 px-3 rounded-md transition-colors">
-          <a class="flex items-center gap-3 flex-grow" href="{% url 'admissions:campuses' %}">
-            <span class="material-symbols-outlined text-[20px] text-primary">apartment</span>
-            <span>Our Campuses</span>
-          </a>
-          <button type="button" onclick="toggleMobileCampuses(event)" aria-expanded="false" aria-label="Toggle campuses submenu" class="p-1 text-on-surface-variant hover:text-primary rounded cursor-pointer">
-            <span id="mobile-campuses-chevron" class="material-symbols-outlined text-[20px] transition-transform duration-200">expand_more</span>
-          </button>
-        </div>
-        <div id="mobile-campuses-submenu" class="hidden pl-8 pr-2 py-1.5 flex flex-col gap-1 text-sm bg-surface-container-lowest/60 rounded-md my-1 border-l-2 border-primary/30">
-          <a class="text-on-surface-variant hover:text-primary py-1.5 px-2 rounded hover:bg-surface-container-high transition-colors flex items-center justify-between" href="{% url 'admissions:campus_detail' 'ISB' %}">
-            <span>Islamabad Main (ISB)</span>
-            <span class="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.2 rounded">Main</span>
-          </a>
-          <a class="text-on-surface-variant hover:text-primary py-1.5 px-2 rounded hover:bg-surface-container-high transition-colors flex items-center justify-between" href="{% url 'admissions:campus_detail' 'LHR' %}">
-            <span>Lahore Campus (LHR)</span>
-          </a>
-          <a class="text-on-surface-variant hover:text-primary py-1.5 px-2 rounded hover:bg-surface-container-high transition-colors flex items-center justify-between" href="{% url 'admissions:campus_detail' 'KHI' %}">
-            <span>Karachi Campus (KHI)</span>
-          </a>
-          <a class="text-secondary font-bold py-1.5 px-2 rounded hover:bg-surface-container-high transition-colors flex items-center gap-1 mt-0.5 border-t border-outline-variant/30 pt-2" href="{% url 'admissions:campuses' %}">
-            <span>View All Campuses</span>
-            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- 5. Campus Life (Dedicated Position) -->
-      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:student_life' %}">
+      <!-- 4. Campus Life -->
+      <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:campus_life' %}">
         <span class="material-symbols-outlined text-[20px] text-primary">groups</span>
         <span>Campus Life</span>
       </a>
 
-      <!-- 6. Contact -->
+      <!-- 5. Contact -->
       <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:contact' %}">
         <span class="material-symbols-outlined text-[20px] text-primary">contact_support</span>
         <span>Contact</span>
       </a>
 
-      <!-- 7. About -->
+      <!-- 6. About -->
       <a class="text-on-surface hover:text-primary hover:bg-surface-container-low font-title-md text-title-md py-2 px-3 rounded-md transition-colors flex items-center gap-3" href="{% url 'admissions:about' %}">
         <span class="material-symbols-outlined text-[20px] text-primary">info</span>
         <span>About</span>
@@ -274,7 +181,6 @@
     <!-- Category Filter Tabs -->
     <div class="flex items-center gap-1.5 px-4 py-2 bg-surface-container-low border-b border-outline-variant/60 overflow-x-auto text-xs no-scrollbar">
       <button type="button" data-search-filter="all" class="search-filter-pill active px-3 py-1 rounded-full font-medium transition-all bg-primary text-white">All</button>
-      <button type="button" data-search-filter="Campuses" class="search-filter-pill px-3 py-1 rounded-full font-medium transition-all bg-surface hover:bg-surface-container-high text-on-surface-variant">Campuses</button>
       <button type="button" data-search-filter="Programs" class="search-filter-pill px-3 py-1 rounded-full font-medium transition-all bg-surface hover:bg-surface-container-high text-on-surface-variant">Programs</button>
       <button type="button" data-search-filter="Admissions" class="search-filter-pill px-3 py-1 rounded-full font-medium transition-all bg-surface hover:bg-surface-container-high text-on-surface-variant">Admissions</button>
       <button type="button" data-search-filter="Departments" class="search-filter-pill px-3 py-1 rounded-full font-medium transition-all bg-surface hover:bg-surface-container-high text-on-surface-variant">Departments</button>
@@ -339,24 +245,6 @@
       closeMobileNav();
     } else {
       openMobileNav();
-    }
-  }
-
-  function toggleMobileCampuses(e) {
-    if (e) e.stopPropagation();
-    var submenu = document.getElementById('mobile-campuses-submenu');
-    var chevron = document.getElementById('mobile-campuses-chevron');
-    if (submenu) {
-      var isHidden = submenu.classList.contains('hidden');
-      if (isHidden) {
-        submenu.classList.remove('hidden');
-        submenu.classList.add('flex');
-        if (chevron) chevron.classList.add('rotate-180');
-      } else {
-        submenu.classList.add('hidden');
-        submenu.classList.remove('flex');
-        if (chevron) chevron.classList.remove('rotate-180');
-      }
     }
   }
 
