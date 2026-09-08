@@ -27,7 +27,7 @@ class ExternalApplicationSerializer(serializers.Serializer):
     fsc_marks = serializers.IntegerField(min_value=0)
     fsc_total = serializers.IntegerField(min_value=1)
     tests = ApplicantTestScoreSerializer(many=True)
-    campus_code = serializers.CharField(max_length=12)
+    campus_code = serializers.CharField(max_length=12, required=False, default='ISB')
     program_code = serializers.CharField(max_length=30)
     nationality = serializers.CharField(max_length=80, required=False, allow_blank=True)
     passport_number = serializers.CharField(max_length=40, required=False, allow_blank=True)
@@ -49,10 +49,12 @@ class ExternalApplicationSerializer(serializers.Serializer):
         if attrs['fsc_marks'] > fsc_total:
             raise serializers.ValidationError({'fsc_marks': ['FSc marks cannot exceed total marks.']})
 
+        # Lock campus context strictly to Islamabad Main Campus (ISB)
+        attrs['campus_code'] = 'ISB'
         try:
-            attrs['campus'] = Campus.objects.get(code=attrs['campus_code'], is_active=True)
+            attrs['campus'] = Campus.objects.get(code='ISB', is_active=True)
         except Campus.DoesNotExist as exc:
-            raise serializers.ValidationError({'campus_code': ['Campus not found or inactive.']}) from exc
+            raise serializers.ValidationError({'campus_code': ['Islamabad Main Campus not found or inactive.']}) from exc
 
         try:
             attrs['program'] = Program.objects.select_related('department', 'department__campus').get(code=attrs['program_code'])

@@ -51,8 +51,6 @@ def dashboard(request):
         'total_applications': applicants.count(),
         'applications_today': applicants.filter(created_at__date=timezone.now().date()).count(),
         'islamabad_applications': applicants.filter(campus__code='ISB').count(),
-        'lahore_applications': applicants.filter(campus__code='LHR').count(),
-        'karachi_applications': applicants.filter(campus__code='KHI').count(),
         'awaiting_review': applicants.filter(status=PISTApplicant.Status.RECEIVED).count(),
         'entry_tests_scheduled': applicants.filter(status=PISTApplicant.Status.ROLL_ISSUED).count(),
         'shortlisted': applicants.filter(status=PISTApplicant.Status.SHORTLISTED).count(),

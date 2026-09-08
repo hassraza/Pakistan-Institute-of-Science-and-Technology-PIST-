@@ -237,9 +237,9 @@
     {
       title: 'Explore All Degree Programs & Deadlines',
       category: 'Admissions',
-      description: 'Browse all available undergraduate and graduate programs across Islamabad, Lahore, and Karachi campuses.',
+      description: 'Browse all available undergraduate and graduate programs across 20 departments at PIST Islamabad Main Campus.',
       url: '/programs/',
-      keywords: 'browse programs search degrees all courses filter campuses departments',
+      keywords: 'browse programs search degrees all courses filter departments islamabad',
       icon: 'list_alt'
     },
     {
@@ -309,43 +309,27 @@
       icon: 'apartment'
     },
 
-    // --- Campuses & Locations ---
+    // --- Institutional Spotlight & Contact ---
     {
-      title: 'Our Campuses Across Pakistan',
-      category: 'Campuses',
-      description: 'Explore all university campuses: Islamabad Main Campus (ISB), Lahore Campus (LHR), and Karachi Campus (KHI).',
-      url: '/campuses/',
-      keywords: 'our campuses network islamabad lahore karachi locations directory map all branches',
-      icon: 'apartment'
+      title: 'About PIST Islamabad Main Campus (H-12)',
+      category: 'About',
+      description: 'Plot H-12, Sector H-12, Islamabad. Sole university campus featuring 20 departments, 41 programs, and world-class research facilities.',
+      url: '/about/',
+      keywords: 'about pist islamabad main campus h12 federal territory capital central facilities departments programs',
+      icon: 'domain'
     },
     {
-      title: 'Islamabad Main Campus (ISB)',
-      category: 'Campuses',
-      description: 'Plot H-12, Sector H-12, Islamabad. Flagship university campus featuring advanced research facilities.',
-      url: '/campuses/ISB/',
-      keywords: 'islamabad isb main campus h12 federal territory capital central facilities',
-      icon: 'location_on'
+      title: 'Campus Life & Student Societies',
+      category: 'Campus Life',
+      description: 'Student clubs, sports events, robotics guild, literary circle, residential hostels, and student community life.',
+      url: '/campus-life/',
+      keywords: 'campus life societies student clubs events sports cultural extra curricular hostels',
+      icon: 'celebration'
     },
     {
-      title: 'Lahore Campus (LHR)',
-      category: 'Campuses',
-      description: 'Raiwind Road, Lahore, Punjab. State-of-the-art academic blocks, libraries, and student sports facilities.',
-      url: '/campuses/LHR/',
-      keywords: 'lahore lhr campus punjab raiwind road engineering computing business',
-      icon: 'location_on'
-    },
-    {
-      title: 'Karachi Campus (KHI)',
-      category: 'Campuses',
-      description: 'PECHS Block 6, Karachi, Sindh. Modern technology labs, incubation center, and multimedia facilities.',
-      url: '/campuses/KHI/',
-      keywords: 'karachi khi campus sindh pechs block tech hub coastal',
-      icon: 'location_on'
-    },
-    {
-      title: 'University Contact & Campus Directory',
-      category: 'Campuses',
-      description: 'Official phone directory, email contacts, admissions office locations, and helpline hours.',
+      title: 'University Contact & Admissions Desk',
+      category: 'Contact',
+      description: 'Official phone directory, email contacts, admissions office at Sector H-12 Islamabad, and helpline hours.',
       url: '/contact/',
       keywords: 'contact helpline email phone number location address directory support',
       icon: 'call'
@@ -393,10 +377,10 @@
       icon: 'science'
     },
     {
-      title: 'Campus Life & Student Societies',
+      title: 'Campus Life & Student Experience',
       category: 'Portals',
-      description: 'Student clubs, sports events, robotics society, literary circle, and campus community life.',
-      url: '/student-life/',
+      description: 'Student clubs, sports events, robotics guild, literary circle, and campus community life.',
+      url: '/campus-life/',
       keywords: 'campus life societies student clubs events sports cultural extra curricular',
       icon: 'celebration'
     },
@@ -486,8 +470,8 @@
           <button type="button" class="quick-suggestion-btn text-xs font-medium bg-surface-container-high hover:bg-primary hover:text-white px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5" data-search-term="Student Portal">
             <span class="material-symbols-outlined text-[14px]">dashboard</span> Student Portal
           </button>
-          <button type="button" class="quick-suggestion-btn text-xs font-medium bg-surface-container-high hover:bg-primary hover:text-white px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5" data-search-term="Lahore Campus">
-            <span class="material-symbols-outlined text-[14px]">location_on</span> Lahore Campus
+          <button type="button" class="quick-suggestion-btn text-xs font-medium bg-surface-container-high hover:bg-primary hover:text-white px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5" data-search-term="Campus Life">
+            <span class="material-symbols-outlined text-[14px]">celebration</span> Campus Life
           </button>
         </div>
 
@@ -557,7 +541,7 @@
           <div class="flex flex-wrap items-center justify-center gap-2">
             <button type="button" class="empty-suggestion-btn text-xs font-semibold px-3 py-1 bg-surface-container-high hover:bg-primary hover:text-white rounded transition-colors" data-search-term="Admissions">Admissions</button>
             <button type="button" class="empty-suggestion-btn text-xs font-semibold px-3 py-1 bg-surface-container-high hover:bg-primary hover:text-white rounded transition-colors" data-search-term="Computer Science">Computer Science</button>
-            <button type="button" class="empty-suggestion-btn text-xs font-semibold px-3 py-1 bg-surface-container-high hover:bg-primary hover:text-white rounded transition-colors" data-search-term="Campuses">Campuses</button>
+            <button type="button" class="empty-suggestion-btn text-xs font-semibold px-3 py-1 bg-surface-container-high hover:bg-primary hover:text-white rounded transition-colors" data-search-term="Campus Life">Campus Life</button>
             <button type="button" class="empty-suggestion-btn text-xs font-semibold px-3 py-1 bg-surface-container-high hover:bg-primary hover:text-white rounded transition-colors" data-search-term="Student Portal">Student Portal</button>
           </div>
         </div>

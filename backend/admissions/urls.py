@@ -21,6 +21,7 @@ urlpatterns = [
     path('verify/<str:application_uuid>/', views.verify_application, name='verify_application'),
     path('verify/roll-slip/<uuid:qr_token>/', views.verify_roll_slip, name='verify_roll_slip'),
     path('research/', views.research, name='research'),
+    path('campus-life/', views.student_life, name='campus_life'),
     path('student-life/', views.student_life, name='student_life'),
     path('contact/', views.contact, name='contact'),
 ]

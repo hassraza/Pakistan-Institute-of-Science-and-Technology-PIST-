@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from .forms import StudentRegistrationForm
 from .models import AcademicDocument, StudentProfile
@@ -193,7 +194,7 @@ class StudentDashboardTests(TestCase):
         response = self.client.post(reverse('students:profile_edit'), data)
         self.assertRedirects(response, reverse('students:profile'))
         self.student.refresh_from_db()
-        self.assertIn('student_photos/2026/08/', self.student.profile_photo.name)
+        self.assertIn(f"student_photos/{timezone.now().strftime('%Y/%m')}/", self.student.profile_photo.name)
 
     def test_profile_photo_rejects_invalid_type(self):
         upload = SimpleUploadedFile('avatar.txt', b'not-an-image', content_type='text/plain')

@@ -10,7 +10,7 @@
     </div>
     <h1 class="font-display-lg text-display-lg text-primary mb-2">{{ department.name }}</h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-6">
-      {{ department.campus.name }}
+      Pakistan Institute of Science and Technology &middot; Islamabad Main Campus (H-12)
     </p>
     
     <div class="bg-white border border-outline-variant rounded p-6 shadow-sm">
@@ -19,7 +19,7 @@
         {{ department.description|default:'A leading department focused on academic excellence, practical research, and professional development.' }}
       </p>
       <div class="mt-4 pt-4 border-t border-surface-variant">
-        <a class="text-primary font-bold hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:campus_detail' department.campus.code %}">View campus details <span class="material-symbols-outlined text-[16px]">location_city</span></a>
+        <a class="text-primary font-bold hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:about' %}">About PIST Islamabad <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
       </div>
     </div>
   </section>

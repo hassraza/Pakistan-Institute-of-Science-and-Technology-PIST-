@@ -9,7 +9,7 @@ import qrcode
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Prefetch, Q
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -156,19 +156,17 @@ def about(request):
 
 
 def campuses(request):
-    campus_qs = Campus.objects.filter(is_active=True).annotate(
-        department_count=Count('departments', distinct=True),
-        program_count=Count('departments__programs', distinct=True),
-    )
-    return render(request, 'admissions/campuses.html', {'campuses': campus_qs})
+    return redirect('admissions:about', permanent=True)
 
 
 def campus_detail(request, campus_code):
+    if campus_code.upper() != 'ISB':
+        raise Http404(f"Campus '{campus_code}' not found.")
     campus = get_object_or_404(
         Campus.objects.prefetch_related(
             Prefetch('departments', queryset=Department.objects.filter(is_active=True).prefetch_related('programs'))
         ),
-        code=campus_code,
+        code__iexact='ISB',
     )
     return render(request, 'admissions/campus_detail.html', {'campus': campus})
 
@@ -188,13 +186,13 @@ def programs(request):
         'department', 'department__campus', 'campus', 'required_qualification'
     ).prefetch_related('eligibility_rules__qualification', 'test_requirements__test_type')
     
-    campus_code = request.GET.get('campus', '').strip()
+    # Strictly locked to Islamabad Main Campus (ISB)
+    program_qs = program_qs.filter(Q(campus__code='ISB') | Q(department__campus__code='ISB'))
+    
     department_code = request.GET.get('department', '').strip()
     status_filter = request.GET.get('status', '').strip()
     search_query = request.GET.get('q', '').strip()
     
-    if campus_code:
-        program_qs = program_qs.filter(Q(campus__code=campus_code) | Q(department__campus__code=campus_code))
     if department_code:
         program_qs = program_qs.filter(department__code=department_code)
     if status_filter == 'open':
@@ -210,18 +208,14 @@ def programs(request):
             Q(description__icontains=search_query)
         )
         
-    active_campuses = Campus.objects.filter(is_active=True).order_by('-is_main_campus', 'name')
-    active_departments = Department.objects.select_related('campus').filter(is_active=True).order_by('campus__city', 'name')
-    if campus_code:
-        active_departments = active_departments.filter(campus__code=campus_code)
+    active_departments = Department.objects.select_related('campus').filter(is_active=True, campus__code='ISB').order_by('name')
         
     context = {
         'programs': program_qs,
-        'campus_code': campus_code,
+        'campus_code': 'ISB',
         'department_code': department_code,
         'status_filter': status_filter,
         'search_query': search_query,
-        'active_campuses': active_campuses,
         'active_departments': active_departments,
     }
     return render(request, 'admissions/programs.html', context)
@@ -481,7 +475,7 @@ class PublicSiteAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        campuses = Campus.objects.filter(is_active=True).prefetch_related('departments__programs').order_by('city', 'name')
+        campuses = Campus.objects.filter(is_active=True, code='ISB').prefetch_related('departments__programs').order_by('name')
         campus_payload = []
         for campus in campuses:
             campus_payload.append(
@@ -504,8 +498,8 @@ class PublicSiteAPIView(APIView):
 
         programs = (
             Program.objects.select_related('department', 'department__campus')
-            .filter(admissions_open=True, department__campus__is_active=True)
-            .order_by('department__campus__city', 'department__name', 'name')[:12]
+            .filter(admissions_open=True, department__campus__code='ISB')
+            .order_by('department__name', 'name')
         )
         program_payload = [
             {

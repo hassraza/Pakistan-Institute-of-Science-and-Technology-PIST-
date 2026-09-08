@@ -16,14 +16,14 @@
       <article class="bg-white rounded-md border border-outline-variant p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
           <div class="flex justify-between items-center mb-5">
-            <span class="bg-surface-container text-on-surface-variant text-xs font-bold px-2 py-1 rounded">{{ department.campus.code }}</span>
+            <span class="bg-secondary/10 text-secondary text-xs font-bold px-2 py-1 rounded">Islamabad H-12</span>
             <span class="text-secondary font-bold text-xs">{{ department.programs.count }} programs</span>
           </div>
           <a href="{% url 'admissions:department_detail' department.slug %}" class="block hover:text-secondary transition-colors group">
              <h2 class="text-xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors">{{ department.name }}</h2>
           </a>
           <p class="text-sm text-on-surface-variant leading-relaxed mb-6">
-             {{ department.description|default:'A campus-specific department represented in the university database.' }}
+             {{ department.description|default:'Academic department offering undergraduate and graduate programs at PIST Islamabad.' }}
           </p>
         </div>
         <div class="flex gap-4 border-t border-surface-variant pt-4 flex-wrap">
@@ -31,7 +31,6 @@
           {% if department.code %}
             <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:programs' %}?department={{ department.code }}">Filter Programs <span class="material-symbols-outlined text-[16px]">filter_list</span></a>
           {% endif %}
-          <a class="text-primary font-bold text-sm hover:text-secondary transition-colors flex items-center gap-1" href="{% url 'admissions:campus_detail' department.campus.code %}">View Campus <span class="material-symbols-outlined text-[16px]">location_city</span></a>
         </div>
       </article>
     {% empty %}

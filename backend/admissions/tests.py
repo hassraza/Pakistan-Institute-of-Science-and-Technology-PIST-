@@ -298,8 +298,8 @@ class PublicAndAdminTests(TestCase):
 
     def test_campuses_page_loads(self):
         response = self.client.get(reverse('admissions:campuses'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.campus.name)
+        self.assertEqual(response.status_code, 301)
+        self.assertIn(reverse('admissions:about'), response.headers['Location'])
 
     def test_campus_detail_loads(self):
         response = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': self.campus.code}))
@@ -331,28 +331,27 @@ class PublicAndAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         content = response.content.decode('utf-8')
         
-        # Verify navigation link items presence
+        # Verify strict 6 navigation link items presence + CTA
         self.assertIn('Admissions', content)
         self.assertIn('Academics', content)
         self.assertIn('Research', content)
-        self.assertIn('Our Campuses', content)
         self.assertIn('Campus Life', content)
         self.assertIn('Contact', content)
         self.assertIn('About', content)
         self.assertIn('Student Portal', content)
 
-        # Verify Our Campuses dropdown links
-        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'ISB'}), content)
-        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'LHR'}), content)
-        self.assertIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'KHI'}), content)
-        self.assertIn(reverse('admissions:campuses'), content)
+        # Verify absence of Our Campuses dropdown and legacy campus codes
+        self.assertNotIn('Our Campuses', content)
+        self.assertNotIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'LHR'}), content)
+        self.assertNotIn(reverse('admissions:campus_detail', kwargs={'campus_code': 'KHI'}), content)
 
-        # Verify Campus Life routing
-        self.assertIn(reverse('admissions:student_life'), content)
+        # Verify Campus Life routing points to /campus-life/
+        self.assertIn(reverse('admissions:campus_life'), content)
 
-        # Verify Home page campuses section anchor
-        self.assertIn('id="campuses"', content)
-        self.assertIn('Campuses Across Pakistan', content)
+        # Verify Home page spotlight section
+        self.assertIn('id="about-campus"', content)
+        self.assertIn('About PIST Islamabad', content)
+        self.assertNotIn('Campuses Across Pakistan', content)
 
     def test_dedicated_campus_life_page(self):
         response = self.client.get(reverse('admissions:student_life'))
@@ -389,10 +388,21 @@ class PublicAndAdminTests(TestCase):
         self.department.save(update_fields=['code'])
         departments = self.client.get(reverse('admissions:departments'))
         self.assertContains(departments, '?department=CS')
+        
+        # Campuses index redirects 301 to about
         campuses = self.client.get(reverse('admissions:campuses'))
-        self.assertContains(campuses, f'?campus={self.campus.code}')
-        campus = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': self.campus.code}))
-        self.assertContains(campus, f'?campus={self.campus.code}')
+        self.assertEqual(campuses.status_code, 301)
+        self.assertIn(reverse('admissions:about'), campuses.headers['Location'])
+
+        # ISB campus detail works
+        campus = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': 'ISB'}))
+        self.assertEqual(campus.status_code, 200)
+
+        # Non-ISB campus detail returns 404
+        lhr_resp = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': 'LHR'}))
+        self.assertEqual(lhr_resp.status_code, 404)
+        khi_resp = self.client.get(reverse('admissions:campus_detail', kwargs={'campus_code': 'KHI'}))
+        self.assertEqual(khi_resp.status_code, 404)
 
     def test_admission_procedure_describes_student_portal_workflow(self):
         response = self.client.get(reverse('admissions:admission_procedure'))
@@ -542,10 +552,10 @@ class PublicAndAdminTests(TestCase):
             )
         response = self.client.get(
             reverse('university_admin:applications'),
-            {'campus': self.campus.pk, 'status': PISTApplicant.Status.ROLL_ISSUED, 'page': 2},
+            {'status': PISTApplicant.Status.ROLL_ISSUED, 'page': 2},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'campus=')
+        self.assertContains(response, 'status=')
 
     def test_csv_export_respects_filters(self):
         self.client.login(username='officer', password='password123')
@@ -569,7 +579,7 @@ class PublicAndAdminTests(TestCase):
         self.client.login(username='officer', password='password123')
         response = self.client.get(reverse('university_admin:application_detail', kwargs={'application_uuid': self.applicant.pk}))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Update Status')
+        self.assertContains(response, 'Update Overall Application Status')
         self.assertContains(response, 'Print Roll Slip')
 
     def test_status_update_rejects_arbitrary_values(self):
@@ -613,11 +623,12 @@ class AcademicSeedTests(TestCase):
         self.assertEqual(Campus.objects.get(code='ISB').name, 'Pakistan Institute of Science and Technology — Islamabad Main Campus')
         self.assertTrue(Campus.objects.get(code='ISB').is_main_campus)
         self.assertEqual(Department.objects.filter(campus__code='ISB').count(), 20)
-        self.assertGreaterEqual(Department.objects.count(), 20)
+        self.assertEqual(Department.objects.count(), 20)
         self.assertEqual(Program.objects.filter(campus__code='ISB').count(), 41)
-        self.assertEqual(Program.objects.count(), 55)
-        for campus_code in ('ISB', 'LHR', 'KHI'):
-            self.assertTrue(Program.objects.filter(name='Bachelor of Science in Computer Science', campus__code=campus_code).exists())
+        self.assertEqual(Program.objects.count(), 41)
+        self.assertEqual(Campus.objects.count(), 1)
+        self.assertEqual(Campus.objects.filter(code__in=['LHR', 'KHI']).count(), 0)
+        self.assertTrue(Program.objects.filter(name='Bachelor of Science in Computer Science', campus__code='ISB').exists())
         self.assertEqual(Program.objects.filter(eligibility_rules__isnull=True).count(), 0)
         self.assertEqual(Program.objects.filter(test_requirements__isnull=True).count(), 0)
         self.assertTrue(Program.objects.filter(admissions_open=True).exists())

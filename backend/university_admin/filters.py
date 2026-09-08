@@ -12,7 +12,6 @@ class ApplicantFilter(django_filters.FilterSet):
     class Meta:
         model = PISTApplicant
         fields = {
-            'campus': ['exact'],
             'program': ['exact'],
             'status': ['exact'],
             'test_date': ['exact'],

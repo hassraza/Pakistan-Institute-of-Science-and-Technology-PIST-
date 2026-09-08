@@ -18,23 +18,13 @@
         <h2 class="font-title-lg text-title-lg text-primary mb-md border-b border-outline-variant pb-xs">Search Departments by:</h2>
         
         <form method="get" action="{% url 'admissions:programs' %}" class="flex flex-col gap-5">
-          
-          <div>
-            <label for="campus" class="font-title-md text-title-md text-on-surface mb-2 block">Campus</label>
-            <select name="campus" id="campus" class="w-full border-outline-variant rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-sm p-2 bg-surface">
-              <option value="">All Campuses</option>
-              {% for campus in active_campuses %}
-                <option value="{{ campus.code }}" {% if campus_code == campus.code %}selected{% endif %}>{{ campus.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
 
           <div>
             <label for="department" class="font-title-md text-title-md text-on-surface mb-2 block">Department</label>
             <select name="department" id="department" class="w-full border-outline-variant rounded-sm focus:border-primary focus:ring-1 focus:ring-primary text-sm p-2 bg-surface">
               <option value="">All Departments</option>
               {% for dept in active_departments %}
-                <option value="{{ dept.code }}" {% if department_code == dept.code %}selected{% endif %}>{{ dept.name }} ({{ dept.campus.code }})</option>
+                <option value="{{ dept.code }}" {% if department_code == dept.code %}selected{% endif %}>{{ dept.name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -57,7 +47,7 @@
             <button type="submit" class="bg-primary text-white font-bold py-2.5 px-4 rounded-sm hover:bg-primary-container transition-colors w-full flex items-center justify-center gap-2 shadow-sm text-center">
               <span class="material-symbols-outlined text-[18px]">search</span> Search
             </button>
-            {% if campus_code or department_code or status_filter or search_query %}
+            {% if department_code or status_filter or search_query %}
               <a href="{% url 'admissions:programs' %}" class="bg-surface-variant text-on-surface-variant font-bold py-2 rounded-sm hover:bg-outline-variant transition-colors w-full text-center text-sm">Clear Search</a>
             {% endif %}
           </div>
@@ -78,7 +68,7 @@
               </div>
               <h3 class="font-headline-md text-headline-md text-primary mb-xs">{{ program.name }}</h3>
               <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">
-                <strong>Campus:</strong> {{ program.campus.name|default:program.department.campus.name }}
+                <strong>Campus:</strong> Islamabad Main Campus (H-12)
               </p>
               <div class="flex flex-wrap gap-sm font-body-sm text-body-sm text-on-surface-variant">
                 <div class="flex items-center gap-1">
