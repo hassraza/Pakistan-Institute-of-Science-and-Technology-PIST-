@@ -22,6 +22,11 @@ from .permissions import HasPISTExternalAPIKey
 from .serializers import ExternalApplicationSerializer
 from .services import ConflictError, EligibilityError, ApplicationProcessingService, ConfigurationError
 
+try:
+    from drf_spectacular.utils import extend_schema
+except ImportError:
+    extend_schema = lambda *args, **kwargs: (lambda f: f)
+
 
 logger = logging.getLogger(__name__)
 
@@ -429,6 +434,7 @@ def contact(request):
     return render(request, 'admissions/contact.html', {'campuses': campuses})
 
 
+@extend_schema(request=ExternalApplicationSerializer, responses={201: None, 400: None}, tags=['Admissions V1 API'])
 class ExternalApplicationAPIView(APIView):
     permission_classes = [HasPISTExternalAPIKey]
 
@@ -471,6 +477,7 @@ class ExternalApplicationAPIView(APIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(responses={200: None}, tags=['Admissions V1 API'])
 class PublicSiteAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -528,6 +535,7 @@ class PublicSiteAPIView(APIView):
         )
 
 
+@extend_schema(responses={200: None, 400: None, 404: None}, tags=['Admissions V1 API'])
 class PublicApplicationLookupAPIView(APIView):
     permission_classes = [AllowAny]
 

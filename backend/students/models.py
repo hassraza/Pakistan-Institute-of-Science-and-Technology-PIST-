@@ -28,7 +28,7 @@ class StudentProfile(models.Model):
     full_name = models.CharField(max_length=150)
     email_verified = models.BooleanField(default=False)
     cnic = models.CharField(max_length=15, unique=True, db_index=True)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, choices=Gender.choices, blank=True)
     phone = models.CharField(max_length=20)
     father_name = models.CharField(max_length=150, blank=True)
@@ -229,3 +229,25 @@ class StudentTestScore(models.Model):
         self.full_clean()
         self.percentage = round((self.score / self.total_score) * 100, 2)
         super().save(*args, **kwargs)
+
+
+class Student(StudentProfile):
+    class Meta:
+        proxy = True
+        verbose_name = 'Student'
+        verbose_name_plural = 'Students'
+
+
+class Notification(models.Model):
+    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='notifications')
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.title} - {self.student}'

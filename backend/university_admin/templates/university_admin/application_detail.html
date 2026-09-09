@@ -11,19 +11,22 @@
     border-left: 5px solid #ca8a04;
     border-radius: 8px;
     padding: 18px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
+
   .admin-doc-card--verified {
     border-color: #86efac;
     border-left-color: #16a34a;
   }
+
   .admin-doc-card--rejected {
     border-color: #fca5a5;
     border-left-color: #dc2626;
   }
+
   .admin-doc-card--pending {
     border-color: #fde047;
     border-left-color: #ca8a04;
@@ -125,7 +128,8 @@
 
     <div style="display: flex; flex-direction: column; gap: 14px;">
       {% for doc in documents %}
-      <div class="admin-doc-card {% if doc.verification_status == 'VERIFIED' %}admin-doc-card--verified{% elif doc.verification_status == 'REJECTED' %}admin-doc-card--rejected{% else %}admin-doc-card--pending{% endif %}">
+      <div
+        class="admin-doc-card {% if doc.verification_status == 'VERIFIED' %}admin-doc-card--verified{% elif doc.verification_status == 'REJECTED' %}admin-doc-card--rejected{% else %}admin-doc-card--pending{% endif %}">
 
         <div
           style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
@@ -150,7 +154,8 @@
             <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">
               Uploaded on {{ doc.uploaded_at|date:'j F Y, h:i A' }}
               {% if doc.reviewed_at %}
-              &bull; Reviewed on {{ doc.reviewed_at|date:'j F Y, h:i A' }} {% if doc.reviewed_by %}(by {{ doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}){% endif %}
+              &bull; Reviewed on {{ doc.reviewed_at|date:'j F Y, h:i A' }} {% if doc.reviewed_by %}(by {{
+              doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}){% endif %}
               {% endif %}
             </div>
 
@@ -187,17 +192,13 @@
         <div
           style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px; flex-wrap: wrap;">
           <!-- View / Preview Button -->
-          <button type="button"
-            class="button button--secondary"
-            data-title="{{ doc.get_document_type_display }}"
-            data-file-name="{{ doc.file_name }}"
-            data-file-size="{{ doc.file_size_display|default:'' }}"
+          <button type="button" class="button button--secondary" data-title="{{ doc.get_document_type_display }}"
+            data-file-name="{{ doc.file_name }}" data-file-size="{{ doc.file_size_display|default:'' }}"
             data-file-ext="{{ doc.file_extension|default:'FILE' }}"
             data-is-image="{% if doc.is_image %}true{% else %}false{% endif %}"
             data-is-pdf="{% if doc.is_pdf %}true{% else %}false{% endif %}"
             data-file-url="{% url 'students:document_view' doc.pk %}"
-            data-download-url="{% url 'students:document_view' doc.pk %}?download=1"
-            onclick="adminPreviewDoc(this)"
+            data-download-url="{% url 'students:document_view' doc.pk %}?download=1" onclick="adminPreviewDoc(this)"
             style="min-height: 36px; padding: 0 12px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
             <span class="material-symbols-outlined" style="font-size: 18px; color: #0284c7;">visibility</span>
             <span>Preview File</span>

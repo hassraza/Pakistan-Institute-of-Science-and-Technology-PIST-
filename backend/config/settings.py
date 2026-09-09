@@ -22,6 +22,7 @@ import os
 ALLOWED_HOSTS = [
     'hasaza55.pythonanywhere.com',
     '.vercel.app',
+    'testserver',
 ] + [
     host.strip()
     for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'django_filters',
     'main',
     'admissions',
@@ -149,7 +151,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', '')
+PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', 'pist-integration-secret-key-2026')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -161,6 +163,34 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PIST University Admission Integration API',
+    'DESCRIPTION': (
+        'Centralized Admission Platform (PakUniPortal) API integration layer for '
+        'Pakistan Institute of Science and Technology (PIST). Allows external platforms '
+        'to create student accounts, submit applications, check status, retrieve notifications, and access roll slips.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SECURITY': [{'ApiKeyAuth': []}],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'ApiKeyAuth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'X-API-KEY',
+                'description': 'Secret API key for PakUniPortal integration authentication.',
+            }
+        }
+    },
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+    },
 }
 
 

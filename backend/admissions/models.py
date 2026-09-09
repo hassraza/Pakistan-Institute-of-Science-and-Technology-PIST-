@@ -196,17 +196,18 @@ class PISTApplicant(models.Model):
     eligibility_status = models.CharField(max_length=20, choices=EligibilityStatus.choices, default=EligibilityStatus.PENDING)
     qualifying_qualification = models.ForeignKey('Qualification', on_delete=models.PROTECT, null=True, blank=True, related_name='applicants')
     qualifying_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    application_number = models.PositiveIntegerField(unique=True, null=True, blank=True, db_index=True)
     full_name = models.CharField(max_length=200)
-    father_name = models.CharField(max_length=200)
+    father_name = models.CharField(max_length=200, blank=True, default='')
     cnic = models.CharField(max_length=20, db_index=True)
     email = models.EmailField(db_index=True)
     phone = models.CharField(max_length=20)
-    address = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True, default='')
     profile_photo = models.ImageField(upload_to='applicants/photos/', blank=True, null=True)
-    matric_marks = models.PositiveIntegerField()
-    matric_total = models.PositiveIntegerField()
-    fsc_marks = models.PositiveIntegerField()
-    fsc_total = models.PositiveIntegerField()
+    matric_marks = models.PositiveIntegerField(default=0)
+    matric_total = models.PositiveIntegerField(default=100)
+    fsc_marks = models.PositiveIntegerField(default=0)
+    fsc_total = models.PositiveIntegerField(default=100)
     test_type = models.CharField(max_length=20, choices=Program.TEST_TYPE_CHOICES, blank=True)
     test_score = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     campus = models.ForeignKey(Campus, on_delete=models.PROTECT, related_name='applicants')
@@ -219,7 +220,7 @@ class PISTApplicant(models.Model):
     test_building = models.CharField(max_length=200, blank=True)
     test_hall = models.CharField(max_length=200, blank=True)
     status = models.CharField(max_length=40, choices=Status.choices, default=Status.RECEIVED)
-    source_application_id = models.CharField(max_length=80, db_index=True)
+    source_application_id = models.CharField(max_length=80, blank=True, default='', db_index=True)
     nationality = models.CharField(max_length=80, blank=True)
     passport_number = models.CharField(max_length=40, blank=True)
     visa_information = models.CharField(max_length=120, blank=True)
@@ -263,6 +264,21 @@ class PISTApplicant(models.Model):
     @property
     def application_identifier(self):
         return str(self.pk)
+
+    def save(self, *args, **kwargs):
+        if self.application_number is None:
+            max_num = PISTApplicant.objects.aggregate(models.Max('application_number'))['application_number__max'] or 0
+            self.application_number = max_num + 1
+        if not self.source_application_id:
+            self.source_application_id = self.application_id or f'APP-{self.application_number}'
+        super().save(*args, **kwargs)
+
+
+class Application(PISTApplicant):
+    class Meta:
+        proxy = True
+        verbose_name = 'Application'
+        verbose_name_plural = 'Applications'
 
 
 class ApplicantTestScore(models.Model):
@@ -348,3 +364,23 @@ class RollSlip(models.Model):
 
     def __str__(self):
         return self.roll_number
+
+    @property
+    def test_date(self):
+        if self.test_session and self.test_session.test_date:
+            return self.test_session.test_date
+        if self.application and self.application.test_date:
+            return self.application.test_date
+        return None
+
+    @property
+    def venue(self):
+        if self.test_session and self.test_session.test_center:
+            center = self.test_session.test_center
+            parts = [center.name, self.test_session.building, self.test_session.hall]
+            venue_str = ', '.join(p for p in parts if p)
+            return venue_str or center.address
+        if self.application and self.application.test_venue:
+            parts = [self.application.test_venue, self.application.test_building, self.application.test_hall]
+            return ', '.join(p for p in parts if p)
+        return 'PIST Main Examination Hall'
