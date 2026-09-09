@@ -2,7 +2,7 @@ import os
 from django.apps import AppConfig
 
 
-class AdmissionsConfig(AppConfig):
+class UniversityAdminConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'admissions'
+    name = 'university_admin'
     path = os.path.dirname(os.path.abspath(__file__))

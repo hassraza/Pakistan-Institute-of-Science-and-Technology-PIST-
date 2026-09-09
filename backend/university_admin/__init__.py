@@ -1,0 +1,1 @@
+"""University Admin application package."""
