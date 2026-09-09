@@ -20,6 +20,7 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 import os
 
 ALLOWED_HOSTS = [
+    '.pythonanywhere.com',
     'hasaza55.pythonanywhere.com',
     '.vercel.app',
     'testserver',
