@@ -13,6 +13,7 @@ from django.db import transaction, models
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,13 +24,15 @@ from admissions.services import (
     current_admission_year,
     generate_program_registration_id,
 )
-from students.models import StudentProfile, Notification
+from students.models import StudentProfile, Notification, AcademicDocument
 from students.services import generate_student_id
 from .authentication import APIKeyAuthentication, HasAPIKeyPermission
 from .serializers import (
     ApplicationCreateInputSerializer,
     ApplicationCreateOutputSerializer,
     ApplicationStatusOutputSerializer,
+    DocumentUploadInputSerializer,
+    DocumentUploadOutputSerializer,
     ErrorResponseSerializer,
     NotificationOutputSerializer,
     RollSlipOutputSerializer,
@@ -612,15 +615,121 @@ class RollSlipAPIView(APIView):
                     'rollNumber': '',
                     'test_date': '',
                     'venue': '',
+                    'slip_url': '',
+                    'qr_url': '',
                     'detail': 'Roll slip has not been generated for this application yet.',
                 },
                 status=status.HTTP_200_OK,
             )
+
+        slip_path = f"/admissions/roll-slip/{application.id}/"
+        qr_path = f"/admissions/roll-slip/{application.id}/qr.png"
+        slip_url = request.build_absolute_uri(slip_path)
+        qr_url = request.build_absolute_uri(qr_path)
 
         serializer = RollSlipOutputSerializer({
             'roll_number': slip.roll_number,
             'rollNumber': slip.roll_number,
             'test_date': str(slip.test_date) if slip.test_date else '',
             'venue': slip.venue or '',
+            'slip_url': slip_url,
+            'qr_url': qr_url,
         })
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DocumentUploadAPIView(APIView):
+    """
+    Endpoint for uploading student documents from external portals (e.g. PakUniPortal Vault).
+    """
+    authentication_classes = [APIKeyAuthentication]
+    permission_classes = [HasAPIKeyPermission]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @extend_schema(
+        tags=['Integration (PakUniPortal)'],
+        summary='Upload Student Document',
+        description='Uploads an academic document or profile photo for a student from an external portal.',
+        request=DocumentUploadInputSerializer,
+        responses={
+            201: OpenApiResponse(response=DocumentUploadOutputSerializer, description='Document uploaded successfully.'),
+            400: OpenApiResponse(response=ErrorResponseSerializer, description='Invalid payload or unsupported document type.'),
+            401: OpenApiResponse(response=ErrorResponseSerializer, description='Missing or invalid API key.'),
+            404: OpenApiResponse(response=ErrorResponseSerializer, description='Student not found.'),
+        },
+    )
+    def post(self, request):
+        serializer = DocumentUploadInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'detail': serializer.errors, 'code': 'invalid_input'}, status=status.HTTP_400_BAD_REQUEST)
+
+        student_identifier = serializer.validated_data['student_id']
+        raw_doc_type = serializer.validated_data['document_type'].strip().upper()
+        uploaded_file = serializer.validated_data['file']
+
+        student = resolve_student(student_identifier)
+        if not student:
+            app = resolve_application(student_identifier)
+            if app and app.student:
+                student = app.student
+
+        if not student:
+            return Response(
+                {'detail': f'Student not found for identifier "{student_identifier}".', 'code': 'not_found'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        type_mapping = {
+            'CNIC': AcademicDocument.DocumentType.CNIC_BFORM,
+            'CNIC_FRONT': AcademicDocument.DocumentType.CNIC_BFORM,
+            'CNIC_BACK': AcademicDocument.DocumentType.CNIC_BFORM,
+            'CNIC_BFORM': AcademicDocument.DocumentType.CNIC_BFORM,
+            'MATRIC': AcademicDocument.DocumentType.MATRIC_RESULT,
+            'MATRIC_RESULT': AcademicDocument.DocumentType.MATRIC_RESULT,
+            'MATRIC_MARKSHEET': AcademicDocument.DocumentType.MATRIC_RESULT,
+            'FSC': AcademicDocument.DocumentType.FSC_RESULT,
+            'FSC_RESULT': AcademicDocument.DocumentType.FSC_RESULT,
+            'INTER_RESULT': AcademicDocument.DocumentType.FSC_RESULT,
+            'INTERMEDIATE': AcademicDocument.DocumentType.FSC_RESULT,
+            'ENTRY_TEST': AcademicDocument.DocumentType.ENTRY_TEST_RESULT,
+            'ENTRY_TEST_RESULT': AcademicDocument.DocumentType.ENTRY_TEST_RESULT,
+            'PHOTO': 'PHOTO',
+            'PROFILE_PHOTO': 'PHOTO',
+            'PICTURE': 'PHOTO',
+            'OTHER': AcademicDocument.DocumentType.OTHER,
+        }
+
+        mapped_type = type_mapping.get(raw_doc_type, AcademicDocument.DocumentType.OTHER)
+
+        try:
+            if mapped_type == 'PHOTO':
+                student.profile_photo = uploaded_file
+                student.save(update_fields=['profile_photo', 'updated_at'])
+                return Response({
+                    'success': True,
+                    'document_id': str(student.id),
+                    'document_type': 'PHOTO',
+                    'file_name': uploaded_file.name,
+                    'message': 'Profile photo updated successfully.',
+                }, status=status.HTTP_201_CREATED)
+
+            doc, _created = AcademicDocument.objects.update_or_create(
+                student=student,
+                document_type=mapped_type,
+                defaults={
+                    'file': uploaded_file,
+                    'file_name': uploaded_file.name,
+                    'verification_status': AcademicDocument.VerificationStatus.VERIFIED,
+                },
+            )
+            return Response({
+                'success': True,
+                'document_id': str(doc.id),
+                'document_type': doc.document_type,
+                'file_name': doc.file_name,
+                'message': f'{doc.get_document_type_display()} uploaded successfully.',
+            }, status=status.HTTP_201_CREATED)
+        except Exception as exc:
+            logger.exception('Document upload failed for student %s: %s', student.student_id, exc)
+            return Response({'detail': str(exc), 'code': 'upload_failed'}, status=status.HTTP_400_BAD_REQUEST)
+

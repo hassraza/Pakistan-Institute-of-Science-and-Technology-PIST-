@@ -176,6 +176,34 @@ class RollSlipOutputSerializer(serializers.Serializer):
     rollNumber = serializers.CharField(source='roll_number', help_text="CamelCase alias for PakUniPortal.", allow_blank=True)
     test_date = serializers.CharField(allow_null=True, allow_blank=True, help_text="Scheduled entry test date (YYYY-MM-DD).")
     venue = serializers.CharField(allow_blank=True, help_text="Assigned examination venue and hall.")
+    slip_url = serializers.CharField(allow_blank=True, required=False, help_text="Direct URL to view/print QR-verified roll slip.")
+    qr_url = serializers.CharField(allow_blank=True, required=False, help_text="Direct URL to QR code image.")
+
+
+class DocumentUploadInputSerializer(serializers.Serializer):
+    """
+    Serializer for uploading student documents from external portals.
+    """
+    student_id = serializers.CharField(
+        help_text="Student identifier (can be numeric ID, PIST student ID, UUID, or CNIC)."
+    )
+    document_type = serializers.CharField(
+        help_text="Type of document (e.g. CNIC, MATRIC, FSC, PHOTO, ENTRY_TEST)."
+    )
+    file = serializers.FileField(
+        help_text="Binary file upload (PDF, PNG, JPG)."
+    )
+
+
+class DocumentUploadOutputSerializer(serializers.Serializer):
+    """
+    Response details after a document is uploaded.
+    """
+    success = serializers.BooleanField()
+    document_id = serializers.CharField(required=False, allow_blank=True)
+    document_type = serializers.CharField()
+    file_name = serializers.CharField(required=False, allow_blank=True)
+    message = serializers.CharField()
 
 
 class ErrorResponseSerializer(serializers.Serializer):

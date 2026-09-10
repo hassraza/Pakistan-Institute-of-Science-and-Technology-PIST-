@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('admissions.urls')),
     path('api/v1/', include('admissions.urls_api')),
     path('api/integration/', include('admissions.integration.urls')),
+    path('api/', include(('admissions.integration.urls', 'integration_compat'), namespace='integration_compat')),
     path('university-admin/', include('university_admin.urls')),
     path('student/', include('students.urls')),
     path('admin/', admin.site.urls),
