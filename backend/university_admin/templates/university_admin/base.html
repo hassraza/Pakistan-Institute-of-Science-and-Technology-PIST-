@@ -4,100 +4,211 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}PIST Superadmin Portal{% endblock %}</title>
+  <title>{% block title %}PIST Academic Administration ERP{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..700,0..1,0" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/admin.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="admin-shell">
-  <!-- Left Sidebar (Matching Screenshot) -->
+  <!-- Left Sidebar (Matching Stitch / Figma ERP Aside) -->
   <aside class="sidebar">
-    <!-- Brand Logo -->
-    <div class="sidebar__brand">
-      <div class="sidebar__brand-shield">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        </svg>
+    <div class="sidebar__top">
+      <!-- PIST Official Academic ERP Brand Header -->
+      <div class="sidebar__brand">
+        <a href="{% url 'university_admin:dashboard' %}" style="display: flex; align-items: center;">
+          <img src="{% static 'images/pist_erp_logo.svg' %}" alt="PIST Academic ERP" class="sidebar__brand-logo">
+        </a>
       </div>
-      <span class="sidebar__brand-title">pakuniportal</span>
+
+      <!-- Admissions Cycle Selector Pill -->
+      <div class="sidebar__cycle-pill" title="Active Admissions Cycle">
+        <div class="sidebar__cycle-left">
+          <span class="sidebar__cycle-dot"></span>
+          <span>Fall 2025 Admissions Cycle</span>
+        </div>
+        <span class="material-symbols-outlined sidebar__cycle-arrows">unfold_more</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav>
+        <a href="{% url 'university_admin:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">grid_view</span>
+            <span>Dashboard</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' and request.GET.view == 'admissions' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">event_available</span>
+            <span>Admissions</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">description</span>
+            <span>Applications</span>
+          </span>
+          <span class="sidebar__badge">1,420</span>
+        </a>
+
+        <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' or request.resolver_match.url_name == 'program_edit' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">school</span>
+            <span>Programs</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">group</span>
+            <span>Students</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' and not request.GET.view %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">assignment_turned_in</span>
+            <span>Entry Tests</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.GET.tab == 'roll_slips' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">confirmation_number</span>
+            <span>Roll Number Slips</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">format_list_numbered</span>
+            <span>Merit Lists</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:programs' %}?filter=departments">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">apartment</span>
+            <span>Departments</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:students_list' %}?role=faculty">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">person_pin</span>
+            <span>Faculty</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">campaign</span>
+            <span>Notifications</span>
+          </span>
+          <span class="sidebar__badge sidebar__badge--red">3</span>
+        </a>
+
+        <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.GET.tab == 'docs' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">folder_open</span>
+            <span>Documents</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span>Reports</span>
+          </span>
+        </a>
+
+        <a href="{% url 'university_admin:dashboard' %}?view=settings">
+          <span class="nav-item-content">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Settings</span>
+          </span>
+        </a>
+      </nav>
     </div>
 
-    <!-- Logged in Admin Profile Card -->
-    <div class="sidebar__user-profile">
-      <div class="sidebar__avatar">
-        {{ user.first_name|default:user.username|slice:':1'|upper }}
+    <!-- Sidebar Bottom Utility Strip -->
+    <div class="sidebar__bottom">
+      <div class="sidebar__hec-sync">
+        <span>HEC Portal Sync</span>
+        <span class="sidebar__hec-status">
+          <span class="sidebar__hec-dot"></span>
+          <span>Active</span>
+        </span>
       </div>
-      <div class="sidebar__user-info">
-        <div class="sidebar__user-name">{{ user.get_full_name|default:user.username }}</div>
-        <div class="sidebar__user-role">Super Admin</div>
+
+      <a href="#" class="sidebar__support-link">
+        <span class="material-symbols-outlined" style="font-size: 16px;">help_outline</span>
+        <span>Support & Manual</span>
+      </a>
+
+      <!-- Controller Profile Card -->
+      <div class="sidebar__user-profile">
+        <div class="sidebar__avatar">
+          {{ user.first_name|default:user.username|slice:':1'|upper }}
+        </div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name">{{ user.get_full_name|default:'Dr. Tahira Naeem' }}</div>
+          <div class="sidebar__user-role">Registrar & Controller</div>
+        </div>
+      </div>
+
+      <!-- Quick Nav for Student Portal & Logout -->
+      <div class="sidebar__quick-links">
+        <a href="{% url 'students:dashboard' %}" target="_blank">
+          <span class="material-symbols-outlined" style="font-size: 15px;">school</span>
+          <span>Student Portal</span>
+        </a>
+        <a href="{% url 'admissions:home' %}" target="_blank" title="Public Main Site">
+          <span class="material-symbols-outlined" style="font-size: 15px;">public</span>
+        </a>
+        <a href="{% url 'university_admin:logout' %}" title="Logout">
+          <span class="material-symbols-outlined" style="font-size: 15px;">logout</span>
+        </a>
       </div>
     </div>
-
-    <!-- Navigation Menu -->
-    <nav>
-      <div class="nav-section-title">OVERVIEW</div>
-      <a href="{% url 'university_admin:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-        <span class="material-symbols-outlined">grid_view</span>
-        <span>Dashboard</span>
-      </a>
-
-      <div class="nav-section-title">MANAGEMENT</div>
-      <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
-        <span class="material-symbols-outlined">group</span>
-        <span>Users</span>
-      </a>
-      <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' and not request.GET.type %}active{% endif %}">
-        <span class="material-symbols-outlined">apartment</span>
-        <span>Universities</span>
-      </a>
-      <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' or request.resolver_match.url_name == 'program_edit' %}active{% endif %}">
-        <span class="material-symbols-outlined">school</span>
-        <span>Programs</span>
-      </a>
-      <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' %}active{% endif %}">
-        <span class="material-symbols-outlined">calendar_month</span>
-        <span>Admissions</span>
-      </a>
-      <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
-        <span class="material-symbols-outlined">description</span>
-        <span>Applications</span>
-      </a>
-      <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
-        <span class="material-symbols-outlined">format_list_bulleted</span>
-        <span>Merit Lists</span>
-      </a>
-
-      <div class="nav-section-title">COMMUNICATION</div>
-      <a href="{% url 'university_admin:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
-        <span class="material-symbols-outlined">campaign</span>
-        <span>Notifications</span>
-      </a>
-
-      <div class="sidebar-divider"></div>
-
-      <a href="{% url 'students:dashboard' %}" target="_blank" rel="noopener">
-        <span class="material-symbols-outlined">school</span>
-        <span>Student Portal</span>
-      </a>
-      <a href="{% url 'admissions:home' %}" target="_blank" rel="noopener">
-        <span class="material-symbols-outlined">public</span>
-        <span>Public Site</span>
-      </a>
-      <a href="{% url 'university_admin:logout' %}">
-        <span class="material-symbols-outlined">logout</span>
-        <span>Logout</span>
-      </a>
-    </nav>
   </aside>
 
   <!-- Main Content Area -->
   <div class="admin-main">
-    <!-- Minimalist Topbar (Matching Screenshot) -->
+    <!-- Topbar (Matching Stitch / Figma Header 64px) -->
     <header class="admin-topbar">
-      <div class="admin-breadcrumb">Admin</div>
+      <div class="topbar__left">
+        <!-- Omnisearch Input -->
+        <div class="topbar__search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="erp-global-search" class="topbar__search-input" placeholder="Search by CNIC, App ID, or Student Name... [Ctrl K]" autocomplete="off">
+        </div>
+        <div class="topbar__cycle-badge">
+          Admissions Cycle 2025-26 - Round 1
+        </div>
+      </div>
+
+      <div class="topbar__right">
+        <a href="{% url 'admissions:home' %}" target="_blank" class="button button--primary button--sm">
+          <span class="material-symbols-outlined" style="font-size: 17px;">add</span>
+          <span>New Application</span>
+        </a>
+        <button type="button" class="topbar__icon-btn" title="Calendar">
+          <span class="material-symbols-outlined" style="font-size: 20px;">calendar_month</span>
+        </button>
+        <button type="button" class="topbar__icon-btn" title="Notifications">
+          <span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
+          <span class="notify-dot"></span>
+        </button>
+        <div class="topbar__avatar">
+          {{ user.first_name|default:user.username|slice:':1'|upper }}
+        </div>
+      </div>
     </header>
 
     <main class="admin-content">

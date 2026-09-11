@@ -1,94 +1,111 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Programs & Admissions Windows | PIST Superadmin{% endblock %}
-{% block admin_heading %}Programs & Admission Window Controls{% endblock %}
-{% block admin_subheading %}Configure academic program offerings, open/close admission windows, adjust eligibility minimums and deadlines{% endblock %}
+{% load static %}
+
+{% block title %}Programs & Admissions Windows | PIST ERP{% endblock %}
 
 {% block content %}
-<section class="panel">
-  <div class="panel__heading">
+<div class="erp-programs-page">
+  <!-- Top Header -->
+  <div class="erp-page-header">
     <div>
-      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Academic Degree Programs</h1>
-      <span style="font-size: 0.85rem; color: var(--slate-500);">Live admission controls across all departments and campuses</span>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">ACADEMIC REGISTRY</span>
+        <span style="font-family: var(--erp-font-mono); font-size: 0.75rem; color: var(--erp-text-muted);">ADMISSIONS-OFFERINGS-2025</span>
+      </div>
+      <h1 class="erp-page-title">Academic Degree Programs &amp; Admission Controls</h1>
+      <p class="erp-page-subtitle">Configure undergraduate and graduate offerings, toggle live application intake windows, and manage entry criteria.</p>
+    </div>
+    <div class="erp-header-actions">
+      <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
+        {{ programs.count }} Active Offerings
+      </span>
     </div>
   </div>
 
-  <div class="table-wrap">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Program & Department</th>
-          <th>Campus</th>
-          <th>Level & Duration</th>
-          <th>Required Test</th>
-          <th>Min Eligibility</th>
-          <th>Deadline</th>
-          <th>Total Applicants</th>
-          <th>Admissions Window</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for prog in programs %}
-        <tr>
-          <td>
-            <strong>{{ prog.name }}</strong>
-            <div style="font-size: 0.78rem; color: var(--slate-500);">
-              Code: <span style="font-family: monospace; font-weight: 600;">{{ prog.code }}</span> &bull; Dept: {{ prog.department.name }}
-            </div>
-          </td>
-          <td><span class="badge badge--muted">{{ prog.department.campus.code }}</span></td>
-          <td>
-            <div>{{ prog.degree_level }}</div>
-            <div style="font-size: 0.78rem; color: var(--slate-500);">{{ prog.duration }}</div>
-          </td>
-          <td>
-            <span class="badge badge--primary">{{ prog.required_test_type }}</span>
-          </td>
-          <td>
-            <strong style="color: var(--navy-900);">{{ prog.eligibility_percentage }}%</strong>
-          </td>
-          <td>
-            {% if prog.application_deadline %}
-              <span style="font-size: 0.88rem; font-weight: 600;">{{ prog.application_deadline|date:'d M Y' }}</span>
-            {% else %}
-              <span style="color: var(--slate-400);">No deadline</span>
-            {% endif %}
-          </td>
-          <td>
-            <strong style="color: var(--blue-600); font-size: 1rem;">{{ prog.total_applicants }}</strong>
-          </td>
-          <td>
-            <form method="post" action="{% url 'university_admin:program_toggle' prog.pk %}" style="margin: 0;">
-              {% csrf_token %}
-              {% if prog.admissions_open %}
-                <button type="submit" class="button button--success button--sm" title="Click to Close Admissions">
-                  <span class="material-symbols-outlined" style="font-size: 14px;">lock_open</span>
-                  <span>Admissions Open</span>
-                </button>
-              {% else %}
-                <button type="submit" class="button button--danger button--sm" title="Click to Open Admissions">
-                  <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
-                  <span>Closed</span>
-                </button>
-              {% endif %}
-            </form>
-          </td>
-          <td>
-            <a href="{% url 'university_admin:program_edit' prog.pk %}" class="button button--secondary button--sm">
-              <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
-              <span>Edit Criteria</span>
-            </a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="9" style="text-align: center; padding: 32px; color: var(--slate-500);">
-            No programs found.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <!-- Programs Ledger Table -->
+  <div class="erp-card">
+    <div class="erp-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table erp-table mb-0">
+          <thead>
+            <tr>
+              <th>PROGRAM &amp; DEPARTMENT</th>
+              <th>CAMPUS</th>
+              <th>LEVEL &amp; DURATION</th>
+              <th>REQUIRED TEST</th>
+              <th>MIN ELIGIBILITY</th>
+              <th>DEADLINE</th>
+              <th style="text-align: center;">APPLICANTS</th>
+              <th style="text-align: center;">ADMISSIONS STATUS</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for prog in programs %}
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: var(--erp-text-main); font-size: 0.88rem;">{{ prog.name }}</div>
+                <div style="font-size: 0.76rem; color: var(--erp-text-muted);">
+                  Code: <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ prog.code }}</span> &bull; Dept: {{ prog.department.name }}
+                </div>
+              </td>
+              <td><span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary); font-weight: 600;">{{ prog.department.campus.code }}</span></td>
+              <td>
+                <div style="font-weight: 600; font-size: 0.82rem; color: var(--erp-text-main);">{{ prog.degree_level }}</div>
+                <div style="font-size: 0.76rem; color: var(--erp-text-muted);">{{ prog.duration }}</div>
+              </td>
+              <td>
+                <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 600;">
+                  {{ prog.required_test_type }}
+                </span>
+              </td>
+              <td>
+                <strong style="color: var(--erp-primary); font-family: var(--erp-font-mono); font-size: 0.88rem;">{{ prog.eligibility_percentage }}%</strong>
+              </td>
+              <td style="font-family: var(--erp-font-mono); font-size: 0.82rem;">
+                {% if prog.application_deadline %}
+                  <span style="font-weight: 600; color: var(--erp-text-main);">{{ prog.application_deadline|date:'d M Y' }}</span>
+                {% else %}
+                  <span style="color: var(--erp-text-muted);">No deadline</span>
+                {% endif %}
+              </td>
+              <td style="text-align: center; font-family: var(--erp-font-mono); font-size: 0.95rem; font-weight: 700; color: var(--erp-primary);">
+                {{ prog.total_applicants }}
+              </td>
+              <td style="text-align: center;">
+                <form method="post" action="{% url 'university_admin:program_toggle' prog.pk %}" style="margin: 0;">
+                  {% csrf_token %}
+                  {% if prog.admissions_open %}
+                    <button type="submit" class="erp-btn" style="background: rgba(184, 237, 226, 0.5); color: #013e37; border: 1px solid rgba(1, 62, 55, 0.2); padding: 4px 10px; font-size: 0.75rem; border-radius: 4px;" title="Click to Close Admissions">
+                      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #013e37; margin-right: 4px;"></span>
+                      Open
+                    </button>
+                  {% else %}
+                    <button type="submit" class="erp-btn" style="background: rgba(255, 218, 214, 0.5); color: #ba1a1a; border: 1px solid rgba(186, 26, 26, 0.2); padding: 4px 10px; font-size: 0.75rem; border-radius: 4px;" title="Click to Open Admissions">
+                      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ba1a1a; margin-right: 4px;"></span>
+                      Closed
+                    </button>
+                  {% endif %}
+                </form>
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'university_admin:program_edit' prog.pk %}" class="erp-btn erp-btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                  Edit Criteria
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="9" style="text-align: center; padding: 48px; color: var(--erp-text-muted);">
+                No academic degree programs found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-</section>
+</div>
 {% endblock %}

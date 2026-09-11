@@ -1,228 +1,297 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Student Dossier: {{ student.full_name }} | PIST Superadmin{% endblock %}
-{% block admin_heading %}Student Dossier & Academic History{% endblock %}
-{% block admin_subheading %}Complete student registry profile, submitted applications, academic certificates, and notifications log{% endblock %}
+{% load static %}
+
+{% block title %}Student Dossier: {{ student.full_name }} | PIST ERP{% endblock %}
 
 {% block content %}
-<section class="panel">
-  <div class="panel__heading">
+<div class="erp-student-dossier">
+  <!-- Header Strip -->
+  <div class="erp-page-header">
     <div style="display: flex; align-items: center; gap: 16px;">
       {% if student.profile_photo %}
-        <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}" style="width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 2px solid var(--slate-300);">
+        <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}" style="width: 58px; height: 58px; border-radius: 10px; object-fit: cover; border: 2px solid var(--erp-border);">
       {% else %}
-        <div style="width: 56px; height: 56px; border-radius: 12px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: var(--navy-900);">
+        <div style="width: 58px; height: 58px; border-radius: 10px; background: rgba(0,38,34,0.08); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: var(--erp-primary);">
           {{ student.full_name|slice:':1' }}
         </div>
       {% endif %}
       <div>
-        <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--navy-900);">{{ student.full_name }}</h1>
-        <p style="margin: 4px 0 0 0; color: var(--slate-500); font-weight: 500;">
-          Student ID: <strong style="font-family: monospace; color: var(--blue-600);">{{ student.student_id }}</strong> &bull; Registered {{ student.created_at|date:'d M Y' }}
-        </p>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">OFFICIAL DOSSIER</span>
+          <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ student.student_id }}</span>
+        </div>
+        <h1 class="erp-page-title">{{ student.full_name }}</h1>
+        <p class="erp-page-subtitle">CNIC: {{ student.cnic }} &bull; Registered on {{ student.created_at|date:'d M Y' }}</p>
       </div>
     </div>
-    <div class="panel__actions">
-      <a class="button button--secondary" href="{% url 'university_admin:students_list' %}">Back to Directory</a>
+    <div class="erp-header-actions">
+      <a class="erp-btn erp-btn-secondary" href="{% url 'university_admin:students_list' %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Students Directory
+      </a>
     </div>
   </div>
 
-  <div class="detail-grid">
+  <!-- 2-Column Bento Information Strip -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
     <!-- Personal Information Card -->
-    <div class="detail-card">
-      <h2>Personal Profile</h2>
-      <p><strong>Father's Name:</strong> {{ student.father_name|default:'N/A' }}</p>
-      <p><strong>CNIC:</strong> <span style="font-family: monospace;">{{ student.cnic }}</span></p>
-      <p><strong>Date of Birth:</strong> {{ student.date_of_birth|default:'Not provided' }}</p>
-      <p><strong>Gender:</strong> {{ student.get_gender_display|default:'Not specified' }}</p>
-      <p><strong>Nationality:</strong> {{ student.nationality }}</p>
-      <p><strong>Email Address:</strong> {{ student.user.email }}</p>
-      <p><strong>Phone Number:</strong> {{ student.phone }}</p>
-      <p><strong>Postal Address:</strong> {{ student.address|default:'Not provided' }}</p>
+    <div class="erp-card">
+      <div class="erp-card-header">
+        <h2 class="erp-card-title">Personal Profile &amp; Demographics</h2>
+      </div>
+      <div class="erp-card-body" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Father's Name</span>
+          <strong style="color: var(--erp-text-main); font-size: 0.85rem;">{{ student.father_name|default:'N/A' }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">National CNIC / B-Form</span>
+          <span class="erp-code">{{ student.cnic }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Date of Birth</span>
+          <span style="color: var(--erp-text-main); font-size: 0.85rem;">{{ student.date_of_birth|default:'Not provided' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Gender / Nationality</span>
+          <span style="color: var(--erp-text-main); font-size: 0.85rem;">{{ student.get_gender_display|default:'Not specified' }} &bull; {{ student.nationality }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Email Address</span>
+          <span style="color: var(--erp-text-main); font-size: 0.85rem;">{{ student.user.email }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--erp-border); padding-bottom: 8px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Phone Number</span>
+          <span class="erp-code">{{ student.phone }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 2px;">
+          <span style="color: var(--erp-text-secondary); font-size: 0.85rem;">Postal Address</span>
+          <span style="color: var(--erp-text-main); font-size: 0.85rem; max-width: 60%; text-align: right;">{{ student.address|default:'Not provided' }}</span>
+        </div>
+      </div>
     </div>
 
     <!-- Academic Records -->
-    <div class="detail-card">
-      <h2>Academic Records on File</h2>
-      {% if student.matric_record %}
-        <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--slate-200);">
-          <strong style="color: var(--navy-900);">Matriculation (SSC):</strong>
-          <p style="margin: 4px 0;">Board: {{ student.matric_record.board_name }} &bull; Roll No: {{ student.matric_record.roll_number }}</p>
-          <p style="margin: 4px 0;">Marks: {{ student.matric_record.obtained_marks }} / {{ student.matric_record.total_marks }} (<strong>{{ student.matric_record.percentage }}%</strong>)</p>
-        </div>
-      {% else %}
-        <p style="color: var(--slate-400); font-style: italic;">No matric record added yet.</p>
-      {% endif %}
+    <div class="erp-card">
+      <div class="erp-card-header">
+        <h2 class="erp-card-title">Academic Qualifications &amp; Test Records</h2>
+      </div>
+      <div class="erp-card-body" style="display: flex; flex-direction: column; gap: 14px;">
+        {% if student.matric_record %}
+          <div style="padding-bottom: 10px; border-bottom: 1px solid var(--erp-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="color: var(--erp-primary); font-size: 0.88rem;">Secondary School Certificate (Matric)</strong>
+              <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700;">{{ student.matric_record.percentage }}%</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--erp-text-secondary);">
+              Board: {{ student.matric_record.board_name }} &bull; Roll No: <span class="erp-code">{{ student.matric_record.roll_number }}</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--erp-text-muted); margin-top: 2px;">
+              Marks: {{ student.matric_record.obtained_marks }} / {{ student.matric_record.total_marks }}
+            </div>
+          </div>
+        {% else %}
+          <div style="font-size: 0.84rem; color: var(--erp-text-muted); font-style: italic;">No matric record added yet.</div>
+        {% endif %}
 
-      {% if student.intermediate_record %}
-        <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--slate-200);">
-          <strong style="color: var(--navy-900);">Intermediate / FSc (HSSC):</strong>
-          <p style="margin: 4px 0;">Group: {{ student.intermediate_record.group_name }} &bull; Board: {{ student.intermediate_record.board_name }}</p>
-          <p style="margin: 4px 0;">Marks: {{ student.intermediate_record.obtained_marks }} / {{ student.intermediate_record.total_marks }} (<strong>{{ student.intermediate_record.percentage }}%</strong>)</p>
-        </div>
-      {% else %}
-        <p style="color: var(--slate-400); font-style: italic;">No intermediate record added yet.</p>
-      {% endif %}
+        {% if student.intermediate_record %}
+          <div style="padding-bottom: 10px; border-bottom: 1px solid var(--erp-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="color: var(--erp-primary); font-size: 0.88rem;">Higher Secondary Certificate (F.Sc / A-Levels)</strong>
+              <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700;">{{ student.intermediate_record.percentage }}%</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--erp-text-secondary);">
+              Group: {{ student.intermediate_record.group_name }} &bull; Board: {{ student.intermediate_record.board_name }}
+            </div>
+            <div style="font-size: 0.82rem; color: var(--erp-text-muted); margin-top: 2px;">
+              Marks: {{ student.intermediate_record.obtained_marks }} / {{ student.intermediate_record.total_marks }}
+            </div>
+          </div>
+        {% else %}
+          <div style="font-size: 0.84rem; color: var(--erp-text-muted); font-style: italic;">No intermediate record added yet.</div>
+        {% endif %}
 
-      <strong style="color: var(--navy-900);">External Test Scores:</strong>
-      {% for score in student.test_scores.all %}
-        <p style="margin: 4px 0;">{{ score.test_type.name }}: {{ score.score }}/{{ score.total_score }} ({{ score.percentage }}%)</p>
-      {% empty %}
-        <p style="color: var(--slate-400); font-style: italic;">No external test score records.</p>
-      {% endfor %}
+        <div>
+          <strong style="color: var(--erp-text-main); font-size: 0.85rem; display: block; margin-bottom: 6px;">External Test Scores:</strong>
+          {% for score in student.test_scores.all %}
+            <div style="font-size: 0.82rem; color: var(--erp-text-secondary); margin-bottom: 4px;">
+              {{ score.test_type.name }}: <strong style="color: var(--erp-primary);">{{ score.score }} / {{ score.total_score }}</strong> ({{ score.percentage }}%)
+            </div>
+          {% empty %}
+            <span style="font-size: 0.82rem; color: var(--erp-text-muted); font-style: italic;">No external test score records.</span>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Applications by this Student -->
-  <div style="margin-top: 24px;">
-    <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--navy-900); margin-bottom: 12px;">Submitted Program Applications</h2>
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Program</th>
-            <th>Campus</th>
-            <th>Roll Number</th>
-            <th>Test Date</th>
-            <th>Status</th>
-            <th>Submitted</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for app in applications %}
-          <tr>
-            <td>
-              <strong>{{ app.program.name }}</strong>
-              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ app.program.code }}</div>
-            </td>
-            <td><span class="badge badge--muted">{{ app.campus.code }}</span></td>
-            <td>
-              {% if app.roll_number %}
-                <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ app.roll_number }}</span>
-              {% else %}
-                <span style="color: var(--slate-400);">Pending</span>
-              {% endif %}
-            </td>
-            <td>{{ app.test_date|default:'TBA' }}</td>
-            <td>
-              {% if app.status == 'Rejected' or app.application_status == 'REJECTED' %}
-                <span class="badge badge--danger">Rejected</span>
-              {% elif app.status == 'Roll No Issued' or app.application_status == 'SCHEDULED' %}
-                <span class="badge badge--primary">Scheduled</span>
-              {% elif app.status == 'Admission Confirmed' or app.application_status == 'ACCEPTED' %}
-                <span class="badge badge--success">Accepted</span>
-              {% else %}
-                <span class="badge badge--muted">{{ app.status|default:app.application_status }}</span>
-              {% endif %}
-            </td>
-            <td>{{ app.created_at|date:'d M Y' }}</td>
-            <td>
-              <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' app.pk %}">
-                Open Dossier
-              </a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="7" style="text-align: center; color: var(--slate-500); padding: 20px;">No applications found for this student.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="erp-card" style="margin-bottom: 24px;">
+    <div class="erp-card-header">
+      <h2 class="erp-card-title">Submitted Program Applications ({{ applications.count }})</h2>
+    </div>
+    <div class="erp-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table erp-table mb-0">
+          <thead>
+            <tr>
+              <th>ACADEMIC PROGRAM</th>
+              <th>CAMPUS</th>
+              <th>ROLL NUMBER</th>
+              <th>TEST DATE</th>
+              <th>APPLICATION STATUS</th>
+              <th>SUBMITTED</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: var(--erp-text-main); font-size: 0.88rem;">{{ app.program.name }}</div>
+                <span class="erp-code" style="color: var(--erp-primary);">{{ app.program.code }}</span>
+              </td>
+              <td><span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary);">{{ app.campus.code }}</span></td>
+              <td>
+                {% if app.roll_number %}
+                  <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ app.roll_number }}</span>
+                {% else %}
+                  <span style="color: var(--erp-text-muted); font-size: 0.82rem;">Pending</span>
+                {% endif %}
+              </td>
+              <td style="font-family: var(--erp-font-mono); font-size: 0.82rem;">{{ app.test_date|default:'TBA' }}</td>
+              <td>
+                {% if app.status == 'Rejected' or app.application_status == 'REJECTED' %}
+                  <span class="erp-badge" style="background: rgba(255, 218, 214, 0.6); color: #ba1a1a;">Rejected</span>
+                {% elif app.status == 'Roll No Issued' or app.application_status == 'SCHEDULED' %}
+                  <span class="erp-badge" style="background: rgba(220, 226, 247, 0.6); color: #1e3a8a;">Scheduled</span>
+                {% elif app.status == 'Admission Confirmed' or app.application_status == 'ACCEPTED' %}
+                  <span class="erp-badge" style="background: rgba(184, 237, 226, 0.6); color: #013e37;">Accepted</span>
+                {% else %}
+                  <span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary);">{{ app.status|default:app.application_status }}</span>
+                {% endif %}
+              </td>
+              <td style="font-family: var(--erp-font-mono); font-size: 0.82rem; color: var(--erp-text-muted);">
+                {{ app.created_at|date:'d M Y' }}
+              </td>
+              <td style="text-align: right;">
+                <a class="erp-btn erp-btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" href="{% url 'university_admin:application_detail' app.pk %}">
+                  Open Dossier
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align: center; color: var(--erp-text-muted); padding: 32px;">No applications found for this student.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- Documents Uploaded by this Student -->
-  <div style="margin-top: 24px;">
-    <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--navy-900); margin-bottom: 12px;">Uploaded Academic Documents</h2>
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Document Type</th>
-            <th>File Name</th>
-            <th>Size</th>
-            <th>Uploaded</th>
-            <th>Verification Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for doc in documents %}
-          <tr>
-            <td><strong>{{ doc.get_document_type_display }}</strong></td>
-            <td><span style="font-family: monospace;">{{ doc.file_name }}</span></td>
-            <td>{{ doc.file_size_display|default:'-' }}</td>
-            <td>{{ doc.uploaded_at|date:'d M Y, H:i' }}</td>
-            <td>
-              {% if doc.verification_status == 'VERIFIED' %}
-                <span class="badge badge--success">Verified</span>
-              {% elif doc.verification_status == 'REJECTED' %}
-                <span class="badge badge--danger">Rejected</span>
-              {% else %}
-                <span class="badge badge--warning">Pending</span>
-              {% endif %}
-            </td>
-            <td>
-              <a href="{% url 'students:document_view' doc.pk %}" target="_blank" class="button button--secondary button--sm">
-                View File
-              </a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="6" style="text-align: center; color: var(--slate-500); padding: 20px;">No documents uploaded.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="erp-card" style="margin-bottom: 24px;">
+    <div class="erp-card-header">
+      <h2 class="erp-card-title">Uploaded Academic Credentials &amp; Verification ({{ documents.count }})</h2>
+    </div>
+    <div class="erp-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table erp-table mb-0">
+          <thead>
+            <tr>
+              <th>DOCUMENT TYPE</th>
+              <th>FILE NAME</th>
+              <th>SIZE</th>
+              <th>UPLOADED</th>
+              <th>VERIFICATION STATUS</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td><strong style="color: var(--erp-text-main);">{{ doc.get_document_type_display }}</strong></td>
+              <td><span class="erp-code">{{ doc.file_name }}</span></td>
+              <td style="font-size: 0.82rem; color: var(--erp-text-muted);">{{ doc.file_size_display|default:'-' }}</td>
+              <td style="font-family: var(--erp-font-mono); font-size: 0.82rem; color: var(--erp-text-muted);">{{ doc.uploaded_at|date:'d M Y, H:i' }}</td>
+              <td>
+                {% if doc.verification_status == 'VERIFIED' %}
+                  <span class="erp-badge" style="background: rgba(184, 237, 226, 0.6); color: #013e37;">Verified</span>
+                {% elif doc.verification_status == 'REJECTED' %}
+                  <span class="erp-badge" style="background: rgba(255, 218, 214, 0.6); color: #ba1a1a;">Rejected</span>
+                {% else %}
+                  <span class="erp-badge" style="background: rgba(233, 226, 210, 0.6); color: #856404;">Pending</span>
+                {% endif %}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'students:document_view' doc.pk %}" target="_blank" class="erp-btn erp-btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;">
+                  View File
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center; color: var(--erp-text-muted); padding: 32px;">No documents uploaded.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- Direct Communication & Notification Center -->
-  <div style="margin-top: 32px; border-top: 2px solid var(--slate-200); padding-top: 24px;">
-    <div class="detail-grid">
-      <!-- Send Note Form -->
-      <div class="panel" style="margin-bottom: 0;">
-        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--navy-900); margin-top: 0;">Send Direct Notification</h2>
-        <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 14px;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <!-- Send Note Form -->
+    <div class="erp-card">
+      <div class="erp-card-header">
+        <h2 class="erp-card-title">Send Direct Notification</h2>
+      </div>
+      <div class="erp-card-body">
+        <p style="font-size: 0.84rem; color: var(--erp-text-secondary); margin-bottom: 14px;">
           Send an official message to {{ student.full_name }} which appears immediately on their student portal dashboard.
         </p>
         <form method="post">
           {% csrf_token %}
           <input type="hidden" name="send_student_note" value="1">
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label style="font-weight: 700; font-size: 0.82rem;">Subject / Title</label>
-            <input type="text" name="title" class="form-control" placeholder="e.g. Document Verification Update or Interview Call" required>
+          <div style="margin-bottom: 14px;">
+            <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 4px;">Subject / Title</label>
+            <input type="text" name="title" class="erp-input" placeholder="e.g. Document Verification Update or Interview Call" required>
           </div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight: 700; font-size: 0.82rem;">Message Body</label>
-            <textarea name="message" class="form-control" rows="3" placeholder="Provide instructions, clarifications, or reminders..." required></textarea>
+          <div style="margin-bottom: 16px;">
+            <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 4px;">Message Body</label>
+            <textarea name="message" class="erp-textarea" rows="3" placeholder="Provide instructions, clarifications, or reminders..." required></textarea>
           </div>
-          <button type="submit" class="button button--primary">
-            <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
-            <span>Send Direct Notification</span>
+          <button type="submit" class="erp-btn erp-btn-primary" style="width: 100%; justify-content: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Send Direct Notification
           </button>
         </form>
       </div>
+    </div>
 
-      <!-- Past Notifications Log -->
-      <div class="panel" style="margin-bottom: 0;">
-        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--navy-900); margin-top: 0;">Recent Notifications History</h2>
-        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
-          {% for notif in notifications %}
-          <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 6px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <strong>{{ notif.title }}</strong>
-              <small style="color: var(--slate-400);">{{ notif.created_at|date:'d M, H:i' }}</small>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--slate-700);">{{ notif.message }}</p>
-            <span style="font-size: 0.72rem; color: {% if notif.is_read %}var(--emerald-600){% else %}var(--slate-400){% endif %};">
-              {% if notif.is_read %}Read by student{% else %}Unread{% endif %}
-            </span>
+    <!-- Past Notifications Log -->
+    <div class="erp-card">
+      <div class="erp-card-header">
+        <h2 class="erp-card-title">Recent Notifications History</h2>
+      </div>
+      <div class="erp-card-body" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+        {% for notif in notifications %}
+        <div style="padding: 10px 14px; background: var(--erp-card-subtle); border: 1px solid var(--erp-border); border-radius: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+            <strong style="color: var(--erp-text-main); font-size: 0.88rem;">{{ notif.title }}</strong>
+            <small style="color: var(--erp-text-muted); font-family: var(--erp-font-mono); font-size: 0.75rem;">{{ notif.created_at|date:'d M, H:i' }}</small>
           </div>
-          {% empty %}
-          <p style="color: var(--slate-400); font-style: italic;">No notifications sent yet to this student.</p>
-          {% endfor %}
+          <p style="margin: 0; font-size: 0.82rem; color: var(--erp-text-secondary); line-height: 1.4;">{{ notif.message }}</p>
+          <div style="margin-top: 4px; font-size: 0.72rem; color: {% if notif.is_read %}#013e37{% else %}var(--erp-text-muted){% endif %}; font-weight: 600;">
+            {% if notif.is_read %}Read by student{% else %}Unread{% endif %}
+          </div>
         </div>
+        {% empty %}
+        <div style="color: var(--erp-text-muted); font-style: italic; font-size: 0.84rem; text-align: center; padding: 32px;">
+          No notifications sent yet to this student.
+        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
-</section>
+</div>
 {% endblock %}

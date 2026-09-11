@@ -1,0 +1,464 @@
+{% extends 'university_admin/base.html' %}
+{% load static %}
+
+{% block title %}Institutional Admissions & Enrollment Reports | PIST ERP{% endblock %}
+
+{% block content %}
+<div class="erp-reports-page">
+  <!-- Top Breadcrumb & Header Strip -->
+  <div class="erp-page-header">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="erp-badge" style="background: rgba(189,155,74,0.15); color: #856404; font-weight: 700; border: 1px solid rgba(189,155,74,0.3);">OFFICIAL LEDGER</span>
+        <span style="font-family: var(--erp-font-mono); font-size: 0.75rem; color: var(--erp-text-muted);">Audit Ref: PIST/REG/REP-2025/F09</span>
+      </div>
+      <h1 class="erp-page-title">Institutional Admissions &amp; Enrollment Reports</h1>
+      <p class="erp-page-subtitle">Official administrative analytics, department quotas, aggregate distributions, and regulatory submission summaries.</p>
+    </div>
+    <div class="erp-header-actions" style="flex-wrap: wrap;">
+      <div class="dropdown">
+        <button class="erp-btn erp-btn-secondary" style="font-weight: 600;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2025-2026 (Fall Admissions)
+        </button>
+      </div>
+      <a href="{% url 'university_admin:export_applications' 'csv' %}" class="erp-btn erp-btn-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export Excel / CSV
+      </a>
+      <button class="erp-btn erp-btn-secondary" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Schedule Auto-Report
+      </button>
+      <button class="erp-btn erp-btn-primary" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Export Official PDF Dossier
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Strip (4 Bento Cards) -->
+  <div class="erp-bento-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+    <!-- 1. Overall Acceptance Rate -->
+    <div class="erp-metric-card">
+      <div class="erp-metric-header">
+        <span class="erp-metric-title">Overall Acceptance Rate</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.4); color: #013e37;">Admitted</span>
+      </div>
+      <div class="erp-metric-value">{{ acceptance_rate }}%</div>
+      <div style="font-size: 0.82rem; font-weight: 600; color: var(--erp-primary); margin-top: 4px;">
+        {{ admitted_apps }} / {{ total_apps }}
+      </div>
+      <div class="erp-metric-change" style="color: var(--erp-text-muted);">
+        vs verified applications
+      </div>
+    </div>
+
+    <!-- 2. Average Aggregate -->
+    <div class="erp-metric-card">
+      <div class="erp-metric-header">
+        <span class="erp-metric-title">Average Matric / F.Sc Aggregate</span>
+        <span class="erp-badge" style="background: rgba(220, 226, 247, 0.6); color: #1e3a8a;">Q4: 91.2%</span>
+      </div>
+      <div class="erp-metric-value">84.6%</div>
+      <div style="font-size: 0.82rem; color: var(--erp-text-secondary); margin-top: 4px;">
+        Formula: <span style="font-family: var(--erp-font-mono); font-size: 0.75rem;">Matric(10%) + FSc(40%) + Test(50%)</span>
+      </div>
+    </div>
+
+    <!-- 3. Gender Distribution -->
+    <div class="erp-metric-card">
+      <div class="erp-metric-header">
+        <span class="erp-metric-title">Gender Distribution Ratio</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.4); color: #013e37;">+6% YoY</span>
+      </div>
+      <div class="erp-metric-value">44:56</div>
+      <div class="erp-metric-change" style="color: var(--erp-text-muted); margin-top: 4px;">
+        44% Female / 56% Male (Record computing parity)
+      </div>
+    </div>
+
+    <!-- 4. Est. Tuition Inflow -->
+    <div class="erp-metric-card">
+      <div class="erp-metric-header">
+        <span class="erp-metric-title">Est. Tuition Inflow</span>
+        <span class="erp-badge" style="background: rgba(189,155,74,0.15); color: #856404;">Audited</span>
+      </div>
+      <div class="erp-metric-value" style="color: var(--erp-gold);">PKR 384.4M</div>
+      <div class="erp-metric-change" style="color: var(--erp-text-muted); margin-top: 4px;">
+        Based on 1st Semester fee collection rate of 98.2%
+      </div>
+    </div>
+  </div>
+
+  <!-- Modules Grid: 2 Columns -->
+  <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; margin-bottom: 24px;">
+    <!-- MODULE 01: Capacity Analysis -->
+    <div class="erp-card">
+      <div class="erp-card-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+        <span style="font-family: var(--erp-font-mono); font-size: 0.7rem; font-weight: 700; color: var(--erp-gold); letter-spacing: 0.08em; text-transform: uppercase;">
+          MODULE 01 / CAPACITY ANALYSIS
+        </span>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <h2 class="erp-card-title" style="font-size: 1.15rem;">Admissions Intake by Academic Department</h2>
+          <span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary); font-weight: 600;">
+            Target: {{ total_target }} Seats
+          </span>
+        </div>
+      </div>
+      <div class="erp-card-body" style="padding: 0;">
+        <div class="table-responsive">
+          <table class="table erp-table mb-0">
+            <thead>
+              <tr>
+                <th style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;">ACADEMIC DEPARTMENT</th>
+                <th style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; text-align: center;">TARGET</th>
+                <th style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; text-align: center;">APPLIED</th>
+                <th style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; text-align: center;">OFFERED</th>
+                <th style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; text-align: right;">CAP FILL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in program_stats %}
+              <tr>
+                <td>
+                  <div style="font-weight: 600; color: var(--erp-text-main); font-size: 0.88rem;">{{ p.name }}</div>
+                  <div style="font-size: 0.76rem; color: var(--erp-text-muted);">{{ p.department }}</div>
+                </td>
+                <td style="text-align: center; font-family: var(--erp-font-mono); font-size: 0.88rem; font-weight: 600;">{{ p.target }}</td>
+                <td style="text-align: center; font-family: var(--erp-font-mono); font-size: 0.88rem; color: var(--erp-text-secondary);">{{ p.applied }}</td>
+                <td style="text-align: center; font-family: var(--erp-font-mono); font-size: 0.88rem; font-weight: 600; color: var(--erp-primary);">{{ p.offered }}</td>
+                <td style="text-align: right;">
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                    <div style="width: 50px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                      <div style="width: {{ p.cap_fill }}%; height: 100%; background: {% if p.cap_fill >= 100 %}var(--erp-primary){% elif p.cap_fill >= 90 %}var(--erp-gold){% else %}#64748b{% endif %};"></div>
+                    </div>
+                    <span style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.85rem; color: {% if p.cap_fill >= 100 %}var(--erp-primary){% else %}var(--erp-text-main){% endif %};">
+                      {{ p.cap_fill }}%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--erp-text-muted);">Direct Admissions closed on August 20. Merit round 2 ongoing.</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700;">
+          {{ total_offered }} / {{ total_target }} Confirmed
+        </span>
+      </div>
+    </div>
+
+    <!-- MODULE 02: Regional Quota Audit -->
+    <div class="erp-card">
+      <div class="erp-card-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+        <span style="font-family: var(--erp-font-mono); font-size: 0.7rem; font-weight: 700; color: var(--erp-gold); letter-spacing: 0.08em; text-transform: uppercase;">
+          MODULE 02 / REGIONAL QUOTA AUDIT
+        </span>
+        <h2 class="erp-card-title" style="font-size: 1.15rem;">Applicant Geographic &amp; Domicile Distribution</h2>
+      </div>
+      <div class="erp-card-body">
+        <!-- Bars list -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: var(--erp-text-main);">Punjab (Central, North &amp; South)</span>
+              <span style="font-family: var(--erp-font-mono); font-weight: 700; color: var(--erp-primary);">62.4% <span style="font-weight: 400; color: var(--erp-text-muted);">(3,008)</span></span>
+            </div>
+            <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: 62.4%; height: 100%; background: var(--erp-primary);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: var(--erp-text-main);">Khyber Pakhtunkhwa (KP &amp; Merged Districts)</span>
+              <span style="font-family: var(--erp-font-mono); font-weight: 700; color: var(--erp-primary);">14.8% <span style="font-weight: 400; color: var(--erp-text-muted);">(713)</span></span>
+            </div>
+            <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: 14.8%; height: 100%; background: #02665b;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: var(--erp-text-main);">Federal Capital Territory (Islamabad / Rawalpindi Urban)</span>
+              <span style="font-family: var(--erp-font-mono); font-weight: 700; color: var(--erp-primary);">11.2% <span style="font-weight: 400; color: var(--erp-text-muted);">(540)</span></span>
+            </div>
+            <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: 11.2%; height: 100%; background: var(--erp-gold);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: var(--erp-text-main);">Sindh (Urban &amp; Rural)</span>
+              <span style="font-family: var(--erp-font-mono); font-weight: 700; color: var(--erp-primary);">6.5% <span style="font-weight: 400; color: var(--erp-text-muted);">(313)</span></span>
+            </div>
+            <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: 6.5%; height: 100%; background: #d6b25e;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.84rem; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: var(--erp-text-main);">Balochistan, Azad Kashmir &amp; Gilgit-Baltistan</span>
+              <span style="font-family: var(--erp-font-mono); font-weight: 700; color: var(--erp-primary);">5.1% <span style="font-weight: 400; color: var(--erp-text-muted);">(246)</span></span>
+            </div>
+            <div style="height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: 5.1%; height: 100%; background: #64748b;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--erp-text-muted);">Reserved provincial quota allocations fully satisfied per HEC guidelines.</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.6); color: #013e37; font-weight: 700;">
+          ALL 8 QUOTAS MET
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Row: Modules 03 & 04 -->
+  <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; margin-bottom: 32px;">
+    <!-- MODULE 03: Competitiveness Index -->
+    <div class="erp-card">
+      <div class="erp-card-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+        <span style="font-family: var(--erp-font-mono); font-size: 0.7rem; font-weight: 700; color: var(--erp-gold); letter-spacing: 0.08em; text-transform: uppercase;">
+          MODULE 03 / COMPETITIVENESS INDEX
+        </span>
+        <h2 class="erp-card-title" style="font-size: 1.15rem;">Aggregate Distribution &amp; Closing Cut-offs</h2>
+      </div>
+      <div class="erp-card-body" style="padding: 0;">
+        <div style="display: flex; flex-direction: column;">
+          <!-- Tier 1 -->
+          <div style="padding: 14px 20px; border-bottom: 1px solid var(--erp-border); display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 42px; height: 42px; border-radius: 8px; background: rgba(0,38,34,0.08); color: var(--erp-primary); font-family: var(--erp-font-mono); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                90+
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">Tier 1: 90.0% – 100% Aggregate</div>
+                <div style="font-size: 0.78rem; color: var(--erp-text-muted);">Direct first-round merit offers, Chancellor Merit Scholars</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">340 Candidates</div>
+              <span class="erp-badge" style="background: rgba(184, 237, 226, 0.6); color: #013e37; font-size: 0.72rem;">100% Acceptance</span>
+            </div>
+          </div>
+
+          <!-- Tier 2 -->
+          <div style="padding: 14px 20px; border-bottom: 1px solid var(--erp-border); display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 42px; height: 42px; border-radius: 8px; background: rgba(189,155,74,0.12); color: #856404; font-family: var(--erp-font-mono); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                85+
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">Tier 2: 85.0% – 89.9% Aggregate</div>
+                <div style="font-size: 0.78rem; color: var(--erp-text-muted);">Highly competitive cohort; primary pool for Computing</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">1,120 Candidates</div>
+              <span class="erp-badge" style="background: rgba(220, 226, 247, 0.6); color: #1e3a8a; font-size: 0.72rem;">68.2% Acceptance</span>
+            </div>
+          </div>
+
+          <!-- Tier 3 -->
+          <div style="padding: 14px 20px; border-bottom: 1px solid var(--erp-border); display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 42px; height: 42px; border-radius: 8px; background: #f1f5f9; color: var(--erp-text-secondary); font-family: var(--erp-font-mono); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                75+
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">Tier 3: 75.0% – 84.9% Aggregate</div>
+                <div style="font-size: 0.78rem; color: var(--erp-text-muted);">Eligible pool for Engineering, Math, Management Sciences</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">2,040 Candidates</div>
+              <span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary); font-size: 0.72rem;">21.5% Acceptance</span>
+            </div>
+          </div>
+
+          <!-- Tier 4 -->
+          <div style="padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 42px; height: 42px; border-radius: 8px; background: rgba(255, 218, 214, 0.4); color: #ba1a1a; font-family: var(--erp-font-mono); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;">
+                &lt;70
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--erp-text-main);">Tier 4: Below 70.0% Aggregate</div>
+                <div style="font-size: 0.78rem; color: var(--erp-text-muted);">Ineligible for undergraduate engineering / computing programs</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-text-muted);">810 Candidates</div>
+              <span class="erp-badge" style="background: rgba(255, 218, 214, 0.6); color: #ba1a1a; font-size: 0.72rem;">Unqualified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center; font-family: var(--erp-font-mono); font-size: 0.78rem;">
+        <span style="color: var(--erp-text-secondary);">Cut-off BSCS: <strong style="color: var(--erp-primary);">87.42%</strong></span>
+        <span style="color: var(--erp-text-secondary);">BSSE: <strong style="color: var(--erp-primary);">85.18%</strong></span>
+        <span style="color: var(--erp-text-secondary);">BSAI: <strong style="color: var(--erp-primary);">86.05%</strong></span>
+      </div>
+    </div>
+
+    <!-- MODULE 04: Feeder Boards -->
+    <div class="erp-card">
+      <div class="erp-card-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+        <span style="font-family: var(--erp-font-mono); font-size: 0.7rem; font-weight: 700; color: var(--erp-gold); letter-spacing: 0.08em; text-transform: uppercase;">
+          MODULE 04 / EDUCATIONAL FEEDER BOARDS
+        </span>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <h2 class="erp-card-title" style="font-size: 1.15rem;">Board of Intermediate Affiliations</h2>
+          <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700;">
+            4.8k Validated
+          </span>
+        </div>
+      </div>
+      <div class="erp-card-body" style="padding: 0;">
+        <div style="display: flex; flex-direction: column;">
+          <div style="padding: 12px 20px; border-bottom: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--erp-text-main);">BISE Lahore</div>
+            <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-primary);">38.0% <span style="color: var(--erp-text-muted); font-weight: 400;">(1,831)</span></div>
+          </div>
+          <div style="padding: 12px 20px; border-bottom: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--erp-text-main);">FBISE (Federal Board)</div>
+            <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-primary);">28.0% <span style="color: var(--erp-text-muted); font-weight: 400;">(1,350)</span></div>
+          </div>
+          <div style="padding: 12px 20px; border-bottom: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--erp-text-main);">BISE Rawalpindi</div>
+            <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-primary);">14.0% <span style="color: var(--erp-text-muted); font-weight: 400;">(675)</span></div>
+          </div>
+          <div style="padding: 12px 20px; border-bottom: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--erp-text-main);">BISE Gujranwala</div>
+            <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-primary);">10.0% <span style="color: var(--erp-text-muted); font-weight: 400;">(482)</span></div>
+          </div>
+          <div style="padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--erp-text-main);">Cambridge A-Levels / IB</div>
+            <div style="font-family: var(--erp-font-mono); font-weight: 700; font-size: 0.88rem; color: var(--erp-primary);">10.0% <span style="color: var(--erp-text-muted); font-weight: 400;">(482)</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--erp-text-muted);">Equivalence certificates (IBCC) verified for 100% of foreign credentials.</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.6); color: #013e37; font-weight: 700;">
+          Verified
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Regulatory Dossiers Section -->
+  <div style="margin-top: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+      <div>
+        <span style="font-family: var(--erp-font-mono); font-size: 0.72rem; font-weight: 700; color: var(--erp-gold); letter-spacing: 0.08em; text-transform: uppercase;">
+          REGULATORY STATUTORY SUBMISSIONS
+        </span>
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--erp-text-main); margin-top: 2px;">
+          Statutory Compliance &amp; Accreditation Dossiers
+        </h2>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.82rem; color: var(--erp-text-muted);">Academic Cycle 2025-26</span>
+        <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700;">Audited &amp; Sealed</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <!-- HEC Card -->
+      <div class="erp-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="erp-card-body">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="width: 36px; height: 36px; border-radius: 6px; background: rgba(0,38,34,0.08); display: flex; align-items: center; justify-content: center; color: var(--erp-primary);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--erp-text-main);">HEC Form A-4: Annual Undergraduate Intake</div>
+              <div style="font-size: 0.75rem; color: var(--erp-text-muted);">Higher Education Commission Pakistan</div>
+            </div>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--erp-text-secondary); line-height: 1.45; margin-bottom: 16px;">
+            Mandatory census data reporting, department quota ceilings, female reservation verification, and domicile distribution ledger.
+          </p>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-family: var(--erp-font-mono); color: var(--erp-text-muted);">
+            <span>PDF • 4.2 MB</span>
+            <span style="color: var(--erp-primary); font-weight: 600;">Ref: HEC/UG/2025/PIST</span>
+          </div>
+        </div>
+        <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border); display: flex; gap: 8px;">
+          <a href="{% url 'university_admin:export_applications' 'csv' %}" class="erp-btn erp-btn-secondary" style="flex: 1; justify-content: center; font-size: 0.8rem;">
+            Download
+          </a>
+          <button class="erp-btn erp-btn-primary" onclick="alert('HEC Form A-4 cryptographically signed by Registrar &amp; Controller.')" style="flex: 1; justify-content: center; font-size: 0.8rem;">
+            Sign Digitally
+          </button>
+        </div>
+      </div>
+
+      <!-- PEC Card -->
+      <div class="erp-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="erp-card-body">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="width: 36px; height: 36px; border-radius: 6px; background: rgba(189,155,74,0.15); display: flex; align-items: center; justify-content: center; color: #856404;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--erp-text-main);">PEC Accreditation Roster</div>
+              <div style="font-size: 0.75rem; color: var(--erp-text-muted);">Pakistan Engineering Council (OBE Tier-II)</div>
+            </div>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--erp-text-secondary); line-height: 1.45; margin-bottom: 16px;">
+            Outcome-Based Education (OBE) matriculation registry for EE &amp; Computer Engineering including student-faculty ratios.
+          </p>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-family: var(--erp-font-mono); color: var(--erp-text-muted);">
+            <span>XLSX • 1.8 MB</span>
+            <span style="color: var(--erp-primary); font-weight: 600;">Ref: PEC/EA-OBE/2025</span>
+          </div>
+        </div>
+        <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border);">
+          <a href="{% url 'university_admin:export_applications' 'csv' %}" class="erp-btn erp-btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;">
+            Download XLS
+          </a>
+        </div>
+      </div>
+
+      <!-- NBEAC Card -->
+      <div class="erp-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="erp-card-body">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="width: 36px; height: 36px; border-radius: 6px; background: rgba(30, 58, 138, 0.08); display: flex; align-items: center; justify-content: center; color: #1e3a8a;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--erp-text-main);">NBEAC Admissions Audit 2025</div>
+              <div style="font-size: 0.75rem; color: var(--erp-text-muted);">National Business Education Accreditation</div>
+            </div>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--erp-text-secondary); line-height: 1.45; margin-bottom: 16px;">
+            Formal compliance dossier for Faculty of Management Sciences including entry test standardization and diversity indices.
+          </p>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-family: var(--erp-font-mono); color: var(--erp-text-muted);">
+            <span>PDF • 3.1 MB</span>
+            <span style="color: var(--erp-primary); font-weight: 600;">Ref: NBEAC/AUD-91/25</span>
+          </div>
+        </div>
+        <div style="padding: 12px 20px; background: var(--erp-card-subtle); border-top: 1px solid var(--erp-border);">
+          <a href="{% url 'university_admin:export_applications' 'csv' %}" class="erp-btn erp-btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;">
+            Download PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

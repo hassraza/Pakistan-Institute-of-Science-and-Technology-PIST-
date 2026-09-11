@@ -36,6 +36,10 @@ urlpatterns = [
     # Notifications Broadcaster
     path('notifications/', views.notifications_list, name='notifications'),
     
+    # Institutional Reports & Analytics (Figma Frame 1:4279)
+    path('reports/', views.reports_view, name='reports'),
+    
     # Exports
     path('exports/<str:format>/', views.export_applications, name='export_applications'),
 ]
+

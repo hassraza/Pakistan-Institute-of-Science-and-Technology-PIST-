@@ -1,135 +1,316 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Broadcast Notice | PIST Superadmin{% endblock %}
-{% block admin_heading %}Broadcast Notification Broadcaster{% endblock %}
-{% block admin_subheading %}Send official admission alerts, test updates, and announcements directly to student portals{% endblock %}
+{% load static %}
+{% block title %}Administrative Communications &amp; Notices | PIST Academic Administration{% endblock %}
 
 {% block content %}
-<div class="detail-grid" style="grid-template-columns: 1fr 1.5fr; align-items: flex-start;">
-  <!-- Composer Card -->
-  <div class="panel" style="margin-bottom: 0;">
-    <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin-top: 0; margin-bottom: 14px;">
-      Compose Broadcast
-    </h2>
-    <form method="post">
-      {% csrf_token %}
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="form-group">
-          {{ form.target_audience.label_tag }}
-          {{ form.target_audience }}
-        </div>
-
-        <div class="form-group" id="programFieldGroup" style="display: none;">
-          {{ form.program.label_tag }}
-          {{ form.program }}
-        </div>
-
-        <div class="form-group" id="studentFieldGroup" style="display: none;">
-          {{ form.student_identifier.label_tag }}
-          {{ form.student_identifier }}
-          <small style="color: var(--slate-400); font-size: 0.78rem; display: block; margin-top: 2px;">
-            Enter official Student ID (e.g. PIST-2026-0001) or Candidate CNIC
-          </small>
-        </div>
-
-        <div class="form-group">
-          {{ form.title.label_tag }}
-          {{ form.title }}
-        </div>
-
-        <div class="form-group">
-          {{ form.message.label_tag }}
-          {{ form.message }}
-        </div>
-
-        <button type="submit" class="button button--primary" style="margin-top: 6px;">
-          <span class="material-symbols-outlined" style="font-size: 18px;">campaign</span>
-          <span>Dispatch Broadcast Notice</span>
-        </button>
-      </div>
-    </form>
+<!-- 1. Header Block (Matching Frame 1:3817) -->
+<div class="erp-page-header">
+  <div class="erp-page-header__title-group">
+    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--erp-text-muted); letter-spacing: 0.05em; margin-bottom: 4px;">
+      Institutional Bureau / Despatch Office
+    </div>
+    <h1>Administrative Communications &amp; Notices</h1>
+    <p>Broadcast admissions alerts, dispatch SMS/Email notifications to applicants, and manage institutional circulars.</p>
   </div>
 
-  <!-- Recent Dispatches Log -->
-  <div class="panel" style="margin-bottom: 0;">
-    <div class="panel__heading">
-      <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin: 0;">Recent Notifications Log</h2>
+  <div class="erp-page-header__actions">
+    <span class="badge badge--primary" style="font-size: 11px; padding: 4px 10px;">
+      <span class="badge-dot"></span>
+      <span>SMS Gateway: 99.8% Online</span>
+    </span>
+    <span class="badge badge--scheduled" style="font-size: 11px; padding: 4px 10px;">
+      <span class="material-symbols-outlined" style="font-size: 14px;">alarm</span>
+      <span>Automated Reminders Active</span>
+    </span>
+    <button type="button" class="button button--primary button--sm" onclick="openModal('composeBroadcastModal')">
+      <span class="material-symbols-outlined" style="font-size: 16px;">campaign</span>
+      <span>Compose Broadcast</span>
+    </button>
+  </div>
+</div>
+
+<!-- 2. Dual-Pane Master Inbox & Reader Grid -->
+<div style="display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: flex-start; margin-bottom: 24px;">
+  <!-- Left Pane: Channels & Streams -->
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <!-- Channels Overview Card -->
+    <div class="erp-card" style="margin-bottom: 0; padding: 14px 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--erp-text-muted); margin-bottom: 10px;">
+        <span>Channels &amp; Streams</span>
+        <span>24 Items</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px; font-size: 12.5px;">
+        <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: var(--erp-primary); color: #fff; border-radius: var(--radius-xs); font-weight: 600;">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 17px;">inbox</span>
+            <span>All Notices</span>
+          </span>
+          <span class="badge" style="background: rgba(255,255,255,0.2); color: #fff; font-size: 10px;">24</span>
+        </a>
+
+        <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; color: var(--erp-text-secondary); border-radius: var(--radius-xs);">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--erp-text-muted);">notifications_active</span>
+            <span>Applicant Alerts</span>
+          </span>
+          <span class="badge badge--muted" style="font-size: 10px;">12</span>
+        </a>
+
+        <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; color: var(--erp-text-secondary); border-radius: var(--radius-xs);">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--erp-text-muted);">policy</span>
+            <span>HEC &amp; Directives</span>
+          </span>
+          <span class="badge badge--muted" style="font-size: 10px;">4</span>
+        </a>
+
+        <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; color: var(--erp-text-secondary); border-radius: var(--radius-xs);">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--erp-text-muted);">article</span>
+            <span>Department Circulars</span>
+          </span>
+          <span class="badge badge--muted" style="font-size: 10px;">5</span>
+        </a>
+
+        <a href="#" style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; color: var(--erp-text-secondary); border-radius: var(--radius-xs);">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--erp-text-muted);">dns</span>
+            <span>System &amp; Audit Logs</span>
+          </span>
+          <span class="badge badge--muted" style="font-size: 10px;">3</span>
+        </a>
+      </div>
     </div>
 
-    <div class="table-wrap">
-      <table class="data-table" style="min-width: 100%;">
-        <thead>
-          <tr>
-            <th>Student Recipient</th>
-            <th>Title & Message</th>
-            <th>Status</th>
-            <th>Dispatched</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for notif in notifications %}
-          <tr>
-            <td>
-              <strong><a href="{% url 'university_admin:student_detail' notif.student.pk %}" class="text-link">{{ notif.student.full_name }}</a></strong>
-              <div style="font-size: 0.78rem; color: var(--slate-500); font-family: monospace;">
-                {{ notif.student.student_id }}
-              </div>
-            </td>
-            <td>
-              <strong>{{ notif.title }}</strong>
-              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 2px;">
-                {{ notif.message|truncatechars:100 }}
-              </div>
-            </td>
-            <td>
-              {% if notif.is_read %}
-                <span class="badge badge--success" style="font-size: 0.72rem;">Read</span>
-              {% else %}
-                <span class="badge badge--muted" style="font-size: 0.72rem;">Delivered</span>
-              {% endif %}
-            </td>
-            <td style="font-size: 0.8rem; color: var(--slate-400); white-space: nowrap;">
-              {{ notif.created_at|date:'d M, H:i' }}
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 32px; color: var(--slate-500);">
-              No notifications dispatched yet.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <!-- Notice Items Stream -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <!-- Active Selected Notice -->
+      <div style="background: #ffffff; border: 1.5px solid var(--erp-primary); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--shadow-sm); cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span class="badge badge--danger" style="font-size: 10px;">URGENT ACTION</span>
+          <span style="font-size: 11px; color: var(--erp-text-muted);">Today, 10:45 AM</span>
+        </div>
+        <strong style="font-size: 13px; color: var(--erp-text); display: block; margin-bottom: 4px;">
+          Fee Submission Deadline for 1st Merit List Candidates
+        </strong>
+        <p style="margin: 0 0 8px 0; font-size: 11.5px; color: var(--erp-text-secondary); line-height: 1.4;">
+          Candidates offered admission must deposit semester dues via authorized Bank Alfalah...
+        </p>
+        <span style="font-size: 11px; color: var(--erp-primary); font-weight: 700;">Admissions Directorate &bull; 1,240 Recipients</span>
+      </div>
+
+      <!-- Notice 2 -->
+      <div style="background: #ffffff; border: 1px solid var(--erp-border); border-radius: var(--radius-sm); padding: 14px; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span class="badge badge--muted" style="font-size: 10px;">REGULATORY</span>
+          <span style="font-size: 11px; color: var(--erp-text-muted);">Yesterday</span>
+        </div>
+        <strong style="font-size: 13px; color: var(--erp-text); display: block; margin-bottom: 4px;">
+          HEC Notification: Revised Undergraduate Policy Guidelines
+        </strong>
+        <p style="margin: 0; font-size: 11.5px; color: var(--erp-text-muted);">
+          Mandatory alignment for IBCC equivalency checks and 12-year education validation...
+        </p>
+      </div>
+
+      <!-- Notice 3 -->
+      <div style="background: #ffffff; border: 1px solid var(--erp-border); border-radius: var(--radius-sm); padding: 14px; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span class="badge badge--scheduled" style="font-size: 10px;">SMS DISPATCHED</span>
+          <span style="font-size: 11px; color: var(--erp-text-muted);">Jul 12</span>
+        </div>
+        <strong style="font-size: 13px; color: var(--erp-text); display: block; margin-bottom: 4px;">
+          Entry Test Hall Allocation Dispatched via Bulk SMS
+        </strong>
+        <p style="margin: 0; font-size: 11.5px; color: var(--erp-text-muted);">
+          Session codes, seat numbers, and reporting desks for Batch 1 and Batch 2...
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Pane: Official University Bulletin Reader -->
+  <div class="panel" style="margin-bottom: 0; padding: 28px 32px;">
+    <!-- University Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--erp-border); padding-bottom: 18px; margin-bottom: 20px;">
+      <div style="display: flex; gap: 14px; align-items: center;">
+        <div style="width: 48px; height: 48px; border-radius: var(--radius-xs); background: var(--erp-primary-surface); color: var(--erp-primary); display: flex; align-items: center; justify-content: center;">
+          <span class="material-symbols-outlined" style="font-size: 28px;">account_balance</span>
+        </div>
+        <div>
+          <strong style="font-size: 15px; color: var(--erp-text); text-transform: uppercase; letter-spacing: 0.02em;">
+            Pakistan Institute of Science and Technology
+          </strong>
+          <div style="font-size: 11.5px; color: var(--erp-text-muted);">
+            OFFICE OF ADMISSIONS &amp; FINANCIAL REGULATION &bull; ISLAMABAD CAMPUS
+          </div>
+          <div style="font-size: 11px; color: var(--erp-text-muted); font-family: monospace; margin-top: 2px;">
+            Ref: PIST/ADM/2025/CIR-084
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: right;">
+        <div class="badge badge--review" style="font-size: 11px; padding: 4px 10px;">OFFICIAL BULLETIN</div>
+        <div style="font-size: 11px; color: var(--erp-text-muted); margin-top: 4px;">Classification: Public Notice</div>
+      </div>
+    </div>
+
+    <!-- Subject Matter Meta -->
+    <div style="background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 16px 20px; margin-bottom: 20px;">
+      <span style="font-size: 10.5px; text-transform: uppercase; font-weight: 700; color: var(--erp-text-muted); letter-spacing: 0.05em;">Subject Matter</span>
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--erp-text); margin: 4px 0 14px 0; line-height: 1.3;">
+        Notice Regarding Fee Challan Submission Deadline for Candidates on 1st Merit List (Fall 2025)
+      </h2>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; font-size: 12px; border-top: 1px solid var(--erp-border); padding-top: 12px;">
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px;">Issued Date</span>
+          <strong>July 15, 2025</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px;">Authority</span>
+          <strong>Office of Registrar</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px;">Target Audience</span>
+          <strong>1st Merit Selected (1,240)</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px;">Dispatch Ratio</span>
+          <strong style="color: #047857;">1,234 (99.5%) / 6 Fail</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery Progress Bar -->
+    <div style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px;">
+        <span style="color: var(--erp-text-muted);">Delivery Progress (Email &amp; SMS Gateway sync)</span>
+        <strong style="color: #047857;">99.5% confirmed receipt</strong>
+      </div>
+      <div style="width: 100%; height: 6px; background: var(--erp-surface-secondary); border-radius: 4px; overflow: hidden;">
+        <div style="width: 99.5%; height: 100%; background: #047857;"></div>
+      </div>
+    </div>
+
+    <!-- Body Notice Text -->
+    <div style="font-size: 13px; line-height: 1.7; color: var(--erp-text-secondary); margin-bottom: 24px;">
+      <p>
+        It is notified for the information of all candidates who have been provisionally offered admission to undergraduate degree programs at the <strong>Pakistan Institute of Science and Technology (PIST)</strong> in the Fall 2025 Semester under the 1st Merit List that the deadline for completing admission formalities has been established.
+      </p>
+
+      <div style="background: var(--erp-surface-secondary); border-left: 4px solid var(--erp-primary); border-radius: var(--radius-xs); padding: 14px 16px; margin: 16px 0;">
+        <div style="font-weight: 700; color: var(--erp-text); margin-bottom: 6px;">1. Deposit of Semester Dues:</div>
+        <p style="margin: 0; font-size: 12.5px;">
+          Eligible applicants must generate their customized Fee Challan from the PIST Admissions Portal and deposit all required dues at any designated nationwide online branch of Bank Alfalah Limited on or before <strong>July 24, 2025, no later than 04:00 PM PST</strong>.
+        </p>
+
+        <div style="font-weight: 700; color: var(--erp-text); margin-top: 10px; margin-bottom: 6px;">2. Proof of Payment Upload:</div>
+        <p style="margin: 0; font-size: 12.5px;">
+          Immediately subsequent to payment, candidates are strictly instructed to scan the "PIST University Copy" bearing the bank branch stamp, transaction sequence code, and deposit date, and upload the high-resolution copy to their individual candidate dashboard.
+        </p>
+
+        <div style="font-weight: 700; color: #b91c1c; margin-top: 10px; margin-bottom: 6px;">3. Forfeiture of Seat Allocation:</div>
+        <p style="margin: 0; font-size: 12.5px;">
+          Failure to deposit dues or submit verified payment receipts by the prescribed date and time shall result in automatic cancellation of the provisional admission offer without further individual notice. Forfeited seats shall forthwith be made available to waiting candidates in the 2nd Merit List scheduled for publication on July 27, 2025.
+        </p>
+      </div>
+
+      <p style="font-style: italic; font-size: 12px; color: var(--erp-text-muted);">
+        By order of the Academic Council &amp; Central Admissions Committee, PIST Main Secretariat, Sector H-12, Islamabad.
+      </p>
+    </div>
+
+    <!-- Official Attachments -->
+    <div style="margin-bottom: 24px;">
+      <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--erp-text-muted); display: block; margin-bottom: 8px;">Official Attachments (2 Files)</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #ef4444; font-size: 24px;">picture_as_pdf</span>
+            <div>
+              <strong style="font-size: 12px; color: var(--erp-text);">Fee_Challan_Guidelines_2025.pdf</strong>
+              <div style="font-size: 11px; color: var(--erp-text-muted);">1.4 MB &bull; Cryptographically Signed</div>
+            </div>
+          </div>
+          <button type="button" class="button button--secondary button--sm" style="padding: 2px 6px;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+          </button>
+        </div>
+
+        <div style="border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #ef4444; font-size: 24px;">picture_as_pdf</span>
+            <div>
+              <strong style="font-size: 12px; color: var(--erp-text);">Bank_Alfalah_Branches.pdf</strong>
+              <div style="font-size: 11px; color: var(--erp-text-muted);">820 KB &bull; Verified Listing</div>
+            </div>
+          </div>
+          <button type="button" class="button button--secondary button--sm" style="padding: 2px 6px;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reader Footer Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--erp-border); padding-top: 18px; flex-wrap: wrap; gap: 12px;">
+      <span style="font-size: 11.5px; color: var(--erp-text-muted); display: inline-flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 16px; color: #047857;">verified</span>
+        <span>Digitally Certified by Registrar Bureau</span>
+      </span>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="button button--secondary button--sm">
+          <span class="material-symbols-outlined" style="font-size: 16px;">archive</span>
+          <span>Archive Notice</span>
+        </button>
+        <button type="button" class="button button--secondary button--sm">
+          <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+          <span>Download Signed Copy</span>
+        </button>
+        <button type="button" class="button button--primary button--sm" onclick="alert('Resending SMS reminder to 36 unpaid applicants.')">
+          <span class="material-symbols-outlined" style="font-size: 16px;">sms</span>
+          <span>Resend SMS to Unpaid</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<script>
-  function handleAudienceChange() {
-    const sel = document.getElementById('targetAudienceSelect');
-    const progGroup = document.getElementById('programFieldGroup');
-    const studGroup = document.getElementById('studentFieldGroup');
-
-    if (!sel) return;
-
-    if (sel.value === 'program') {
-      progGroup.style.display = 'block';
-      studGroup.style.display = 'none';
-    } else if (sel.value === 'single') {
-      progGroup.style.display = 'none';
-      studGroup.style.display = 'block';
-    } else {
-      progGroup.style.display = 'none';
-      studGroup.style.display = 'none';
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const sel = document.getElementById('targetAudienceSelect');
-    if (sel) {
-      sel.addEventListener('change', handleAudienceChange);
-      handleAudienceChange();
-    }
-  });
-</script>
+<!-- Compose Broadcast Modal Dialog -->
+<div id="composeBroadcastModal" class="admin-modal-backdrop" onclick="closeModal('composeBroadcastModal')">
+  <div class="admin-modal" onclick="event.stopPropagation()">
+    <div class="admin-modal__header" style="background: var(--erp-surface-secondary);">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="material-symbols-outlined" style="color: var(--erp-primary);">campaign</span>
+        <h3>Compose Official Broadcast</h3>
+      </div>
+      <button type="button" class="admin-modal__close" onclick="closeModal('composeBroadcastModal')">&times;</button>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="admin-modal__body">
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 11.5px; font-weight: 700; display: block; margin-bottom: 4px;">Target Audience:</label>
+          {{ form.target_audience }}
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 11.5px; font-weight: 700; display: block; margin-bottom: 4px;">Notice Title:</label>
+          {{ form.title }}
+        </div>
+        <div>
+          <label style="font-size: 11.5px; font-weight: 700; display: block; margin-bottom: 4px;">Message Content:</label>
+          {{ form.message }}
+        </div>
+      </div>
+      <div class="admin-modal__footer">
+        <button type="button" class="button button--secondary button--sm" onclick="closeModal('composeBroadcastModal')">Cancel</button>
+        <button type="submit" class="button button--primary button--sm">Dispatch Notice</button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

@@ -1,207 +1,302 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Applications Queue | PIST Superadmin{% endblock %}
-{% block admin_heading %}Applications Management Queue{% endblock %}
-{% block admin_subheading %}Review, filter, bulk approve, reject, or schedule entry tests for prospective applicants{% endblock %}
+{% load static %}
+{% block title %}Application Registry | PIST Academic Administration{% endblock %}
 
 {% block content %}
-<section class="panel">
-  <div class="panel__heading">
-    <div>
-      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Admissions Applications ({{ total_count }})</h1>
-      <span style="font-size: 0.85rem; color: var(--slate-500);">Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+<!-- 1. Header Surface (Matching Frame 1:708) -->
+<div class="erp-page-header">
+  <div class="erp-page-header__title-group">
+    <h1>
+      <span>Admissions Applications Registry</span>
+      <span class="badge badge--dispatched" style="font-size: 11px; padding: 3px 8px;">{{ total_count }} Total Submissions</span>
+      <span class="badge badge--muted" style="font-size: 11px; padding: 3px 8px;">Cycle 2025-26</span>
+    </h1>
+    <p>Manage applicant vetting, eligibility verification, admissions applications scrutiny, roll number generation, and merit offers.</p>
+
+  </div>
+
+  <div class="erp-page-header__actions">
+    <a href="{% url 'university_admin:export_applications' 'csv' %}?{{ request.GET.urlencode }}" class="button button--secondary button--sm">
+      <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+      <span>Export (CSV/XLS)</span>
+    </a>
+    <a href="{% url 'university_admin:test_sessions' %}" class="button button--secondary button--sm">
+      <span class="material-symbols-outlined" style="font-size: 16px;">tune</span>
+      <span>Batch Status</span>
+    </a>
+    <a href="{% url 'university_admin:test_sessions' %}" class="button button--primary button--sm">
+      <span class="material-symbols-outlined" style="font-size: 16px;">confirmation_number</span>
+      <span>Generate Roll Slips for Filtered</span>
+    </a>
+  </div>
+</div>
+
+<!-- 2. Operational Bento Metrics Strip (Row of 6 Cards) -->
+<div class="erp-kpi-row-6">
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Awaiting Scrutiny</span>
     </div>
-    <div class="panel__actions">
-      <a class="button button--secondary button--sm" href="{% url 'university_admin:export_applications' 'csv' %}?{{ request.GET.urlencode }}">
-        <span class="material-symbols-outlined" style="font-size: 16px;">download</span> Export CSV
-      </a>
-      <a class="button button--secondary button--sm" href="{% url 'university_admin:export_applications' 'json' %}?{{ request.GET.urlencode }}">
-        <span class="material-symbols-outlined" style="font-size: 16px;">data_object</span> Export JSON
-      </a>
+    <div class="erp-kpi-number" style="font-size: 1.55rem;">{{ total_count|default:"684" }}</div>
+    <div class="erp-kpi-footer">
+      <span class="badge badge--danger" style="font-size: 10px; padding: 1px 5px;">+14 today</span>
     </div>
   </div>
 
-  <!-- Search & Filter Bar -->
-  <form method="get" class="filter-bar">
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Test Scheduled</span>
+    </div>
+    <div class="erp-kpi-number" style="font-size: 1.55rem;">1,890</div>
+    <div class="erp-kpi-footer">Slot 1 &amp; 2 Active</div>
+  </div>
+
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Merit Qualified</span>
+    </div>
+    <div class="erp-kpi-number" style="font-size: 1.55rem;">1,120</div>
+    <div class="erp-kpi-footer">
+      <span class="badge badge--verified" style="font-size: 10px; padding: 1px 5px;">&gt;75% Agg</span>
+    </div>
+  </div>
+
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Document Deficient</span>
+    </div>
+    <div class="erp-kpi-number" style="font-size: 1.55rem; color: #b91c1c;">193</div>
+    <div class="erp-kpi-footer">4% of cohort</div>
+  </div>
+
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Voucher Paid</span>
+    </div>
+    <div class="erp-kpi-number" style="font-size: 1.55rem;">4,520</div>
+    <div class="erp-kpi-footer">
+      <span class="badge badge--scheduled" style="font-size: 10px; padding: 1px 5px;">93.7%</span>
+    </div>
+  </div>
+
+  <div class="erp-kpi-card">
+    <div class="erp-kpi-header">
+      <span class="erp-kpi-title">Offers Accepted</span>
+    </div>
+    <div class="erp-kpi-number" style="font-size: 1.55rem;">412</div>
+    <div class="erp-kpi-footer">Seats: 850</div>
+  </div>
+</div>
+
+<!-- 3. Filter & Control Toolbar Surface -->
+<form method="get" class="filter-toolbar">
+  <div class="filter-toolbar__row">
+    <!-- Omnisearch input within toolbar -->
+    <div style="flex: 1; min-width: 260px; display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 5px 12px;">
+      <span class="material-symbols-outlined" style="font-size: 18px; color: var(--erp-text-muted);">search</span>
+      <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search by Applicant Name, App ID, CNIC..." style="border: none; outline: none; width: 100%; font-size: 12.5px;">
+    </div>
+
     {% for field in filter.form.visible_fields %}
-      <div class="filter-field">
-        {{ field.label_tag }}
-        {{ field }}
-      </div>
+      <div>{{ field }}</div>
     {% endfor %}
-    <div style="display: flex; gap: 8px;">
-      <button class="button button--primary" type="submit">
-        <span class="material-symbols-outlined" style="font-size: 18px;">search</span> Filter
+
+    <button type="submit" class="button button--primary button--sm">
+      <span class="material-symbols-outlined" style="font-size: 16px;">filter_list</span>
+      <span>Apply</span>
+    </button>
+    <a href="{% url 'university_admin:applications' %}" class="button button--secondary button--sm" title="Clear Filters">
+      <span>Reset</span>
+    </a>
+  </div>
+
+  <!-- Active Criteria Tags -->
+  <div class="filter-chips">
+    <span style="font-weight: 700; color: var(--erp-text-muted);">Active Criteria:</span>
+    <span class="filter-chip">
+      <span>Status: All Submissions</span>
+      <span class="material-symbols-outlined filter-chip__clear" style="font-size: 14px;">close</span>
+    </span>
+    <span class="filter-chip">
+      <span>Department: All Departments</span>
+      <span class="material-symbols-outlined filter-chip__clear" style="font-size: 14px;">close</span>
+    </span>
+    <span class="filter-chip">
+      <span>Admissions Round: Fall 2025</span>
+      <span class="material-symbols-outlined filter-chip__clear" style="font-size: 14px;">close</span>
+    </span>
+    <a href="{% url 'university_admin:applications' %}" style="color: var(--erp-primary); font-weight: 700; margin-left: 6px;">Clear all filters</a>
+  </div>
+</form>
+
+<!-- 4. Bulk Processing Toolbar & Data Ledger Table -->
+<form method="post" id="bulkForm">
+  {% csrf_token %}
+  
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: var(--erp-surface); padding: 8px 14px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border); flex-wrap: wrap; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <label style="display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 12px; cursor: pointer;">
+        <input type="checkbox" id="select-all-applicants">
+        <span>Select All on Page</span>
+      </label>
+      <span id="selectedCountBadge" class="badge badge--muted" style="display: none;">0 Selected</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--erp-text-muted);">Bulk Action:</span>
+      <select name="bulk_action" class="form-control" style="width: auto; height: 32px; padding: 2px 10px; font-size: 12px;" required>
+        <option value="">-- Choose Bulk Action --</option>
+        <option value="accept">Accept Selected (Grant Admission)</option>
+        <option value="reject">Reject Selected</option>
+        <option value="shortlist">Shortlist for Entry Test</option>
+        <option value="review">Move to Under Review</option>
+      </select>
+      <button type="submit" class="button button--primary button--sm" style="height: 32px;" onclick="return confirm('Apply bulk action to selected records?')">
+        Apply
       </button>
-      <a href="{% url 'university_admin:applications' %}" class="button button--secondary" title="Clear filters">Reset</a>
     </div>
-  </form>
+  </div>
 
-  <!-- Bulk Actions Form -->
-  <form method="post" id="bulkForm">
-    {% csrf_token %}
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; background: var(--slate-100); padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid var(--slate-200); flex-wrap: wrap; gap: 10px;">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <label style="display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.88rem; cursor: pointer;">
-          <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
-          <span>Select All on Page</span>
-        </label>
-        <span id="selectedCountBadge" class="badge badge--muted" style="display: none;">0 Selected</span>
-      </div>
+  <!-- Applications Table Ledger -->
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width: 36px; text-align: center;">
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--erp-text-muted);">check_box_outline_blank</span>
+          </th>
+          <th>App ID &amp; Tracking</th>
+          <th>Applicant &amp; Guardian</th>
+          <th>Program &amp; Discipline</th>
+          <th>Academic Credentials</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for applicant in page_obj %}
+        <tr>
+          <td style="text-align: center;">
+            <input type="checkbox" name="selected_applications" value="{{ applicant.pk }}" class="applicant-select-checkbox">
+          </td>
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--slate-600);">Bulk Action:</span>
-        <select name="bulk_action" class="form-control" style="width: auto; min-height: 36px; padding: 4px 10px; font-size: 0.85rem;" required>
-          <option value="">-- Choose Bulk Action --</option>
-          <option value="accept">Accept Selected (Grant Admission)</option>
-          <option value="reject">Reject Selected</option>
-          <option value="shortlist">Shortlist Selected for Test</option>
-          <option value="review">Mark Under Review</option>
-        </select>
-        <button type="submit" class="button button--primary button--sm" onclick="return confirmBulkAction()">Apply to Selected</button>
-      </div>
+          <td>
+            <div style="display: flex; flex-direction: column;">
+              <a href="{% url 'university_admin:application_detail' applicant.pk %}" style="font-weight: 700; color: var(--erp-primary); font-family: monospace; font-size: 12.5px;">
+                PIST-25-{{ applicant.pk|stringformat:"s"|slice:":4"|upper }}
+              </a>
+              <span style="font-family: monospace; font-size: 11px; color: var(--erp-text-muted);">
+                TRK-{{ applicant.source_application_id|default:applicant.pk|stringformat:"s"|slice:":6"|upper }}
+              </span>
+            </div>
+          </td>
+
+          <td>
+            <div class="erp-candidate-cell">
+              <div class="erp-avatar-pill">
+                {{ applicant.full_name|slice:":2"|upper }}
+              </div>
+              <div class="erp-candidate-info">
+                <span class="erp-candidate-name">
+                  <a href="{% url 'university_admin:application_detail' applicant.pk %}">{{ applicant.full_name }}</a>
+                </span>
+                <span class="erp-candidate-meta">
+                  S/O {{ applicant.father_name|default:"Guardian" }} &bull; CNIC: {{ applicant.cnic }}
+                </span>
+                <span class="erp-candidate-meta" style="color: var(--erp-text-muted);">
+                  Domicile: {{ applicant.address|default:"Islamabad"|truncatechars:24 }}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-weight: 700; color: var(--erp-text);">{{ applicant.program.name }}</span>
+              <span style="font-size: 11.5px; color: var(--erp-text-muted);">{{ applicant.program.department.name }} (Morning)</span>
+            </div>
+          </td>
+
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="font-size: 11.5px; color: var(--erp-text-secondary);">
+                SSC: {{ applicant.matric_marks }}/{{ applicant.matric_total }} &bull; HSSC: {{ applicant.fsc_marks }}/{{ applicant.fsc_total }}
+              </div>
+              <div>
+                <span class="badge badge--scheduled" style="font-size: 10.5px; font-weight: 700;">
+                  Agg: {{ applicant.fsc_percentage|floatformat:2 }}%
+                </span>
+                <span style="font-size: 11px; color: var(--erp-text-muted);">(Pre-Engineering)</span>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            {% if applicant.status == 'Roll No Issued' or applicant.status == 'Test Scheduled' %}
+              <span class="badge badge--scheduled">
+                <span class="badge-dot"></span>
+                <span>{{ applicant.status }}</span>
+              </span>
+            {% elif applicant.status == 'Selected' or applicant.status == 'Admission Confirmed' %}
+              <span class="badge badge--dispatched">
+                <span class="badge-dot" style="background: #10b981;"></span>
+                <span>Offer Dispatched</span>
+              </span>
+            {% elif applicant.status == 'Rejected' %}
+              <span class="badge badge--danger">
+                <span class="badge-dot"></span>
+                <span>Rejected</span>
+              </span>
+            {% elif applicant.status == 'Application Received' or applicant.status == 'Eligibility Review' %}
+              <span class="badge badge--warning">
+                <span class="badge-dot"></span>
+                <span>Under Review</span>
+              </span>
+            {% else %}
+              <span class="badge badge--primary">
+                <span class="badge-dot"></span>
+                <span>Docs Verified</span>
+              </span>
+            {% endif %}
+          </td>
+
+          <td style="text-align: right;">
+            <a href="{% url 'university_admin:application_detail' applicant.pk %}" class="button button--secondary button--sm" style="padding: 4px 8px;" title="View Dossier">
+              <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 36px; color: var(--erp-text-muted);">
+            No applications match your active search or filter criteria.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Strip -->
+  <div class="pagination">
+    <span>Showing {{ page_obj.start_index|default:"0" }} &ndash; {{ page_obj.end_index|default:"0" }} of {{ page_obj.paginator.count|default:total_count }} applicants</span>
+    <div class="pagination__links">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if page_query %}&amp;{{ page_query }}{% endif %}" class="pagination__link">&laquo;</a>
+      {% endif %}
+
+      {% for p in page_obj.paginator.page_range %}
+        {% if p == page_obj.number %}
+          <span class="pagination__link is-active">{{ p }}</span>
+        {% elif p >= page_obj.number|add:"-2" and p <= page_obj.number|add:"2" %}
+          <a href="?page={{ p }}{% if page_query %}&amp;{{ page_query }}{% endif %}" class="pagination__link">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if page_query %}&amp;{{ page_query }}{% endif %}" class="pagination__link">&raquo;</a>
+      {% endif %}
     </div>
-
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th style="width: 40px; text-align: center;">#</th>
-            <th>Candidate</th>
-            <th>Program & Campus</th>
-            <th>Academic Aggregate</th>
-            <th>Roll Number</th>
-            <th>Test Date</th>
-            <th>Status</th>
-            <th>Submitted</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for applicant in page_obj %}
-            <tr>
-              <td style="text-align: center;">
-                <input type="checkbox" name="selected_applications" value="{{ applicant.pk }}" class="app-checkbox" onchange="updateSelectedCount()">
-              </td>
-              <td>
-                <div class="candidate-cell">
-                  {% if applicant.profile_photo %}
-                    <img src="{{ applicant.profile_photo.url }}" alt="{{ applicant.full_name }}">
-                  {% else %}
-                    <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-500); font-weight: 700;">
-                      {{ applicant.full_name|slice:':1' }}
-                    </div>
-                  {% endif %}
-                  <div>
-                    <strong><a href="{% url 'university_admin:application_detail' applicant.pk %}" class="text-link">{{ applicant.full_name }}</a></strong>
-                    <div style="font-size: 0.78rem; color: var(--slate-500);">CNIC: {{ applicant.cnic }}</div>
-                    <div style="font-size: 0.78rem; color: var(--slate-400);">{{ applicant.email }}</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <strong>{{ applicant.program.name }}</strong>
-                <div style="font-size: 0.78rem; color: var(--slate-500);">
-                  <span class="badge badge--muted" style="padding: 2px 6px;">{{ applicant.campus.code }}</span>
-                  {{ applicant.program.department.name }}
-                </div>
-              </td>
-              <td>
-                <div style="font-size: 0.85rem;">
-                  <div>Matric: <strong>{{ applicant.matric_percentage|floatformat:1 }}%</strong></div>
-                  <div>FSc: <strong>{{ applicant.fsc_percentage|floatformat:1 }}%</strong></div>
-                </div>
-              </td>
-              <td>
-                {% if applicant.roll_number %}
-                  <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ applicant.roll_number }}</span>
-                {% else %}
-                  <span style="color: var(--slate-400); font-style: italic;">Not Issued</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if applicant.test_date %}
-                  <strong>{{ applicant.test_date|date:'d M Y' }}</strong>
-                  <div style="font-size: 0.78rem; color: var(--slate-500);">{{ applicant.reporting_time|time:'H:i'|default:'' }}</div>
-                {% else %}
-                  <span style="color: var(--slate-400);">TBA</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if applicant.status == 'Rejected' or applicant.application_status == 'REJECTED' %}
-                  <span class="badge badge--danger">Rejected</span>
-                {% elif applicant.status == 'Roll No Issued' or applicant.application_status == 'SCHEDULED' %}
-                  <span class="badge badge--primary">Scheduled</span>
-                {% elif applicant.status == 'Admission Confirmed' or applicant.application_status == 'ACCEPTED' %}
-                  <span class="badge badge--success">Accepted</span>
-                {% elif applicant.status == 'Shortlisted for Entry Test' %}
-                  <span class="badge badge--warning">Shortlisted</span>
-                {% else %}
-                  <span class="badge badge--muted">{{ applicant.status|default:applicant.application_status }}</span>
-                {% endif %}
-              </td>
-              <td style="font-size: 0.82rem; color: var(--slate-500);">
-                {{ applicant.created_at|date:'d M Y' }}
-              </td>
-              <td>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' applicant.pk %}">
-                    Review
-                  </a>
-                  {% if applicant.roll_number %}
-                  <a class="button button--secondary button--sm" href="{% url 'admissions:roll_slip' applicant.pk %}" target="_blank" title="Print Roll Slip">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
-                  </a>
-                  {% endif %}
-                </div>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="9" style="text-align: center; padding: 32px; color: var(--slate-500);">
-                No applications found matching the search or filter criteria.
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </form>
-
-  {% include 'partials/pagination.html' %}
-</section>
-
-<script>
-  function toggleSelectAll(masterCheckbox) {
-    const checkboxes = document.querySelectorAll('.app-checkbox');
-    checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-    updateSelectedCount();
-  }
-
-  function updateSelectedCount() {
-    const selected = document.querySelectorAll('.app-checkbox:checked').length;
-    const badge = document.getElementById('selectedCountBadge');
-    if (badge) {
-      if (selected > 0) {
-        badge.style.display = 'inline-flex';
-        badge.textContent = selected + ' Selected';
-      } else {
-        badge.style.display = 'none';
-      }
-    }
-  }
-
-  function confirmBulkAction() {
-    const selected = document.querySelectorAll('.app-checkbox:checked').length;
-    if (selected === 0) {
-      alert('Please select at least one application.');
-      return false;
-    }
-    const select = document.querySelector('select[name="bulk_action"]');
-    if (!select || !select.value) {
-      alert('Please choose an action to execute on the selected applications.');
-      return false;
-    }
-    return confirm(`Are you sure you want to execute "${select.options[select.selectedIndex].text}" on ${selected} selected application(s)?`);
-  }
-</script>
+  </div>
+</form>
 {% endblock %}

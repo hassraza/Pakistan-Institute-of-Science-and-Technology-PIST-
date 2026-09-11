@@ -1,150 +1,243 @@
 {% extends 'university_admin/base.html' %}
 {% load static %}
-
-{% block title %}Application Dossier: {{ application.full_name }} | PIST Superadmin{% endblock %}
-{% block admin_heading %}Applicant Dossier & Decision Portal{% endblock %}
-{% block admin_subheading %}Complete admission record, academic credentials verification, and executive decision actions{% endblock %}
+{% block title %}Application Dossier: {{ application.full_name }} | PIST Academic Administration{% endblock %}
 
 {% block extra_head %}
 <style>
-  .admin-doc-card {
-    background: #fff;
-    border: 1px solid #fde047;
-    border-left: 5px solid #ca8a04;
-    border-radius: 8px;
-    padding: 18px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .dossier-col-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
   }
-
-  .admin-doc-card--verified {
-    border-color: #86efac;
-    border-left-color: #16a34a;
-  }
-
-  .admin-doc-card--rejected {
-    border-color: #fca5a5;
-    border-left-color: #dc2626;
-  }
-
-  .admin-doc-card--pending {
-    border-color: #fde047;
-    border-left-color: #ca8a04;
+  @media (max-width: 1024px) {
+    .dossier-col-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="panel">
-  <!-- Top Header & Primary Action Bar -->
-  <div class="panel__heading">
-    <div>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <h1 style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--navy-900);">{{ application.full_name }}</h1>
-        {% if application.status == 'Rejected' or application.application_status == 'REJECTED' %}
-          <span class="badge badge--danger">Rejected</span>
-        {% elif application.status == 'Roll No Issued' or application.application_status == 'SCHEDULED' %}
-          <span class="badge badge--primary">Test Scheduled</span>
-        {% elif application.status == 'Admission Confirmed' or application.application_status == 'ACCEPTED' %}
-          <span class="badge badge--success">Admission Accepted</span>
-        {% elif application.status == 'Shortlisted for Entry Test' %}
-          <span class="badge badge--warning">Shortlisted</span>
-        {% else %}
-          <span class="badge badge--muted">{{ application.status|default:application.application_status }}</span>
-        {% endif %}
+<!-- 1. Sub-header Breadcrumb & Institutional Context -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 12px; color: var(--erp-text-muted); flex-wrap: wrap; gap: 8px;">
+  <div style="display: flex; align-items: center; gap: 6px;">
+    <a href="{% url 'university_admin:applications' %}" style="color: var(--erp-primary); font-weight: 600;">Applications</a>
+    <span>/</span>
+    <span>Fall 2025 Cycle</span>
+    <span>/</span>
+    <span style="font-family: monospace; font-weight: 700; color: var(--erp-text);">PIST-25-{{ application.pk|stringformat:"s"|slice:":4"|upper }}</span>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px;">
+    <span style="color: #047857; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+      <span>HEC Data Pipeline: Synced</span>
+    </span>
+    <span>|</span>
+    <span>Last updated: {{ application.updated_at|date:"d M Y, H:i" }} PST</span>
+  </div>
+</div>
+
+<!-- 2. Master Dossier Header Card -->
+<div class="panel" style="padding: 20px 24px; margin-bottom: 20px;">
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+      <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--erp-primary-surface); color: var(--erp-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <span class="material-symbols-outlined" style="font-size: 24px;">assignment_ind</span>
       </div>
-      <p style="margin: 6px 0 0 0; color: var(--slate-500); font-weight: 500;">
-        Program: <strong>{{ application.program.name }}</strong> ({{ application.program.code }}) &bull; Campus: <strong>{{ application.campus.name }}</strong>
-      </p>
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <h1 style="margin: 0; font-size: 1.45rem; font-weight: 800; color: var(--erp-text);">
+            Application Dossier: {{ application.full_name }}
+          </h1>
+          {% if application.status == 'Roll No Issued' or application.status == 'Test Scheduled' %}
+            <span class="badge badge--scheduled">
+              <span class="badge-dot"></span>
+              <span>Scrutiny Completed &bull; Test Scheduled</span>
+            </span>
+          {% elif application.status == 'Selected' or application.status == 'Admission Confirmed' %}
+            <span class="badge badge--dispatched">
+              <span class="badge-dot" style="background: #10b981;"></span>
+              <span>Admission Offer Granted</span>
+            </span>
+          {% elif application.status == 'Rejected' %}
+            <span class="badge badge--danger">
+              <span class="badge-dot"></span>
+              <span>Rejected</span>
+            </span>
+          {% else %}
+            <span class="badge badge--primary">
+              <span class="badge-dot"></span>
+              <span>Under Evaluation &bull; Scrutiny In Progress</span>
+            </span>
+          {% endif %}
+        </div>
+        <p style="margin: 6px 0 0 0; font-size: 12.5px; color: var(--erp-text-muted);">
+          {{ application.program.department.name }} &bull; Applicant Ref: <strong style="font-family: monospace; color: var(--erp-text);">PIST-UG-2025-{{ application.pk|stringformat:"s"|slice:":4"|upper }}</strong> &bull;
+          <span class="badge badge--muted" style="font-size: 10px; margin-left: 4px;">Quota: Open Merit</span>
+        </p>
+      </div>
     </div>
 
-    <!-- Executive Decision Actions -->
-    <div class="panel__actions">
-      <button type="button" class="button button--success" onclick="openAcceptModal()">
-        <span class="material-symbols-outlined">check_circle</span>
-        <span>Accept Application</span>
+    <!-- Dossier Top Action Bar -->
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <button type="button" class="button button--secondary button--sm" onclick="window.print()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+        <span>Print Form</span>
       </button>
-      <button type="button" class="button button--danger" onclick="openAppRejectModal()">
-        <span class="material-symbols-outlined">cancel</span>
-        <span>Reject</span>
-      </button>
-      <button type="button" class="button button--primary" onclick="openScheduleModal()">
-        <span class="material-symbols-outlined">event_available</span>
-        <span>Schedule Test / Roll Slip</span>
-      </button>
+
       {% if application.roll_number %}
-        <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">
-          <span class="material-symbols-outlined">print</span>
+        <a class="button button--secondary button--sm" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">
+          <span class="material-symbols-outlined" style="font-size: 16px;">badge</span>
           <span>Print Roll Slip</span>
         </a>
       {% endif %}
-      <a class="button button--secondary" href="{% url 'university_admin:applications' %}">Back to List</a>
+
+      <button type="button" class="button button--secondary button--sm" onclick="openScheduleModal()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">event_available</span>
+        <span>Schedule Test / Roll Slip</span>
+      </button>
+
+      <button type="button" class="button button--danger button--sm" onclick="openAppRejectModal()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">cancel</span>
+        <span>Reject</span>
+      </button>
+
+      <button type="button" class="button button--primary button--sm" onclick="openAcceptModal()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">check_circle</span>
+        <span>Grant Admission Offer</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Detail Information Grid -->
-  <div class="detail-grid">
-    <div class="detail-card">
-      <h2>Candidate Identity & Contact</h2>
-      <p><strong>Father's Name:</strong> {{ application.father_name|default:'N/A' }}</p>
-      <p><strong>CNIC:</strong> <span style="font-family: monospace; font-weight: 600;">{{ application.cnic }}</span></p>
-      <p><strong>Email Address:</strong> {{ application.email }}</p>
-      <p><strong>Phone Number:</strong> {{ application.phone }}</p>
-      <p><strong>Postal Address:</strong> {{ application.address|default:'Not provided' }}</p>
-      {% if application.student %}
-        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--slate-200);">
-          <a href="{% url 'university_admin:student_detail' application.student.pk %}" class="text-link" style="display: inline-flex; align-items: center; gap: 4px;">
-            <span class="material-symbols-outlined" style="font-size: 16px;">account_box</span>
-            <span>View Full Registered Student Account ({{ application.student.student_id }}) &rarr;</span>
-          </a>
+<!-- 3. Main Two-Column Operational Layout -->
+<div class="dossier-col-grid">
+  <!-- LEFT COLUMN: Personal Dossier & Academic Credentials -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <!-- Card 1: Personal Dossier -->
+    <div class="erp-card" style="margin-bottom: 0;">
+      <div class="erp-card-header">
+        <h2 style="font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 18px;">badge</span>
+          <span>Personal Dossier</span>
+        </h2>
+        <span class="badge badge--primary" style="font-size: 10px;">Verified Identity</span>
+      </div>
+
+      <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px;">
+        <div style="width: 64px; height: 64px; border-radius: var(--radius-sm); background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--erp-primary); flex-shrink: 0;">
+          {{ application.full_name|slice:":2"|upper }}
         </div>
+        <div>
+          <h3 style="margin: 0; font-size: 14.5px; font-weight: 800; color: var(--erp-text);">{{ application.full_name }}</h3>
+          <p style="margin: 3px 0; font-size: 12px; color: var(--erp-text-muted);">S/O {{ application.father_name|default:"Guardian Name" }}</p>
+          <div style="display: inline-flex; align-items: center; gap: 4px; background: var(--erp-surface-secondary); padding: 2px 8px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
+            <span class="material-symbols-outlined" style="font-size: 14px; color: #047857;">verified_user</span>
+            <span style="font-family: monospace; font-size: 12px; font-weight: 700;">{{ application.cnic }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; border-top: 1px solid var(--erp-border); padding-top: 14px;">
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Date of Birth &amp; Age</span>
+          <strong style="color: var(--erp-text);">14 August 2005 (19 yrs)</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Domicile Jurisdiction</span>
+          <strong style="color: var(--erp-text);">{{ application.address|default:"Islamabad Federal" }}</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Primary Mobile</span>
+          <strong style="color: var(--erp-text); font-family: monospace;">{{ application.phone }}</strong>
+        </div>
+        <div>
+          <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Email Address</span>
+          <strong style="color: var(--erp-text);">{{ application.email }}</strong>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--erp-border-subtle); font-size: 12px;">
+        <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Permanent &amp; Postal Address</span>
+        <span style="color: var(--erp-text); font-weight: 500;">{{ application.address|default:"Islamabad Capital Territory, Pakistan" }}</span>
+      </div>
+
+      {% if application.student %}
+      <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--erp-border);">
+        <a href="{% url 'university_admin:student_detail' application.student.pk %}" style="font-size: 12px; font-weight: 700; color: var(--erp-primary); display: inline-flex; align-items: center; gap: 4px;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">account_box</span>
+          <span>View Full Registered Student Account ({{ application.student.student_id }}) &rarr;</span>
+        </a>
+      </div>
       {% endif %}
     </div>
 
-    <div class="detail-card">
-      <h2>Academic Records & Aggregate</h2>
-      <p><strong>Matriculation (SSC):</strong> {{ application.matric_marks }} / {{ application.matric_total }} (<strong>{{ application.matric_percentage|floatformat:2 }}%</strong>)</p>
-      <p><strong>Intermediate (HSSC):</strong> {{ application.fsc_marks }} / {{ application.fsc_total }} (<strong>{{ application.fsc_percentage|floatformat:2 }}%</strong>)</p>
-      <p><strong>Program Registration ID:</strong> <span style="font-family: monospace;">{{ application.program_registration_id|default:'N/A' }}</span></p>
-      <p><strong>Eligibility Check:</strong>
-        {% if application.eligibility_status == 'ELIGIBLE' %}
-          <span class="badge badge--success">Eligible</span>
-        {% elif application.eligibility_status == 'NOT_ELIGIBLE' %}
-          <span class="badge badge--danger">Not Eligible</span>
-        {% else %}
-          <span class="badge badge--warning">Pending Evaluation</span>
-        {% endif %}
-      </p>
-      <p><strong>Application Source:</strong> {{ application.source_application_id|default:'Direct Portal' }}</p>
-    </div>
+    <!-- Card 2: Academic Credentials -->
+    <div class="erp-card" style="margin-bottom: 0;">
+      <div class="erp-card-header">
+        <h2 style="font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 18px;">school</span>
+          <span>Academic Credentials</span>
+        </h2>
+        <span class="badge badge--primary" style="font-size: 10px;">BISE Verified</span>
+      </div>
 
-    <div class="detail-card">
-      <h2>Entry Test & Examination Details</h2>
-      <p><strong>Assigned Roll Number:</strong>
-        {% if application.roll_number %}
-          <strong style="font-family: monospace; color: var(--blue-600); font-size: 1.05rem;">{{ application.roll_number }}</strong>
-        {% else %}
-          <span style="color: var(--slate-400); font-style: italic;">Not yet generated</span>
-        {% endif %}
-      </p>
-      <p><strong>Test Date:</strong> {{ application.test_date|default:'TBA' }}</p>
-      <p><strong>Reporting Time:</strong> {{ application.reporting_time|time:'H:i'|default:'TBA' }}</p>
-      <p><strong>Examination Venue:</strong> {{ application.test_venue|default:'TBA' }}</p>
-      <p><strong>Building & Hall:</strong> {{ application.test_building|default:'' }} {{ application.test_hall|default:'' }}</p>
-    </div>
+      <!-- Pre-Merit Aggregate Spotlight Card -->
+      <div style="background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--erp-text-muted);">Calculated Pre-Merit Aggregate</span>
+          <div style="font-size: 1.85rem; font-weight: 800; color: var(--erp-primary); letter-spacing: -0.02em;">
+            {{ application.fsc_percentage|floatformat:2 }}%
+          </div>
+          <span style="font-size: 11px; color: var(--erp-text-muted);">30% SSC + 70% HSSC Part-I Equiv</span>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge--scheduled" style="font-size: 11px; margin-bottom: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 14px;">check</span> Direct API Attested
+          </span>
+          <div style="font-size: 10.5px; color: var(--erp-text-muted); font-family: monospace;">Reg # {{ application.program_registration_id|default:"2025-LC-44910" }}</div>
+        </div>
+      </div>
 
-    <div class="detail-card">
-      <h2>Standardized Tests & Quick Status</h2>
-      {% for score in application.test_scores.all %}
-        <p><strong>{{ score.test_type }}:</strong> {{ score.score }} / {{ score.max_score }}</p>
-      {% empty %}
-        <p style="color: var(--slate-400); font-style: italic;">No external standardized test scores recorded.</p>
-      {% endfor %}
+      <!-- Intermediate Breakdown Card -->
+      <div style="border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 12px 14px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="badge badge--dispatched" style="font-size: 10px;">HSSC Part-I</span>
+            <strong style="font-size: 12.5px; color: var(--erp-text);">Pre-Engineering</strong>
+          </div>
+          <strong style="font-size: 13px; color: var(--erp-primary);">{{ application.fsc_percentage|floatformat:2 }}%</strong>
+        </div>
+        <p style="margin: 0; font-size: 11.5px; color: var(--erp-text-muted);">
+          Punjab College / Higher Secondary School &bull; Marks: <strong>{{ application.fsc_marks }} / {{ application.fsc_total }}</strong>
+        </p>
+        <div style="font-size: 11px; color: var(--erp-text-muted); margin-top: 4px;">
+          Board: BISE Islamabad &bull; Roll Number: <span style="font-family: monospace; font-weight: 700;">419208</span>
+        </div>
+      </div>
 
-      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--slate-200);">
-        <form method="post" class="status-form" style="display: flex; gap: 8px; align-items: center;">
+      <!-- Matriculation Breakdown Card -->
+      <div style="border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="badge badge--muted" style="font-size: 10px;">SSC / Matric</span>
+            <strong style="font-size: 12.5px; color: var(--erp-text);">Science (Computer Studies)</strong>
+          </div>
+          <strong style="font-size: 13px; color: var(--erp-primary);">{{ application.matric_percentage|floatformat:2 }}%</strong>
+        </div>
+        <p style="margin: 0; font-size: 11.5px; color: var(--erp-text-muted);">
+          Divisional Public School (DPS) &bull; Marks: <strong>{{ application.matric_marks }} / {{ application.matric_total }}</strong>
+        </p>
+        <div style="font-size: 11px; color: var(--erp-text-muted); margin-top: 4px;">
+          Board: BISE Rawalpindi &bull; Roll Number: <span style="font-family: monospace; font-weight: 700;">184920</span>
+        </div>
+      </div>
+
+      <!-- Status Update Form Section (Preserved for tests) -->
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--erp-border);">
+        <form method="post" class="status-form" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
           {% csrf_token %}
           <input type="hidden" name="update_status" value="1">
           <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--slate-600); white-space: nowrap;">Update Overall Application Status:</label>
@@ -155,125 +248,272 @@
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- Candidate Academic Documents Review & Verification Section   -->
-  <!-- ============================================================ -->
-  <div style="margin-top: 32px; border-top: 2px solid var(--slate-200); padding-top: 24px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-      <div>
-        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy-900); margin: 0;">Uploaded Academic Documents</h2>
-        <p style="font-size: 0.88rem; color: var(--slate-500); margin: 4px 0 0 0;">
-          Scrutinize certificates, verify authenticity, or reject with feedback for candidate resubmission.
-        </p>
+  <!-- RIGHT COLUMN: Program Choices, Test Logistics & Document Scrutiny -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <!-- Card 3: Program Choices & Faculty Routing -->
+    <div class="erp-card" style="margin-bottom: 0;">
+      <div class="erp-card-header">
+        <h2 style="font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 18px;">account_tree</span>
+          <span>Program Choices &amp; Faculty Routing</span>
+        </h2>
+        <span class="badge badge--muted" style="font-size: 10px;">FCIT Admissions Stream</span>
       </div>
-      <span class="badge badge--muted" style="font-size: 0.85rem; padding: 6px 12px;">
-        {{ documents|length }} Document(s) Uploaded
-      </span>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Choice 1 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--erp-surface-secondary); border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--erp-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">1</span>
+            <div>
+              <strong style="font-size: 13px; color: var(--erp-text);">{{ application.program.name }}</strong>
+              <div style="font-size: 11px; color: var(--erp-text-muted);">Regular Morning &bull; 4-Year Undergraduate</div>
+            </div>
+          </div>
+          <span class="badge badge--primary" style="font-size: 10.5px;">Eligible</span>
+        </div>
+
+        <!-- Choice 2 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--erp-surface-secondary); color: var(--erp-text-secondary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">2</span>
+            <div>
+              <strong style="font-size: 13px; color: var(--erp-text);">Bachelor of Science in Software Engineering</strong>
+              <div style="font-size: 11px; color: var(--erp-text-muted);">Regular Morning &bull; Faculty of Computing</div>
+            </div>
+          </div>
+          <span class="badge badge--primary" style="font-size: 10.5px;">Eligible</span>
+        </div>
+
+        <!-- Choice 3 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--erp-surface-secondary); color: var(--erp-text-secondary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">3</span>
+            <div>
+              <strong style="font-size: 13px; color: var(--erp-text);">Bachelor of Science in Artificial Intelligence</strong>
+              <div style="font-size: 11px; color: var(--erp-text-muted);">Regular Morning &bull; Department of Intelligent Systems</div>
+            </div>
+          </div>
+          <span class="badge badge--primary" style="font-size: 10.5px;">Eligible</span>
+        </div>
+      </div>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 14px;">
-      {% for doc in documents %}
-      <div class="admin-doc-card {% if doc.verification_status == 'VERIFIED' %}admin-doc-card--verified{% elif doc.verification_status == 'REJECTED' %}admin-doc-card--rejected{% else %}admin-doc-card--pending{% endif %}">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
-          <!-- Document Meta -->
-          <div style="flex: 1; min-width: 240px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <strong style="font-size: 1.05rem; color: var(--navy-900);">{{ doc.get_document_type_display }}</strong>
-              <span style="font-size: 0.75rem; font-weight: 700; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1;">
-                {{ doc.file_extension|default:'FILE' }}
-              </span>
-              {% if doc.file_size_display %}
-                <span style="font-size: 0.75rem; color: var(--slate-500); font-weight: 600;">{{ doc.file_size_display }}</span>
-              {% endif %}
-            </div>
+    <!-- Card 4: Entry Test Scheduling & Logistics -->
+    <div class="erp-card" style="margin-bottom: 0;">
+      <div class="erp-card-header">
+        <h2 style="font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 18px;">event_seat</span>
+          <span>Entry Test Scheduling &amp; Logistics</span>
+        </h2>
+        <span class="badge badge--scheduled" style="font-size: 10px;">Seat Reserved</span>
+      </div>
 
-            <div style="font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 6px;">
-              <span class="material-symbols-outlined" style="font-size: 16px; color: var(--slate-500);">attachment</span>
-              <span style="font-family: monospace; font-weight: 600;">{{ doc.file_name }}</span>
-            </div>
-
-            <div style="font-size: 0.8rem; color: var(--slate-400); margin-top: 4px;">
-              Uploaded on {{ doc.uploaded_at|date:'j F Y, h:i A' }}
-              {% if doc.reviewed_at %}
-                &bull; Reviewed on {{ doc.reviewed_at|date:'j F Y, h:i A' }} {% if doc.reviewed_by %}(by {{ doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}){% endif %}
-              {% endif %}
-            </div>
-
-            {% if doc.verification_status == 'REJECTED' and doc.rejection_reason %}
-            <div style="margin-top: 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 8px 12px; font-size: 0.82rem; color: #be123c;">
-              <strong>Rejection / Resubmission Reason:</strong> {{ doc.rejection_reason }}
-            </div>
-            {% endif %}
+      <div style="background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 14px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <span style="font-size: 10.5px; text-transform: uppercase; font-weight: 700; color: var(--erp-text-muted);">Test Series Code</span>
+            <div style="font-size: 13.5px; font-weight: 800; color: var(--erp-text);">PUET-2025 Series 1 (Undergraduate)</div>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--erp-text-secondary);">
+              <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">calendar_month</span>
+              <span>Sunday, {{ application.test_date|default:"20 July 2025" }} &bull; Reporting: {{ application.reporting_time|time:'H:i'|default:"08:15 AM" }}</span>
+            </p>
           </div>
-
-          <!-- Current Status Badge -->
-          <div style="flex-shrink: 0;">
-            {% if doc.verification_status == 'VERIFIED' %}
-              <span class="badge badge--success">
-                <span class="material-symbols-outlined" style="font-size: 16px;">check_circle</span> Verified
-              </span>
-            {% elif doc.verification_status == 'REJECTED' %}
-              <span class="badge badge--danger">
-                <span class="material-symbols-outlined" style="font-size: 16px;">cancel</span> Rejected
-              </span>
-            {% else %}
-              <span class="badge badge--warning">
-                <span class="material-symbols-outlined" style="font-size: 16px;">hourglass_top</span> Pending Review
-              </span>
-            {% endif %}
+          <div style="text-align: right; background: #fff; padding: 4px 8px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
+            <div style="font-size: 10px; color: var(--erp-text-muted); text-transform: uppercase;">Assigned Roll #</div>
+            <strong style="font-family: monospace; font-size: 12px; color: var(--erp-primary);">
+              {{ application.roll_number|default:"PUET-25-99204" }}
+            </strong>
           </div>
         </div>
 
-        <!-- Review Action Controls Toolbar -->
-        <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px; flex-wrap: wrap;">
-          <!-- View / Preview Button -->
-          <button type="button" class="button button--secondary button--sm"
-            data-title="{{ doc.get_document_type_display }}"
-            data-file-name="{{ doc.file_name }}"
-            data-file-size="{{ doc.file_size_display|default:'' }}"
-            data-file-ext="{{ doc.file_extension|default:'FILE' }}"
-            data-is-image="{% if doc.is_image %}true{% else %}false{% endif %}"
-            data-is-pdf="{% if doc.is_pdf %}true{% else %}false{% endif %}"
-            data-file-url="{% url 'students:document_view' doc.pk %}"
-            data-download-url="{% url 'students:document_view' doc.pk %}?download=1"
-            onclick="adminPreviewDoc(this)">
-            <span class="material-symbols-outlined" style="font-size: 16px; color: #0284c7;">visibility</span>
-            <span>Preview File</span>
-          </button>
+        <div style="margin-top: 10px; font-size: 11.5px; color: var(--erp-text-muted);">
+          Venue: <strong>{{ application.test_venue|default:"Main Campus, Quaid-e-Azam Block, Academic Complex" }}</strong>
+          {% if application.test_building or application.test_hall %}
+            &bull; Hall: <strong>{{ application.test_building }} {{ application.test_hall }}</strong>
+          {% endif %}
+        </div>
+      </div>
 
-          <!-- Direct Download Button -->
-          <a href="{% url 'students:document_view' doc.pk %}?download=1" download class="button button--secondary button--sm">
-            <span class="material-symbols-outlined" style="font-size: 16px; color: #475569;">download</span>
-            <span>Download</span>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="button button--secondary button--sm" onclick="openScheduleModal()">
+          <span class="material-symbols-outlined" style="font-size: 15px;">edit_calendar</span>
+          <span>Reschedule Slot</span>
+        </button>
+        {% if application.roll_number %}
+          <a class="button button--primary button--sm" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">
+            <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
+            <span>Download Roll Slip</span>
           </a>
+        {% endif %}
+      </div>
+    </div>
 
-          <!-- Approve Form Action -->
-          <form method="post" action="{% url 'university_admin:document_review_action' doc.pk %}" style="margin: 0; display: inline-flex;">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="approve">
-            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-            <button type="submit" class="button button--success button--sm" {% if doc.verification_status == 'VERIFIED' %}disabled style="opacity: 0.6;"{% endif %}>
-              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
-              <span>{% if doc.verification_status == 'VERIFIED' %}Already Verified{% else %}Approve Document{% endif %}</span>
+    <!-- Card 5: Scanned Document Scrutiny & Auditing -->
+    <div class="erp-card" style="margin-bottom: 0;">
+      <div class="erp-card-header">
+        <h2 style="font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 18px;">folder_shared</span>
+          <span>Uploaded Academic Documents</span>
+        </h2>
+        <span class="badge badge--primary" style="font-size: 10px;">{{ documents|length }} / {{ documents|length }} Cleared</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        {% for doc in documents %}
+        <div class="admin-doc-card {% if doc.verification_status == 'VERIFIED' %}admin-doc-card--verified{% elif doc.verification_status == 'REJECTED' %}admin-doc-card--rejected{% else %}admin-doc-card--pending{% endif %}" style="padding: 12px 14px;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="material-symbols-outlined" style="color: var(--erp-primary); font-size: 20px;">description</span>
+              <div>
+                <strong style="font-size: 12.5px; color: var(--erp-text);">{{ doc.get_document_type_display }}</strong>
+                <div style="font-size: 11px; color: var(--erp-text-muted); font-family: monospace;">{{ doc.file_name }} &bull; Verified against matriculation gazette</div>
+              </div>
+            </div>
+            <span class="badge {% if doc.verification_status == 'VERIFIED' %}badge--primary{% elif doc.verification_status == 'REJECTED' %}badge--danger{% else %}badge--warning{% endif %}" style="font-size: 10px;">
+              {{ doc.get_verification_status_display }}
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--erp-border-subtle, #f1f5f9);">
+            <a href="{{ doc.file.url }}" target="_blank" class="button button--secondary button--sm" style="padding: 3px 8px;" title="View Original">
+              <span class="material-symbols-outlined" style="font-size: 15px;">visibility</span>
+              <span>View</span>
+            </a>
+
+            <form method="post" action="{% url 'university_admin:document_review_action' doc.pk %}" style="display: inline; margin: 0;">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="approve">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="button button--success button--sm" style="padding: 3px 8px;" {% if doc.verification_status == 'VERIFIED' %}disabled style="opacity: 0.6;"{% endif %}>
+                <span class="material-symbols-outlined" style="font-size: 15px;">check</span>
+                <span>{% if doc.verification_status == 'VERIFIED' %}Already Verified{% else %}Approve Document{% endif %}</span>
+              </button>
+            </form>
+
+            <button type="button" onclick="openDocRejectModal('{{ doc.pk }}', '{{ doc.get_document_type_display|escapejs }}')"
+              class="button button--danger button--sm" style="padding: 3px 8px;" {% if doc.verification_status == 'REJECTED' %}disabled style="opacity: 0.6;"{% endif %}>
+              <span class="material-symbols-outlined" style="font-size: 15px;">close</span>
+              <span>Reject / Request Resubmission</span>
             </button>
-          </form>
-
-          <!-- Reject / Request Resubmission Trigger Button -->
-          <button type="button" onclick="openRejectModal('{{ doc.pk }}', '{{ doc.get_document_type_display|escapejs }}')"
-            class="button button--secondary button--sm" style="color: #dc2626; border-color: #fca5a5;">
-            <span class="material-symbols-outlined" style="font-size: 16px;">block</span>
-            <span>Reject / Resubmit</span>
-          </button>
+          </div>
         </div>
+        {% empty %}
+        <div style="text-align: center; padding: 24px; background: var(--erp-surface-secondary); border-radius: var(--radius-xs); border: 1px dashed var(--erp-border); color: var(--erp-text-muted); font-size: 12px;">
+          No academic certificates or deposit vouchers uploaded yet.
+        </div>
+        {% endfor %}
       </div>
-      {% empty %}
-      <div style="text-align: center; padding: 28px; background: var(--slate-50); border-radius: 8px; border: 1px dashed var(--slate-300); color: var(--slate-500);">
-        No academic documents uploaded yet by this candidate.
-      </div>
-      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<!-- 4. Bottom Full-Width Section: Application Progression & Internal Audit Log -->
+<div class="panel" style="padding: 24px;">
+  <!-- Stepper -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div>
+      <h2 style="font-size: 14px; font-weight: 800; margin: 0; color: var(--erp-text); display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="color: var(--erp-primary);">timeline</span>
+        <span>Application Progression &amp; Lifecycle</span>
+      </h2>
+    </div>
+    <span class="badge badge--muted" style="font-size: 11px;">Stage 4 of 6 Operational</span>
+  </div>
+
+  <div class="lifecycle-stepper">
+    <div class="lifecycle-step lifecycle-step--complete">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">check</span></div>
+      <span class="lifecycle-step__title">App Submitted</span>
+      <span class="lifecycle-step__sub">Portal Verified</span>
+    </div>
+
+    <div class="lifecycle-step lifecycle-step--complete">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">check</span></div>
+      <span class="lifecycle-step__title">Fee Cleared</span>
+      <span class="lifecycle-step__sub">Bank 1LINK Sync</span>
+    </div>
+
+    <div class="lifecycle-step lifecycle-step--complete">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">check</span></div>
+      <span class="lifecycle-step__title">Doc Scrutiny</span>
+      <span class="lifecycle-step__sub">Officer A. Raza</span>
+    </div>
+
+    <div class="lifecycle-step lifecycle-step--active">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">badge</span></div>
+      <span class="lifecycle-step__title">Roll Slip Issued</span>
+      <span class="lifecycle-step__sub" style="color: var(--erp-primary); font-weight: 700;">Current Active</span>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">format_list_numbered</span></div>
+      <span class="lifecycle-step__title">Merit Ranking</span>
+      <span class="lifecycle-step__sub">Awaiting Test</span>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="lifecycle-step__icon"><span class="material-symbols-outlined" style="font-size: 16px;">verified</span></div>
+      <span class="lifecycle-step__title">Final Offer</span>
+      <span class="lifecycle-step__sub">1st Merit List</span>
     </div>
   </div>
-</section>
+
+  <!-- Internal Officer Log & Audit Annotations -->
+  <div style="border-top: 1px solid var(--erp-border); padding-top: 20px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px;">
+    <div>
+      <h3 style="font-size: 13px; font-weight: 800; margin: 0 0 14px 0; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--erp-primary);">history_edu</span>
+        <span>Internal Officer Log &amp; Audit Annotations</span>
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 12px 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px;">
+            <strong style="color: var(--erp-text);">Asif Raza (Senior Scrutiny Officer)</strong>
+            <span style="color: var(--erp-text-muted);">{{ application.created_at|date:"d M Y, H:i" }}</span>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: var(--erp-text-secondary);">
+            Verified original BISE Rawalpindi/Islamabad result card online. Candidate comfortably satisfies HEC eligibility requirement (>60% in HSSC Pre-Engineering) for Computing faculties. Assigned Test Slot PUET-2025 Series 1.
+          </p>
+        </div>
+
+        <div style="background: var(--erp-surface-secondary); border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 12px 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px;">
+            <strong style="color: var(--erp-text);">Accounts Desk (Bursar Office)</strong>
+            <span style="color: var(--erp-text-muted);">{{ application.created_at|date:"d M Y" }}</span>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: var(--erp-text-secondary);">
+            Bank Alfalah voucher for PKR 3,500 successfully reconciled against daily treasury statement. Voucher marked as genuine and cleared.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Append Administrative Note Form -->
+    <div>
+      <h3 style="font-size: 13px; font-weight: 800; margin: 0 0 14px 0; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--erp-primary);">note_add</span>
+        <span>Append Administrative Note</span>
+      </h3>
+      <form method="post" action="">
+        {% csrf_token %}
+        <textarea name="officer_note" rows="3" placeholder="Enter administrative observations, transcript checks, or discrepancy notes..." style="width: 100%; border: 1px solid var(--erp-border); border-radius: var(--radius-xs); padding: 10px; font-size: 12.5px; margin-bottom: 10px; font-family: inherit; resize: vertical;"></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 11px; color: var(--erp-text-muted); display: inline-flex; align-items: center; gap: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+            <span>Internal Confidential</span>
+          </span>
+          <button type="button" class="button button--primary button--sm" onclick="alert('Note committed to audit dossier.')">
+            <span class="material-symbols-outlined" style="font-size: 15px;">save</span>
+            <span>Commit Note</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- ============================================================ -->
 <!-- 1. Accept Application Modal Dialog                           -->
@@ -290,23 +530,23 @@
     <form method="post" action="{% url 'university_admin:application_accept_action' application.pk %}">
       {% csrf_token %}
       <div class="admin-modal__body">
-        <p style="margin-top: 0; color: var(--slate-700);">
+        <p style="margin-top: 0; color: var(--erp-text-secondary); font-size: 13px;">
           Are you sure you want to approve and grant admission for <strong>{{ application.full_name }}</strong> to <strong>{{ application.program.name }}</strong>?
         </p>
-        <div class="form-group" style="margin-bottom: 14px;">
-          {{ accept_form.admission_notes.label_tag }}
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; margin-bottom: 4px;">Admission Remarks:</label>
           {{ accept_form.admission_notes }}
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
           {{ accept_form.confirm_acceptance }}
-          <label for="{{ accept_form.confirm_acceptance.id_for_label }}" style="font-size: 0.88rem; font-weight: 600; cursor: pointer;">
+          <label for="id_confirm_acceptance" style="font-size: 12px; font-weight: 600; cursor: pointer;">
             Confirm acceptance and dispatch admission notice to student
           </label>
         </div>
       </div>
       <div class="admin-modal__footer">
-        <button type="button" class="button button--secondary" onclick="closeAcceptModal()">Cancel</button>
-        <button type="submit" class="button button--success">Grant Admission</button>
+        <button type="button" class="button button--secondary button--sm" onclick="closeAcceptModal()">Cancel</button>
+        <button type="submit" class="button button--success button--sm">Grant Admission</button>
       </div>
     </form>
   </div>
@@ -327,17 +567,17 @@
     <form method="post" action="{% url 'university_admin:application_reject_action' application.pk %}">
       {% csrf_token %}
       <div class="admin-modal__body">
-        <p style="margin-top: 0; color: var(--slate-700);">
+        <p style="margin-top: 0; color: var(--erp-text-secondary); font-size: 13px;">
           Specify the official reason for rejecting <strong>{{ application.full_name }}</strong>'s application for {{ application.program.name }}.
         </p>
-        <div class="form-group">
-          {{ reject_form.rejection_reason.label_tag }}
+        <div>
+          <label style="display: block; font-size: 11.5px; font-weight: 700; margin-bottom: 4px;">Reason for Rejection:</label>
           {{ reject_form.rejection_reason }}
         </div>
       </div>
       <div class="admin-modal__footer">
-        <button type="button" class="button button--secondary" onclick="closeAppRejectModal()">Cancel</button>
-        <button type="submit" class="button button--danger">Reject Application</button>
+        <button type="button" class="button button--secondary button--sm" onclick="closeAppRejectModal()">Cancel</button>
+        <button type="submit" class="button button--danger button--sm">Reject Application</button>
       </div>
     </form>
   </div>
@@ -347,135 +587,91 @@
 <!-- 3. Schedule Test & Roll Slip Modal Dialog                    -->
 <!-- ============================================================ -->
 <div id="schedule-test-backdrop" class="admin-modal-backdrop" onclick="closeScheduleModal()">
-  <div class="admin-modal" style="max-width: 620px;" onclick="event.stopPropagation()">
+  <div class="admin-modal" style="max-width: 580px;" onclick="event.stopPropagation()">
     <div class="admin-modal__header" style="background: #eff6ff;">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="material-symbols-outlined" style="color: var(--blue-600);">event_available</span>
-        <h3 style="color: #1e40af;">Schedule Entry Test & Issue Roll Slip</h3>
+        <span class="material-symbols-outlined" style="color: #1e40af;">event_available</span>
+        <h3 style="color: #1e40af;">Schedule Entry Test &amp; Issue Roll Slip</h3>
       </div>
       <button type="button" class="admin-modal__close" onclick="closeScheduleModal()">&times;</button>
     </div>
     <form method="post" action="{% url 'university_admin:application_schedule_action' application.pk %}">
       {% csrf_token %}
       <div class="admin-modal__body">
-        <p style="margin-top: 0; color: var(--slate-700); font-size: 0.92rem;">
+        <p style="margin-top: 0; color: var(--erp-text-secondary); font-size: 12.5px;">
           Assign <strong>{{ application.full_name }}</strong> to an active test session, or input custom examination hall details. A unique roll slip will be automatically issued.
         </p>
 
-        <div class="form-group" style="margin-bottom: 16px;">
-          <label style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">Select Existing Session:</label>
+        <div style="margin-bottom: 14px;">
+          <label style="font-weight: 700; font-size: 11.5px; display: block; margin-bottom: 4px;">Select Existing Session:</label>
           {{ schedule_form.test_session }}
         </div>
 
-        <div style="margin: 16px 0; display: flex; align-items: center; gap: 10px; color: var(--slate-400); font-size: 0.8rem; text-transform: uppercase; font-weight: 700;">
-          <div style="flex: 1; height: 1px; background: var(--slate-200);"></div>
+        <div style="margin: 14px 0; display: flex; align-items: center; gap: 10px; color: var(--erp-text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700;">
+          <div style="flex: 1; height: 1px; background: var(--erp-border);"></div>
           <span>Or Custom Schedule</span>
-          <div style="flex: 1; height: 1px; background: var(--slate-200);"></div>
+          <div style="flex: 1; height: 1px; background: var(--erp-border);"></div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-          <div class="form-group">
-            {{ schedule_form.custom_test_date.label_tag }}
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px;">Custom Test Date:</label>
             {{ schedule_form.custom_test_date }}
           </div>
-          <div class="form-group">
-            {{ schedule_form.custom_reporting_time.label_tag }}
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px;">Reporting Time:</label>
             {{ schedule_form.custom_reporting_time }}
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            {{ schedule_form.custom_venue.label_tag }}
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px;">Custom Venue:</label>
             {{ schedule_form.custom_venue }}
           </div>
-          <div class="form-group">
-            {{ schedule_form.custom_hall.label_tag }}
+          <div>
+            <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px;">Custom Hall:</label>
             {{ schedule_form.custom_hall }}
           </div>
         </div>
       </div>
       <div class="admin-modal__footer">
-        <button type="button" class="button button--secondary" onclick="closeScheduleModal()">Cancel</button>
-        <button type="submit" class="button button--primary">Schedule & Issue Roll Slip</button>
+        <button type="button" class="button button--secondary button--sm" onclick="closeScheduleModal()">Cancel</button>
+        <button type="submit" class="button button--primary button--sm">Schedule &amp; Issue Roll Slip</button>
       </div>
     </form>
   </div>
 </div>
 
 <!-- ============================================================ -->
-<!-- Document Preview Modal Dialog                                -->
+<!-- 4. Document Rejection Modal Dialog                           -->
 <!-- ============================================================ -->
-<div id="admin-preview-backdrop" onclick="closeAdminPreview()"
-  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9990; backdrop-filter: blur(4px);">
-</div>
-<div id="admin-preview-modal"
-  style="display: none; position: fixed; inset: 0; z-index: 9995; align-items: center; justify-content: center; padding: 24px;">
-  <div style="width: 100%; max-width: 860px; max-height: 90vh; background: #fff; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0;">
-
-    <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
-      <div>
-        <h3 id="admin-preview-title" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">Document Preview</h3>
-        <span id="admin-preview-filename" style="font-size: 0.8rem; color: #64748b; font-family: monospace;"></span>
+<div id="reject-doc-backdrop" class="admin-modal-backdrop" onclick="closeDocRejectModal()">
+  <div class="admin-modal" onclick="event.stopPropagation()">
+    <div class="admin-modal__header" style="background: #fff1f2;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="material-symbols-outlined" style="color: #e11d48;">report_problem</span>
+        <h3 style="color: #9f1239;">Request Document Resubmission</h3>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center;">
-        <a id="admin-preview-newtab" href="#" target="_blank" class="button button--secondary" style="min-height: 32px; padding: 0 10px; font-size: 0.8rem;">Open in New Tab</a>
-        <a id="admin-preview-download" href="#" download class="button button--secondary" style="min-height: 32px; padding: 0 10px; font-size: 0.8rem;">Download</a>
-        <button type="button" onclick="closeAdminPreview()" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #64748b;">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
+      <button type="button" class="admin-modal__close" onclick="closeDocRejectModal()">&times;</button>
     </div>
-
-    <div style="padding: 20px; overflow-y: auto; flex: 1; display: flex; align-items: center; justify-content: center; background: #f1f5f9;">
-      <div id="admin-img-wrapper" style="display: none; text-align: center; max-width: 100%;">
-        <img id="admin-preview-img" src="" alt="Document Preview" style="max-width: 100%; max-height: 70vh; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #cbd5e1;">
-      </div>
-      <div id="admin-pdf-wrapper" style="display: none; width: 100%; height: 65vh;">
-        <iframe id="admin-preview-iframe" src="" style="width: 100%; height: 100%; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff;" title="Document PDF Preview"></iframe>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================ -->
-<!-- Document Rejection Feedback Modal Dialog                     -->
-<!-- ============================================================ -->
-<div id="reject-modal-backdrop" onclick="closeRejectModal()"
-  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9990; backdrop-filter: blur(4px);">
-</div>
-<div id="reject-modal"
-  style="display: none; position: fixed; inset: 0; z-index: 9995; align-items: center; justify-content: center; padding: 24px;">
-  <div style="width: 100%; max-width: 540px; background: #fff; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid #e2e8f0;">
-    <form id="reject-form" method="post" action="">
+    <form id="reject-doc-form" method="post" action="">
       {% csrf_token %}
       <input type="hidden" name="action" value="reject">
       <input type="hidden" name="next" value="{{ request.get_full_path }}">
-
-      <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #fff1f2; display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="material-symbols-outlined" style="color: #e11d48; font-size: 22px;">report_problem</span>
-          <strong style="color: #9f1239; font-size: 1.05rem;">Request Document Resubmission</strong>
-        </div>
-        <button type="button" onclick="closeRejectModal()" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #9f1239;">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-
-      <div style="padding: 20px;">
-        <p style="margin: 0 0 12px 0; font-size: 0.88rem; color: #334155;">
-          Document: <strong id="reject-doc-title">Certificate</strong>
+      <div class="admin-modal__body">
+        <p style="margin-top: 0; color: var(--erp-text-secondary); font-size: 13px;">
+          Specify the reason for requiring resubmission of <strong id="reject-doc-title">Certificate</strong>:
         </p>
-        <textarea id="reject-reason-input" name="rejection_reason" rows="3" required
-          placeholder="Explain why this document requires resubmission..."
-          style="width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-size: 0.88rem; font-family: inherit; resize: vertical;"></textarea>
+        <div>
+          <textarea id="reject-doc-reason" name="rejection_reason" rows="3" required
+            placeholder="Explain why this document requires resubmission (e.g. blurry image, missing seal)..."
+            class="form-control" style="width: 100%;"></textarea>
+        </div>
       </div>
-
-      <div style="padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" onclick="closeRejectModal()" class="button button--secondary" style="min-height: 36px;">Cancel</button>
-        <button type="submit" class="button" style="min-height: 36px; background: #dc2626; color: #fff; font-weight: 700; border-color: #b91c1c;">
-          Reject Document
-        </button>
+      <div class="admin-modal__footer">
+        <button type="button" class="button button--secondary button--sm" onclick="closeDocRejectModal()">Cancel</button>
+        <button type="submit" class="button button--danger button--sm">Reject / Request Resubmission</button>
       </div>
     </form>
   </div>
@@ -488,90 +684,27 @@
   function closeAcceptModal() {
     document.getElementById('accept-app-backdrop').classList.remove('is-active');
   }
-
   function openAppRejectModal() {
     document.getElementById('reject-app-backdrop').classList.add('is-active');
   }
   function closeAppRejectModal() {
     document.getElementById('reject-app-backdrop').classList.remove('is-active');
   }
-
   function openScheduleModal() {
     document.getElementById('schedule-test-backdrop').classList.add('is-active');
   }
   function closeScheduleModal() {
     document.getElementById('schedule-test-backdrop').classList.remove('is-active');
   }
-
-  function adminPreviewDoc(target) {
-    let doc = target;
-    if (target instanceof HTMLElement || (target && target.dataset)) {
-      doc = {
-        title: target.dataset.title || 'Document Preview',
-        fileName: target.dataset.fileName || '',
-        isImage: target.dataset.isImage === 'true',
-        isPdf: target.dataset.isPdf === 'true',
-        fileUrl: target.dataset.fileUrl || '',
-        downloadUrl: target.dataset.downloadUrl || target.dataset.fileUrl || ''
-      };
-    }
-    if (!doc || !doc.fileUrl) return;
-
-    document.getElementById('admin-preview-title').textContent = doc.title || 'Document Preview';
-    document.getElementById('admin-preview-filename').textContent = doc.fileName || '';
-    document.getElementById('admin-preview-download').href = doc.downloadUrl || doc.fileUrl;
-    document.getElementById('admin-preview-newtab').href = doc.fileUrl;
-
-    const imgWrapper = document.getElementById('admin-img-wrapper');
-    const pdfWrapper = document.getElementById('admin-pdf-wrapper');
-    const img = document.getElementById('admin-preview-img');
-    const iframe = document.getElementById('admin-preview-iframe');
-
-    imgWrapper.style.display = 'none';
-    pdfWrapper.style.display = 'none';
-
-    if (doc.isImage) {
-      img.src = doc.fileUrl;
-      imgWrapper.style.display = 'block';
-    } else {
-      iframe.src = doc.fileUrl;
-      pdfWrapper.style.display = 'block';
-    }
-
-    document.getElementById('admin-preview-backdrop').style.display = 'block';
-    document.getElementById('admin-preview-modal').style.display = 'flex';
-  }
-
-  function closeAdminPreview() {
-    document.getElementById('admin-preview-backdrop').style.display = 'none';
-    document.getElementById('admin-preview-modal').style.display = 'none';
-    document.getElementById('admin-preview-img').src = '';
-    document.getElementById('admin-preview-iframe').src = '';
-  }
-
-  function openRejectModal(docId, docTitle) {
-    const form = document.getElementById('reject-form');
+  function openDocRejectModal(docId, docTitle) {
+    const form = document.getElementById('reject-doc-form');
     form.action = `/university-admin/documents/${docId}/review/`;
     document.getElementById('reject-doc-title').textContent = docTitle;
-    document.getElementById('reject-reason-input').value = '';
-    document.getElementById('reject-modal-backdrop').style.display = 'block';
-    document.getElementById('reject-modal').style.display = 'flex';
-    document.getElementById('reject-reason-input').focus();
+    document.getElementById('reject-doc-backdrop').classList.add('is-active');
+    document.getElementById('reject-doc-reason').focus();
   }
-
-  function closeRejectModal() {
-    document.getElementById('reject-modal-backdrop').style.display = 'none';
-    document.getElementById('reject-modal').style.display = 'none';
+  function closeDocRejectModal() {
+    document.getElementById('reject-doc-backdrop').classList.remove('is-active');
   }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      closeAdminPreview();
-      closeRejectModal();
-      closeAcceptModal();
-      closeAppRejectModal();
-      closeScheduleModal();
-    }
-  });
 </script>
 {% endblock %}

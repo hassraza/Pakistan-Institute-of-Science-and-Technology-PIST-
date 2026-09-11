@@ -1,56 +1,82 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Edit {{ program.name }} | PIST Superadmin{% endblock %}
-{% block admin_heading %}Edit Program Admission Settings{% endblock %}
-{% block admin_subheading %}Modify admission window, eligibility criteria, and application deadline for {{ program.name }}{% endblock %}
+{% load static %}
+
+{% block title %}Edit {{ program.name }} | PIST ERP{% endblock %}
 
 {% block content %}
-<section class="panel" style="max-width: 680px; margin: 0 auto;">
-  <div class="panel__heading">
+<div class="erp-program-edit-page" style="max-width: 760px; margin: 0 auto;">
+  <!-- Header -->
+  <div class="erp-page-header">
     <div>
-      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">{{ program.name }} ({{ program.code }})</h1>
-      <span style="font-size: 0.85rem; color: var(--slate-500);">Campus: {{ program.department.campus.name }} &bull; Dept: {{ program.department.name }}</span>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">ACADEMIC OFFERING</span>
+        <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ program.code }}</span>
+      </div>
+      <h1 class="erp-page-title">Edit Program Admission Criteria</h1>
+      <p class="erp-page-subtitle">{{ program.name }} &bull; {{ program.department.name }} &bull; {{ program.department.campus.name }}</p>
     </div>
-    <a href="{% url 'university_admin:programs' %}" class="button button--secondary button--sm">Cancel</a>
+    <div class="erp-header-actions">
+      <a href="{% url 'university_admin:programs' %}" class="erp-btn erp-btn-secondary">
+        Cancel &amp; Return
+      </a>
+    </div>
   </div>
 
-  <form method="post">
-    {% csrf_token %}
-
-    <div style="display: flex; flex-direction: column; gap: 16px;">
-      <div style="display: flex; align-items: center; gap: 10px; background: var(--slate-50); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--slate-200);">
-        {{ form.admissions_open }}
-        <label for="{{ form.admissions_open.id_for_label }}" style="font-weight: 700; font-size: 0.92rem; color: var(--navy-900); cursor: pointer;">
-          Admissions Currently Open for this Program
-        </label>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="form-group">
-          <label style="font-weight: 700; font-size: 0.85rem;">Minimum Eligibility (%)</label>
-          {{ form.eligibility_percentage }}
-        </div>
-        <div class="form-group">
-          <label style="font-weight: 700; font-size: 0.85rem;">Application Deadline</label>
-          {{ form.application_deadline }}
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="form-group">
-          <label style="font-weight: 700; font-size: 0.85rem;">Program Duration</label>
-          {{ form.duration }}
-        </div>
-        <div class="form-group">
-          <label style="font-weight: 700; font-size: 0.85rem;">Required Test Type</label>
-          {{ form.required_test_type }}
-        </div>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-        <a href="{% url 'university_admin:programs' %}" class="button button--secondary">Cancel</a>
-        <button type="submit" class="button button--primary">Save Program Settings</button>
-      </div>
+  <!-- Edit Card Form -->
+  <div class="erp-card">
+    <div class="erp-card-header">
+      <h2 class="erp-card-title">Admission Window &amp; Eligibility Parameters</h2>
     </div>
-  </form>
-</section>
+    <div class="erp-card-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Admissions Toggle Pill -->
+          <div style="display: flex; align-items: center; gap: 12px; background: var(--erp-card-subtle); padding: 16px 20px; border-radius: var(--erp-radius-sm); border: 1px solid var(--erp-border);">
+            {{ form.admissions_open }}
+            <div>
+              <label for="{{ form.admissions_open.id_for_label }}" style="font-weight: 700; font-size: 0.92rem; color: var(--erp-text-main); cursor: pointer; display: block;">
+                Admissions Currently Open
+              </label>
+              <span style="font-size: 0.78rem; color: var(--erp-text-muted);">
+                When enabled, prospective students can select and apply for this degree program online.
+              </span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Minimum Eligibility Percentage (%)</label>
+              {{ form.eligibility_percentage }}
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Application Deadline Date</label>
+              {{ form.application_deadline }}
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Program Duration (e.g. 4 Years / 8 Semesters)</label>
+              {{ form.duration }}
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Required Test Type</label>
+              {{ form.required_test_type }}
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--erp-border);">
+            <a href="{% url 'university_admin:programs' %}" class="erp-btn erp-btn-secondary">Cancel</a>
+            <button type="submit" class="erp-btn erp-btn-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Save Program Settings
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

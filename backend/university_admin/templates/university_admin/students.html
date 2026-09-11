@@ -1,105 +1,140 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Students Directory | PIST Superadmin{% endblock %}
-{% block admin_heading %}Registered Students Directory{% endblock %}
-{% block admin_subheading %}Comprehensive registry of enrolled student profiles, academic histories, and applicant accounts{% endblock %}
+{% load static %}
+
+{% block title %}Students Directory | PIST ERP{% endblock %}
 
 {% block content %}
-<section class="panel">
-  <div class="panel__heading">
+<div class="erp-students-page">
+  <!-- Top Header -->
+  <div class="erp-page-header">
     <div>
-      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Students Directory ({{ total_students }})</h1>
-      <span style="font-size: 0.85rem; color: var(--slate-500);">All verified student accounts created in PIST portal</span>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">REGISTRAR ROSTER</span>
+        <span style="font-family: var(--erp-font-mono); font-size: 0.75rem; color: var(--erp-text-muted);">PIST-DIR-2025</span>
+      </div>
+      <h1 class="erp-page-title">Registered Students Directory</h1>
+      <p class="erp-page-subtitle">Comprehensive registry of enrolled student profiles, academic credentials, and applicant accounts across all departments.</p>
+    </div>
+    <div class="erp-header-actions">
+      <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
+        {{ total_students }} Enrolled Profiles
+      </span>
     </div>
   </div>
 
-  <!-- Search Bar -->
-  <form method="get" class="filter-bar" style="grid-template-columns: 1fr auto;">
-    <div class="filter-field">
-      <label for="searchQuery">Search Student Profiles</label>
-      <input type="text" id="searchQuery" name="q" value="{{ search_query }}" placeholder="Search by name, Student ID (e.g. PIST-2026-0001), CNIC, email, or phone..." class="form-control">
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <button class="button button--primary" type="submit">
-        <span class="material-symbols-outlined" style="font-size: 18px;">search</span> Search
+  <!-- Search & Filter Toolbar -->
+  <div class="erp-card" style="margin-bottom: 20px; padding: 16px 20px;">
+    <form method="get" style="display: flex; gap: 12px; align-items: center; width: 100%;">
+      <div class="erp-search-wrap" style="flex: 1; max-width: 100%;">
+        <svg class="erp-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search by name, Student ID (e.g. PIST-2026-0001), CNIC, email, or phone..." class="erp-input erp-search-input" style="padding-left: 38px;">
+      </div>
+      <button class="erp-btn erp-btn-primary" type="submit">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Search
       </button>
       {% if search_query %}
-        <a href="{% url 'university_admin:students_list' %}" class="button button--secondary">Clear</a>
+        <a href="{% url 'university_admin:students_list' %}" class="erp-btn erp-btn-secondary">Clear</a>
       {% endif %}
-    </div>
-  </form>
-
-  <div class="table-wrap">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Student Identity</th>
-          <th>Student ID</th>
-          <th>CNIC</th>
-          <th>Contact</th>
-          <th>Applications</th>
-          <th>Documents</th>
-          <th>Registered</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in page_obj %}
-        <tr>
-          <td>
-            <div class="candidate-cell">
-              {% if student.profile_photo %}
-                <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}">
-              {% else %}
-                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-600); font-weight: 700;">
-                  {{ student.full_name|slice:':1' }}
-                </div>
-              {% endif %}
-              <div>
-                <strong><a href="{% url 'university_admin:student_detail' student.pk %}" class="text-link">{{ student.full_name }}</a></strong>
-                <div style="font-size: 0.78rem; color: var(--slate-500);">Father: {{ student.father_name|default:'N/A' }}</div>
-              </div>
-            </div>
-          </td>
-          <td>
-            <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ student.student_id }}</span>
-          </td>
-          <td>
-            <span style="font-family: monospace;">{{ student.cnic }}</span>
-          </td>
-          <td>
-            <div>{{ student.user.email }}</div>
-            <div style="font-size: 0.78rem; color: var(--slate-500);">{{ student.phone }}</div>
-          </td>
-          <td>
-            <span class="badge badge--primary">
-              {{ student.program_applications.count }} Application(s)
-            </span>
-          </td>
-          <td>
-            <span class="badge badge--muted">
-              {{ student.academic_documents.count }} Document(s)
-            </span>
-          </td>
-          <td style="font-size: 0.82rem; color: var(--slate-500);">
-            {{ student.created_at|date:'d M Y' }}
-          </td>
-          <td>
-            <a class="button button--secondary button--sm" href="{% url 'university_admin:student_detail' student.pk %}">
-              View Profile
-            </a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="8" style="text-align: center; padding: 32px; color: var(--slate-500);">
-            No students found matching your search.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    </form>
   </div>
 
-  {% include 'partials/pagination.html' %}
-</section>
+  <!-- Students Table Ledger -->
+  <div class="erp-card">
+    <div class="erp-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table erp-table mb-0">
+          <thead>
+            <tr>
+              <th>STUDENT IDENTITY</th>
+              <th>STUDENT ID</th>
+              <th>CNIC</th>
+              <th>CONTACT DETAILS</th>
+              <th>APPLICATIONS</th>
+              <th>DOCUMENTS</th>
+              <th>REGISTERED</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in page_obj %}
+            <tr>
+              <td>
+                <div class="erp-candidate-cell">
+                  {% if student.profile_photo %}
+                    <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}" class="erp-avatar">
+                  {% else %}
+                    <div class="erp-avatar" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 800;">
+                      {{ student.full_name|slice:':1' }}
+                    </div>
+                  {% endif %}
+                  <div>
+                    <a href="{% url 'university_admin:student_detail' student.pk %}" style="font-weight: 700; color: var(--erp-text-main); text-decoration: none;">
+                      {{ student.full_name }}
+                    </a>
+                    <div style="font-size: 0.78rem; color: var(--erp-text-muted);">
+                      Father: {{ student.father_name|default:'N/A' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ student.student_id }}</span>
+              </td>
+              <td>
+                <span class="erp-code">{{ student.cnic }}</span>
+              </td>
+              <td>
+                <div style="font-size: 0.84rem; color: var(--erp-text-main); font-weight: 500;">{{ student.user.email }}</div>
+                <div style="font-size: 0.78rem; color: var(--erp-text-muted); font-family: var(--erp-font-mono);">{{ student.phone }}</div>
+              </td>
+              <td>
+                <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 600;">
+                  {{ student.program_applications.count }} Program(s)
+                </span>
+              </td>
+              <td>
+                <span class="erp-badge" style="background: #f1f5f9; color: var(--erp-text-secondary); font-weight: 600;">
+                  {{ student.academic_documents.count }} Document(s)
+                </span>
+              </td>
+              <td style="font-size: 0.82rem; color: var(--erp-text-muted); font-family: var(--erp-font-mono);">
+                {{ student.created_at|date:'d M Y' }}
+              </td>
+              <td style="text-align: right;">
+                <a class="erp-btn erp-btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" href="{% url 'university_admin:student_detail' student.pk %}">
+                  View Profile
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 48px; color: var(--erp-text-muted);">
+                No student profiles found matching your search.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination Footer -->
+    {% if page_obj.has_other_pages %}
+    <div style="padding: 14px 20px; border-top: 1px solid var(--erp-border); display: flex; justify-content: space-between; align-items: center; background: var(--erp-card-subtle);">
+      <div style="font-size: 0.82rem; color: var(--erp-text-secondary);">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </div>
+      <div style="display: flex; gap: 6px;">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="erp-btn erp-btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="erp-btn erp-btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;">Next</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

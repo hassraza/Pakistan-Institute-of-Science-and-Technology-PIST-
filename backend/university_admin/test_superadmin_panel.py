@@ -228,3 +228,12 @@ class SuperadminPanelTests(TestCase):
         })
         self.assertEqual(post_res.status_code, 302)
         self.assertTrue(Notification.objects.filter(student=self.student_profile, title='General Campus Announcement').exists())
+
+    def test_institutional_reports(self):
+        reports_url = reverse('university_admin:reports')
+        res = self.client.get(reports_url)
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, 'Institutional Admissions &amp; Enrollment Reports')
+        self.assertContains(res, 'Overall Acceptance Rate')
+        self.assertContains(res, 'Admissions Intake by Academic Department')
+
