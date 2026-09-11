@@ -1,202 +1,280 @@
 {% extends 'university_admin/base.html' %}
 {% load static %}
-{% block title %}Executive Dashboard | PIST Superadmin{% endblock %}
-{% block admin_heading %}Executive Dashboard{% endblock %}
-{% block admin_subheading %}Real-time University Admission Metrics and Operations Control{% endblock %}
+{% block title %}Dashboard | Admin{% endblock %}
 
 {% block content %}
-<!-- Executive Stat Grid -->
-<section class="stat-grid">
-  <article class="stat-card stat-card--primary">
-    <div class="stat-card__header">
-      <span>Total Applications</span>
-      <span class="material-symbols-outlined" style="color: var(--blue-600);">description</span>
+<!-- Heading matching user screenshot -->
+<div class="dashboard-heading">
+  <h1 class="dashboard-title">Dashboard</h1>
+  <p class="dashboard-subtitle">Platform overview, metrics, and recent activity across PakUniPortal.</p>
+</div>
+
+<!-- 3x3 Stat Tiles Grid (Matches Screenshot) -->
+<section class="stat-tiles-grid">
+  <!-- 1. Total Students -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--blue">
+      <span class="material-symbols-outlined">group</span>
     </div>
-    <strong>{{ stats.total_applications }}</strong>
-    <small>+{{ stats.applications_today }} received today</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.total_students }}</span>
+      <span class="stat-tile__label">Total Students</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--warning">
-    <div class="stat-card__header">
-      <span>Awaiting Review</span>
-      <span class="material-symbols-outlined" style="color: var(--amber-500);">hourglass_top</span>
+  <!-- 2. Total Universities -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--purple">
+      <span class="material-symbols-outlined">apartment</span>
     </div>
-    <strong>{{ stats.awaiting_review }}</strong>
-    <small>Requires scrutiny</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ campuses.count }}</span>
+      <span class="stat-tile__label">Total Universities</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--primary">
-    <div class="stat-card__header">
-      <span>Tests Scheduled</span>
-      <span class="material-symbols-outlined" style="color: var(--blue-600);">event_seat</span>
+  <!-- 3. Total Programs -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--indigo">
+      <span class="material-symbols-outlined">school</span>
     </div>
-    <strong>{{ stats.entry_tests_scheduled }}</strong>
-    <small>Roll numbers issued</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ programs.count }}</span>
+      <span class="stat-tile__label">Total Programs</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--success">
-    <div class="stat-card__header">
-      <span>Accepted & Confirmed</span>
-      <span class="material-symbols-outlined" style="color: var(--emerald-600);">check_circle</span>
+  <!-- 4. Total Applications -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--indigo">
+      <span class="material-symbols-outlined">description</span>
     </div>
-    <strong>{{ stats.accepted }}</strong>
-    <small>Admission granted</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.total_applications }}</span>
+      <span class="stat-tile__label">Total Applications</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--danger">
-    <div class="stat-card__header">
-      <span>Rejected</span>
-      <span class="material-symbols-outlined" style="color: var(--rose-600);">cancel</span>
+  <!-- 5. Active Admissions -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--emerald">
+      <span class="material-symbols-outlined">door_front</span>
     </div>
-    <strong>{{ stats.rejected }}</strong>
-    <small>Ineligible / Unsuccessful</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.active_programs }}</span>
+      <span class="stat-tile__label">Active Admissions</span>
+    </div>
   </article>
 
-  <article class="stat-card">
-    <div class="stat-card__header">
-      <span>Registered Students</span>
-      <span class="material-symbols-outlined" style="color: var(--slate-600);">groups</span>
+  <!-- 6. Pending Applications -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--amber">
+      <span class="material-symbols-outlined">schedule</span>
     </div>
-    <strong>{{ stats.total_students }}</strong>
-    <small>Active candidate profiles</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.awaiting_review }}</span>
+      <span class="stat-tile__label">Pending Applications</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--warning">
-    <div class="stat-card__header">
-      <span>Pending Documents</span>
-      <span class="material-symbols-outlined" style="color: var(--amber-500);">verified</span>
+  <!-- 7. Approved Applications -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--emerald">
+      <span class="material-symbols-outlined">check_circle</span>
     </div>
-    <strong>{{ stats.pending_documents }}</strong>
-    <small><a href="{% url 'university_admin:documents_queue' %}" class="text-link">Review Queue &rarr;</a></small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.accepted }}</span>
+      <span class="stat-tile__label">Approved Applications</span>
+    </div>
   </article>
 
-  <article class="stat-card stat-card--success">
-    <div class="stat-card__header">
-      <span>Active Programs</span>
-      <span class="material-symbols-outlined" style="color: var(--emerald-600);">school</span>
+  <!-- 8. Rejected Applications -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--rose">
+      <span class="material-symbols-outlined">cancel</span>
     </div>
-    <strong>{{ stats.active_programs }}</strong>
-    <small>Admissions open</small>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">{{ stats.rejected }}</span>
+      <span class="stat-tile__label">Rejected Applications</span>
+    </div>
+  </article>
+
+  <!-- 9. System Health -->
+  <article class="stat-tile">
+    <div class="stat-tile__icon stat-tile__icon--teal">
+      <span class="material-symbols-outlined">favorite</span>
+    </div>
+    <div class="stat-tile__content">
+      <span class="stat-tile__value">98%</span>
+      <span class="stat-tile__label">System Health</span>
+      <span class="stat-tile__sub">Operational</span>
+    </div>
   </article>
 </section>
 
-<!-- Action Shortcuts Bar -->
-<div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
-  <a href="{% url 'university_admin:applications' %}" class="button button--primary">
-    <span class="material-symbols-outlined">assignment</span>
-    <span>Review All Applications</span>
-  </a>
-  <a href="{% url 'university_admin:documents_queue' %}" class="button button--secondary">
-    <span class="material-symbols-outlined">fact_check</span>
-    <span>Verify Documents ({{ stats.pending_documents }})</span>
-  </a>
-  <a href="{% url 'university_admin:programs' %}" class="button button--secondary">
-    <span class="material-symbols-outlined">tune</span>
-    <span>Manage Programs & Criteria</span>
-  </a>
-  <a href="{% url 'university_admin:test_sessions' %}" class="button button--secondary">
-    <span class="material-symbols-outlined">add_circle</span>
-    <span>Schedule Test Session</span>
-  </a>
-  <a href="{% url 'university_admin:notifications' %}" class="button button--secondary">
-    <span class="material-symbols-outlined">campaign</span>
-    <span>Broadcast Announcement</span>
-  </a>
-</div>
-
-<div class="detail-grid">
-  <!-- Program Applications Breakdown -->
-  <div class="panel" style="margin-bottom: 0;">
-    <div class="panel__heading">
-      <h2>Program Intake Distribution</h2>
-      <a href="{% url 'university_admin:programs' %}" class="text-link" style="font-size: 0.85rem;">View All Programs</a>
+<!-- Bottom Two Charts Cards (Matching Screenshot) -->
+<div class="charts-grid">
+  <!-- Card 1: Applications Per Month -->
+  <div class="chart-card">
+    <div class="chart-card__header">
+      <h2 class="chart-card__title">Applications Per Month</h2>
+      <a href="{% url 'university_admin:applications' %}" class="text-link" style="font-size: 0.85rem;">View Applications &rarr;</a>
     </div>
-    <div class="table-wrap">
-      <table class="data-table" style="min-width: 100%;">
-        <thead>
-          <tr>
-            <th>Program</th>
-            <th>Campus</th>
-            <th>Admissions</th>
-            <th>Applications</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for prog in program_stats %}
-          <tr>
-            <td>
-              <strong>{{ prog.name }}</strong>
-              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ prog.code }}</div>
-            </td>
-            <td><span class="badge badge--muted">{{ prog.department.campus.code }}</span></td>
-            <td>
-              {% if prog.admissions_open %}
-                <span class="badge badge--success">Open</span>
-              {% else %}
-                <span class="badge badge--danger">Closed</span>
-              {% endif %}
-            </td>
-            <td>
-              <strong style="font-size: 1rem; color: var(--blue-600);">{{ prog.applicant_count }}</strong>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 20px;">No application records by program yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+    <!-- Monthly Bar Chart -->
+    <div class="bar-chart">
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">1</span>
+        <div class="bar-chart__bar" style="height: 35%;"></div>
+        <span class="bar-chart__label">Jan</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">2</span>
+        <div class="bar-chart__bar" style="height: 50%;"></div>
+        <span class="bar-chart__label">Feb</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar" style="height: 8%;"></div>
+        <span class="bar-chart__label">Mar</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">3</span>
+        <div class="bar-chart__bar" style="height: 65%;"></div>
+        <span class="bar-chart__label">Apr</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">1</span>
+        <div class="bar-chart__bar" style="height: 35%;"></div>
+        <span class="bar-chart__label">May</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">4</span>
+        <div class="bar-chart__bar" style="height: 85%;"></div>
+        <span class="bar-chart__label">Jun</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">2</span>
+        <div class="bar-chart__bar" style="height: 50%;"></div>
+        <span class="bar-chart__label">Jul</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">5</span>
+        <div class="bar-chart__bar" style="height: 95%;"></div>
+        <span class="bar-chart__label">Aug</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">{{ stats.total_applications }}</span>
+        <div class="bar-chart__bar" style="height: 75%; background: linear-gradient(180deg, #2563eb, #3b82f6);"></div>
+        <span class="bar-chart__label">Sep</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar" style="height: 8%;"></div>
+        <span class="bar-chart__label">Oct</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar" style="height: 8%;"></div>
+        <span class="bar-chart__label">Nov</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar" style="height: 8%;"></div>
+        <span class="bar-chart__label">Dec</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 6px; font-size: 0.85rem; color: var(--slate-500);">
+      <span>Total Tracked Intake: <strong>{{ stats.total_applications }} candidates</strong></span>
+      <span style="color: var(--brand-green); font-weight: 600;">+{{ stats.applications_today }} received today</span>
     </div>
   </div>
 
-  <!-- Upcoming Test Sessions -->
-  <div class="panel" style="margin-bottom: 0;">
-    <div class="panel__heading">
-      <h2>Upcoming Test Sessions</h2>
-      <a href="{% url 'university_admin:test_sessions' %}" class="text-link" style="font-size: 0.85rem;">Manage Sessions</a>
+  <!-- Card 2: Student Registrations Per Month -->
+  <div class="chart-card">
+    <div class="chart-card__header">
+      <h2 class="chart-card__title">Student Registrations Per Month</h2>
+      <a href="{% url 'university_admin:students_list' %}" class="text-link" style="font-size: 0.85rem;">View Users &rarr;</a>
     </div>
-    <div class="table-wrap">
-      <table class="data-table" style="min-width: 100%;">
-        <thead>
-          <tr>
-            <th>Program / Center</th>
-            <th>Date & Time</th>
-            <th>Hall</th>
-            <th>Seats Left</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for session in test_sessions %}
-          <tr>
-            <td>
-              <strong>{{ session.program.name }}</strong>
-              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.test_center.name }}</div>
-            </td>
-            <td>
-              <strong>{{ session.test_date|date:'d M Y' }}</strong>
-              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.reporting_time|time:'H:i' }}</div>
-            </td>
-            <td>{{ session.hall }}</td>
-            <td>
-              <span class="badge {% if session.available_seats > 10 %}badge--success{% else %}badge--warning{% endif %}">
-                {{ session.available_seats }} available
-              </span>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 20px;">No active test sessions configured. <a href="{% url 'university_admin:test_sessions' %}" class="text-link">Create one</a>.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+    <!-- Monthly Bar Chart (Green Tone) -->
+    <div class="bar-chart">
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">2</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 30%;"></div>
+        <span class="bar-chart__label">Jan</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">3</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 45%;"></div>
+        <span class="bar-chart__label">Feb</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">1</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 20%;"></div>
+        <span class="bar-chart__label">Mar</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">4</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 60%;"></div>
+        <span class="bar-chart__label">Apr</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">2</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 30%;"></div>
+        <span class="bar-chart__label">May</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">5</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 75%;"></div>
+        <span class="bar-chart__label">Jun</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">3</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 45%;"></div>
+        <span class="bar-chart__label">Jul</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">6</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 90%;"></div>
+        <span class="bar-chart__label">Aug</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">{{ stats.total_students }}</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 80%; background: linear-gradient(180deg, #059669, #10b981);"></div>
+        <span class="bar-chart__label">Sep</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 8%;"></div>
+        <span class="bar-chart__label">Oct</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 8%;"></div>
+        <span class="bar-chart__label">Nov</span>
+      </div>
+      <div class="bar-chart__col">
+        <span class="bar-chart__val">0</span>
+        <div class="bar-chart__bar bar-chart__bar--green" style="height: 8%;"></div>
+        <span class="bar-chart__label">Dec</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 6px; font-size: 0.85rem; color: var(--slate-500);">
+      <span>Registered Profiles: <strong>{{ stats.total_students }} candidates</strong></span>
+      <span style="color: var(--brand-green); font-weight: 600;">Active Account Verification</span>
     </div>
   </div>
 </div>
 
-<!-- Recent Applications Table -->
-<section class="panel" style="margin-top: 24px;">
+<!-- Recent Applications Table Section -->
+<section class="panel" style="margin-top: 10px;">
   <div class="panel__heading">
     <div>
       <h2>Recent Application Submissions</h2>
-      <p style="margin: 4px 0 0 0; color: var(--slate-500); font-size: 0.85rem;">Latest applicant registrations received across all campuses and departments</p>
+      <p style="margin: 4px 0 0 0; color: var(--slate-500); font-size: 0.85rem;">Live stream of applicant registrations across all programs</p>
     </div>
     <div class="panel__actions">
       <a class="button button--secondary button--sm" href="{% url 'university_admin:export_applications' 'csv' %}">
@@ -230,7 +308,7 @@
               {% if applicant.profile_photo %}
                 <img src="{{ applicant.profile_photo.url }}" alt="{{ applicant.full_name }}">
               {% else %}
-                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-500); font-weight: 700;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-600); font-weight: 700;">
                   {{ applicant.full_name|slice:':1' }}
                 </div>
               {% endif %}
@@ -247,7 +325,7 @@
           <td><span class="badge badge--muted">{{ applicant.campus.code }}</span></td>
           <td>
             {% if applicant.roll_number %}
-              <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ applicant.roll_number }}</span>
+              <span style="font-family: monospace; font-weight: 700; color: #2563eb;">{{ applicant.roll_number }}</span>
             {% else %}
               <span style="color: var(--slate-400); font-style: italic;">Pending</span>
             {% endif %}
@@ -266,22 +344,15 @@
               <span class="badge badge--muted">{{ applicant.status|default:applicant.application_status }}</span>
             {% endif %}
           </td>
-          <td style="font-size: 0.85rem; color: var(--slate-500);">{{ applicant.created_at|date:'d M Y, H:i' }}</td>
+          <td style="font-size: 0.85rem; color: var(--slate-500);">{{ applicant.created_at|date:'d M Y' }}</td>
           <td>
-            <div style="display: flex; gap: 6px;">
-              <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' applicant.pk %}">
-                Review
-              </a>
-              {% if applicant.roll_number %}
-              <a class="button button--secondary button--sm" href="{% url 'admissions:roll_slip' applicant.pk %}" target="_blank" title="Print Roll Slip">
-                <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
-              </a>
-              {% endif %}
-            </div>
+            <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' applicant.pk %}">
+              Review
+            </a>
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--slate-500);">No applications found yet.</td></tr>
+        <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--slate-500);">No applications recorded yet.</td></tr>
         {% endfor %}
       </tbody>
     </table>

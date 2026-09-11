@@ -13,55 +13,74 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body class="admin-shell">
+  <!-- Left Sidebar (Matching Screenshot) -->
   <aside class="sidebar">
+    <!-- Brand Logo -->
     <div class="sidebar__brand">
-      <div class="sidebar__brand-logo">P</div>
-      <div>
-        <span class="sidebar__brand-title">PIST Portal</span>
-        <span class="sidebar__brand-subtitle">Superadmin Control</span>
+      <div class="sidebar__brand-shield">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <span class="sidebar__brand-title">pakuniportal</span>
+    </div>
+
+    <!-- Logged in Admin Profile Card -->
+    <div class="sidebar__user-profile">
+      <div class="sidebar__avatar">
+        {{ user.first_name|default:user.username|slice:':1'|upper }}
+      </div>
+      <div class="sidebar__user-info">
+        <div class="sidebar__user-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="sidebar__user-role">Super Admin</div>
       </div>
     </div>
 
+    <!-- Navigation Menu -->
     <nav>
-      <div class="nav-section-title">Core Operations</div>
+      <div class="nav-section-title">OVERVIEW</div>
       <a href="{% url 'university_admin:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-        <span class="material-symbols-outlined">dashboard</span>
+        <span class="material-symbols-outlined">grid_view</span>
         <span>Dashboard</span>
       </a>
-      <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
-        <span class="material-symbols-outlined">assignment</span>
-        <span>Applications Queue</span>
-      </a>
-      <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
-        <span class="material-symbols-outlined">groups</span>
-        <span>Students Directory</span>
-      </a>
-      <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
-        <span class="material-symbols-outlined">verified</span>
-        <span>Document Verification</span>
-      </a>
 
-      <div class="nav-section-title">Admissions & Testing</div>
+      <div class="nav-section-title">MANAGEMENT</div>
+      <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
+        <span class="material-symbols-outlined">group</span>
+        <span>Users</span>
+      </a>
+      <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' and not request.GET.type %}active{% endif %}">
+        <span class="material-symbols-outlined">apartment</span>
+        <span>Universities</span>
+      </a>
       <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' or request.resolver_match.url_name == 'program_edit' %}active{% endif %}">
         <span class="material-symbols-outlined">school</span>
-        <span>Programs & Criteria</span>
+        <span>Programs</span>
       </a>
       <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' %}active{% endif %}">
-        <span class="material-symbols-outlined">event_available</span>
-        <span>Test Sessions</span>
+        <span class="material-symbols-outlined">calendar_month</span>
+        <span>Admissions</span>
+      </a>
+      <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
+        <span class="material-symbols-outlined">description</span>
+        <span>Applications</span>
+      </a>
+      <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
+        <span class="material-symbols-outlined">format_list_bulleted</span>
+        <span>Merit Lists</span>
       </a>
 
-      <div class="nav-section-title">Outreach & Communications</div>
+      <div class="nav-section-title">COMMUNICATION</div>
       <a href="{% url 'university_admin:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
         <span class="material-symbols-outlined">campaign</span>
-        <span>Broadcast Notice</span>
+        <span>Notifications</span>
       </a>
 
       <div class="sidebar-divider"></div>
 
       <a href="{% url 'admissions:home' %}" target="_blank" rel="noopener">
         <span class="material-symbols-outlined">public</span>
-        <span>Public Admissions Site</span>
+        <span>Public Site</span>
       </a>
       <a href="{% url 'university_admin:logout' %}">
         <span class="material-symbols-outlined">logout</span>
@@ -70,24 +89,11 @@
     </nav>
   </aside>
 
+  <!-- Main Content Area -->
   <div class="admin-main">
+    <!-- Minimalist Topbar (Matching Screenshot) -->
     <header class="admin-topbar">
-      <div>
-        <strong>{% block admin_heading %}University Admission Office{% endblock %}</strong>
-        <span>{% block admin_subheading %}Pakistan Institute of Science and Technology Superadmin Portal{% endblock %}</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <span class="topbar-badge topbar-badge--super">
-          <span class="material-symbols-outlined" style="font-size: 16px;">verified_user</span>
-          Superadmin Privileges
-        </span>
-        {% if user.is_authenticated %}
-        <span class="topbar-badge">
-          <span class="material-symbols-outlined" style="font-size: 16px;">account_circle</span>
-          {{ user.get_full_name|default:user.username }}
-        </span>
-        {% endif %}
-      </div>
+      <div class="admin-breadcrumb">Admin</div>
     </header>
 
     <main class="admin-content">

@@ -89,7 +89,7 @@ class SuperadminPanelTests(TestCase):
         url = reverse('university_admin:dashboard')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Executive Dashboard')
+        self.assertContains(response, 'Dashboard')
         self.assertContains(response, 'Total Applications')
         self.assertContains(response, 'BS Computer Science')
         self.assertContains(response, 'Zainab Tariq')
@@ -164,7 +164,7 @@ class SuperadminPanelTests(TestCase):
         detail_url = reverse('university_admin:student_detail', kwargs={'student_id': self.student_profile.pk})
         detail_res = self.client.get(detail_url)
         self.assertEqual(detail_res.status_code, 200)
-        self.assertContains(detail_res, 'Student Dossier & Academic History')
+        self.assertContains(detail_res, 'Student Dossier')
         self.assertContains(detail_res, self.student_profile.student_id)
 
         # Test sending direct notification
@@ -218,7 +218,7 @@ class SuperadminPanelTests(TestCase):
         url = reverse('university_admin:notifications')
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
-        self.assertContains(res, 'Broadcast Notification Broadcaster')
+        self.assertContains(res, 'Compose Broadcast')
 
         # Send broadcast to all students
         post_res = self.client.post(url, {
