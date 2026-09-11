@@ -158,17 +158,13 @@
           {{ user.first_name|default:user.username|slice:':1'|upper }}
         </div>
         <div class="sidebar__user-info">
-          <div class="sidebar__user-name">{{ user.get_full_name|default:'Dr. Tahira Naeem' }}</div>
+          <div class="sidebar__user-name">{{ user.get_full_name|default:user.username }}</div>
           <div class="sidebar__user-role">Registrar & Controller</div>
         </div>
       </div>
 
-      <!-- Quick Nav for Student Portal & Logout -->
+      <!-- Quick Nav for public site and logout -->
       <div class="sidebar__quick-links">
-        <a href="{% url 'students:dashboard' %}" target="_blank">
-          <span class="material-symbols-outlined" style="font-size: 15px;">school</span>
-          <span>Student Portal</span>
-        </a>
         <a href="{% url 'admissions:home' %}" target="_blank" title="Public Main Site">
           <span class="material-symbols-outlined" style="font-size: 15px;">public</span>
         </a>

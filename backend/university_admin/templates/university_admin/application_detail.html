@@ -143,7 +143,7 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; border-top: 1px solid var(--erp-border); padding-top: 14px;">
         <div>
           <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Date of Birth &amp; Age</span>
-          <strong style="color: var(--erp-text);">14 August 2005 (19 yrs)</strong>
+          <strong style="color: var(--erp-text);">{{ application.date_of_birth|default:'Not provided' }}</strong>
         </div>
         <div>
           <span style="color: var(--erp-text-muted); display: block; font-size: 11px; text-transform: uppercase; font-weight: 700;">Domicile Jurisdiction</span>
@@ -316,7 +316,7 @@
             <div style="font-size: 13.5px; font-weight: 800; color: var(--erp-text);">PUET-2025 Series 1 (Undergraduate)</div>
             <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--erp-text-secondary);">
               <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">calendar_month</span>
-              <span>Sunday, {{ application.test_date|default:"20 July 2025" }} &bull; Reporting: {{ application.reporting_time|time:'H:i'|default:"08:15 AM" }}</span>
+              <span>{{ application.test_date|default:"Date not set" }} &bull; Reporting: {{ application.reporting_time|time:'H:i'|default:"Time not set" }}</span>
             </p>
           </div>
           <div style="text-align: right; background: #fff; padding: 4px 8px; border-radius: var(--radius-xs); border: 1px solid var(--erp-border);">
