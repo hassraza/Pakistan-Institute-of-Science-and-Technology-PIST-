@@ -1,0 +1,228 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Student Dossier: {{ student.full_name }} | PIST Superadmin{% endblock %}
+{% block admin_heading %}Student Dossier & Academic History{% endblock %}
+{% block admin_subheading %}Complete student registry profile, submitted applications, academic certificates, and notifications log{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel__heading">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      {% if student.profile_photo %}
+        <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}" style="width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 2px solid var(--slate-300);">
+      {% else %}
+        <div style="width: 56px; height: 56px; border-radius: 12px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: var(--navy-900);">
+          {{ student.full_name|slice:':1' }}
+        </div>
+      {% endif %}
+      <div>
+        <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--navy-900);">{{ student.full_name }}</h1>
+        <p style="margin: 4px 0 0 0; color: var(--slate-500); font-weight: 500;">
+          Student ID: <strong style="font-family: monospace; color: var(--blue-600);">{{ student.student_id }}</strong> &bull; Registered {{ student.created_at|date:'d M Y' }}
+        </p>
+      </div>
+    </div>
+    <div class="panel__actions">
+      <a class="button button--secondary" href="{% url 'university_admin:students_list' %}">Back to Directory</a>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <!-- Personal Information Card -->
+    <div class="detail-card">
+      <h2>Personal Profile</h2>
+      <p><strong>Father's Name:</strong> {{ student.father_name|default:'N/A' }}</p>
+      <p><strong>CNIC:</strong> <span style="font-family: monospace;">{{ student.cnic }}</span></p>
+      <p><strong>Date of Birth:</strong> {{ student.date_of_birth|default:'Not provided' }}</p>
+      <p><strong>Gender:</strong> {{ student.get_gender_display|default:'Not specified' }}</p>
+      <p><strong>Nationality:</strong> {{ student.nationality }}</p>
+      <p><strong>Email Address:</strong> {{ student.user.email }}</p>
+      <p><strong>Phone Number:</strong> {{ student.phone }}</p>
+      <p><strong>Postal Address:</strong> {{ student.address|default:'Not provided' }}</p>
+    </div>
+
+    <!-- Academic Records -->
+    <div class="detail-card">
+      <h2>Academic Records on File</h2>
+      {% if student.matric_record %}
+        <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--slate-200);">
+          <strong style="color: var(--navy-900);">Matriculation (SSC):</strong>
+          <p style="margin: 4px 0;">Board: {{ student.matric_record.board_name }} &bull; Roll No: {{ student.matric_record.roll_number }}</p>
+          <p style="margin: 4px 0;">Marks: {{ student.matric_record.obtained_marks }} / {{ student.matric_record.total_marks }} (<strong>{{ student.matric_record.percentage }}%</strong>)</p>
+        </div>
+      {% else %}
+        <p style="color: var(--slate-400); font-style: italic;">No matric record added yet.</p>
+      {% endif %}
+
+      {% if student.intermediate_record %}
+        <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--slate-200);">
+          <strong style="color: var(--navy-900);">Intermediate / FSc (HSSC):</strong>
+          <p style="margin: 4px 0;">Group: {{ student.intermediate_record.group_name }} &bull; Board: {{ student.intermediate_record.board_name }}</p>
+          <p style="margin: 4px 0;">Marks: {{ student.intermediate_record.obtained_marks }} / {{ student.intermediate_record.total_marks }} (<strong>{{ student.intermediate_record.percentage }}%</strong>)</p>
+        </div>
+      {% else %}
+        <p style="color: var(--slate-400); font-style: italic;">No intermediate record added yet.</p>
+      {% endif %}
+
+      <strong style="color: var(--navy-900);">External Test Scores:</strong>
+      {% for score in student.test_scores.all %}
+        <p style="margin: 4px 0;">{{ score.test_type.name }}: {{ score.score }}/{{ score.total_score }} ({{ score.percentage }}%)</p>
+      {% empty %}
+        <p style="color: var(--slate-400); font-style: italic;">No external test score records.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Applications by this Student -->
+  <div style="margin-top: 24px;">
+    <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--navy-900); margin-bottom: 12px;">Submitted Program Applications</h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Campus</th>
+            <th>Roll Number</th>
+            <th>Test Date</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in applications %}
+          <tr>
+            <td>
+              <strong>{{ app.program.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ app.program.code }}</div>
+            </td>
+            <td><span class="badge badge--muted">{{ app.campus.code }}</span></td>
+            <td>
+              {% if app.roll_number %}
+                <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ app.roll_number }}</span>
+              {% else %}
+                <span style="color: var(--slate-400);">Pending</span>
+              {% endif %}
+            </td>
+            <td>{{ app.test_date|default:'TBA' }}</td>
+            <td>
+              {% if app.status == 'Rejected' or app.application_status == 'REJECTED' %}
+                <span class="badge badge--danger">Rejected</span>
+              {% elif app.status == 'Roll No Issued' or app.application_status == 'SCHEDULED' %}
+                <span class="badge badge--primary">Scheduled</span>
+              {% elif app.status == 'Admission Confirmed' or app.application_status == 'ACCEPTED' %}
+                <span class="badge badge--success">Accepted</span>
+              {% else %}
+                <span class="badge badge--muted">{{ app.status|default:app.application_status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ app.created_at|date:'d M Y' }}</td>
+            <td>
+              <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' app.pk %}">
+                Open Dossier
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" style="text-align: center; color: var(--slate-500); padding: 20px;">No applications found for this student.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Documents Uploaded by this Student -->
+  <div style="margin-top: 24px;">
+    <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--navy-900); margin-bottom: 12px;">Uploaded Academic Documents</h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Document Type</th>
+            <th>File Name</th>
+            <th>Size</th>
+            <th>Uploaded</th>
+            <th>Verification Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in documents %}
+          <tr>
+            <td><strong>{{ doc.get_document_type_display }}</strong></td>
+            <td><span style="font-family: monospace;">{{ doc.file_name }}</span></td>
+            <td>{{ doc.file_size_display|default:'-' }}</td>
+            <td>{{ doc.uploaded_at|date:'d M Y, H:i' }}</td>
+            <td>
+              {% if doc.verification_status == 'VERIFIED' %}
+                <span class="badge badge--success">Verified</span>
+              {% elif doc.verification_status == 'REJECTED' %}
+                <span class="badge badge--danger">Rejected</span>
+              {% else %}
+                <span class="badge badge--warning">Pending</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'students:document_view' doc.pk %}" target="_blank" class="button button--secondary button--sm">
+                View File
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" style="text-align: center; color: var(--slate-500); padding: 20px;">No documents uploaded.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Direct Communication & Notification Center -->
+  <div style="margin-top: 32px; border-top: 2px solid var(--slate-200); padding-top: 24px;">
+    <div class="detail-grid">
+      <!-- Send Note Form -->
+      <div class="panel" style="margin-bottom: 0;">
+        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--navy-900); margin-top: 0;">Send Direct Notification</h2>
+        <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 14px;">
+          Send an official message to {{ student.full_name }} which appears immediately on their student portal dashboard.
+        </p>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="send_student_note" value="1">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="font-weight: 700; font-size: 0.82rem;">Subject / Title</label>
+            <input type="text" name="title" class="form-control" placeholder="e.g. Document Verification Update or Interview Call" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label style="font-weight: 700; font-size: 0.82rem;">Message Body</label>
+            <textarea name="message" class="form-control" rows="3" placeholder="Provide instructions, clarifications, or reminders..." required></textarea>
+          </div>
+          <button type="submit" class="button button--primary">
+            <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+            <span>Send Direct Notification</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Past Notifications Log -->
+      <div class="panel" style="margin-bottom: 0;">
+        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--navy-900); margin-top: 0;">Recent Notifications History</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+          {% for notif in notifications %}
+          <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <strong>{{ notif.title }}</strong>
+              <small style="color: var(--slate-400);">{{ notif.created_at|date:'d M, H:i' }}</small>
+            </div>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--slate-700);">{{ notif.message }}</p>
+            <span style="font-size: 0.72rem; color: {% if notif.is_read %}var(--emerald-600){% else %}var(--slate-400){% endif %};">
+              {% if notif.is_read %}Read by student{% else %}Unread{% endif %}
+            </span>
+          </div>
+          {% empty %}
+          <p style="color: var(--slate-400); font-style: italic;">No notifications sent yet to this student.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

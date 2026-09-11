@@ -1,0 +1,148 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Test Sessions Management | PIST Superadmin{% endblock %}
+{% block admin_heading %}Entry Test Sessions Management{% endblock %}
+{% block admin_subheading %}Schedule testing sessions, assign test centers, allocate examination halls, and monitor seat capacities{% endblock %}
+
+{% block content %}
+<div class="detail-grid" style="grid-template-columns: 1fr 2fr; align-items: flex-start;">
+  <!-- Schedule New Session Card -->
+  <div class="panel" style="margin-bottom: 0;">
+    <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin-top: 0; margin-bottom: 14px;">
+      Schedule New Test Session
+    </h2>
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.82rem;">Test Center</label>
+          {{ form.test_center }}
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.82rem;">Degree Program</label>
+          {{ form.program }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Test Date</label>
+            {{ form.test_date }}
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Seats Available</label>
+            {{ form.available_seats }}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Reporting Time</label>
+            {{ form.reporting_time }}
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Test Start Time</label>
+            {{ form.start_time }}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Building</label>
+            {{ form.building }}
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem;">Hall / Room</label>
+            {{ form.hall }}
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+          {{ form.is_active }}
+          <label for="{{ form.is_active.id_for_label }}" style="font-size: 0.88rem; font-weight: 600; cursor: pointer;">
+            Active and available for applicant scheduling
+          </label>
+        </div>
+
+        <button type="submit" class="button button--primary" style="margin-top: 8px;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span>
+          <span>Create Test Session</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Existing Sessions Table -->
+  <div class="panel" style="margin-bottom: 0;">
+    <div class="panel__heading">
+      <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin: 0;">Configured Test Sessions</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table" style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Center & Venue</th>
+            <th>Date & Reporting</th>
+            <th>Hall</th>
+            <th>Seats Status</th>
+            <th>Active</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for session in sessions %}
+          <tr>
+            <td>
+              <strong>{{ session.program.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.program.code }}</div>
+            </td>
+            <td>
+              <strong>{{ session.test_center.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">Campus: {{ session.test_center.campus.code }}</div>
+            </td>
+            <td>
+              <strong>{{ session.test_date|date:'d M Y' }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">
+                Reporting: {{ session.reporting_time|time:'H:i' }} &bull; Start: {{ session.start_time|time:'H:i' }}
+              </div>
+            </td>
+            <td>
+              <div>{{ session.building }}</div>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.hall }}</div>
+            </td>
+            <td>
+              <div><strong>{{ session.applicant_count }}</strong> Enrolled</div>
+              <div style="font-size: 0.78rem; color: var(--emerald-600); font-weight: 600;">
+                {{ session.available_seats }} Seats Left
+              </div>
+            </td>
+            <td>
+              {% if session.is_active %}
+                <span class="badge badge--success">Active</span>
+              {% else %}
+                <span class="badge badge--danger">Inactive</span>
+              {% endif %}
+            </td>
+            <td>
+              <form method="post" action="{% url 'university_admin:test_session_toggle' session.pk %}" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="button button--secondary button--sm">
+                  {% if session.is_active %}Deactivate{% else %}Activate{% endif %}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 32px; color: var(--slate-500);">
+              No test sessions scheduled yet. Use the form on the left to schedule a session.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

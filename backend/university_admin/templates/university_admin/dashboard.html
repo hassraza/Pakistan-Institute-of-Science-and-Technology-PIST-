@@ -1,79 +1,290 @@
 {% extends 'university_admin/base.html' %}
-{% block title %}Dashboard | PIST Admin{% endblock %}
+{% load static %}
+{% block title %}Executive Dashboard | PIST Superadmin{% endblock %}
+{% block admin_heading %}Executive Dashboard{% endblock %}
+{% block admin_subheading %}Real-time University Admission Metrics and Operations Control{% endblock %}
+
 {% block content %}
+<!-- Executive Stat Grid -->
 <section class="stat-grid">
-  <article class="stat-card"><span>Total Applications</span><strong>{{ stats.total_applications }}</strong></article>
-  <article class="stat-card"><span>Applications Today</span><strong>{{ stats.applications_today }}</strong></article>
-  <article class="stat-card"><span>Islamabad (ISB)</span><strong>{{ stats.islamabad_applications }}</strong></article>
-  <article class="stat-card"><span>Awaiting Review</span><strong>{{ stats.awaiting_review }}</strong></article>
-  <article class="stat-card"><span>Tests Scheduled</span><strong>{{ stats.entry_tests_scheduled }}</strong></article>
-  <article class="stat-card"><span>Shortlisted</span><strong>{{ stats.shortlisted }}</strong></article>
+  <article class="stat-card stat-card--primary">
+    <div class="stat-card__header">
+      <span>Total Applications</span>
+      <span class="material-symbols-outlined" style="color: var(--blue-600);">description</span>
+    </div>
+    <strong>{{ stats.total_applications }}</strong>
+    <small>+{{ stats.applications_today }} received today</small>
+  </article>
+
+  <article class="stat-card stat-card--warning">
+    <div class="stat-card__header">
+      <span>Awaiting Review</span>
+      <span class="material-symbols-outlined" style="color: var(--amber-500);">hourglass_top</span>
+    </div>
+    <strong>{{ stats.awaiting_review }}</strong>
+    <small>Requires scrutiny</small>
+  </article>
+
+  <article class="stat-card stat-card--primary">
+    <div class="stat-card__header">
+      <span>Tests Scheduled</span>
+      <span class="material-symbols-outlined" style="color: var(--blue-600);">event_seat</span>
+    </div>
+    <strong>{{ stats.entry_tests_scheduled }}</strong>
+    <small>Roll numbers issued</small>
+  </article>
+
+  <article class="stat-card stat-card--success">
+    <div class="stat-card__header">
+      <span>Accepted & Confirmed</span>
+      <span class="material-symbols-outlined" style="color: var(--emerald-600);">check_circle</span>
+    </div>
+    <strong>{{ stats.accepted }}</strong>
+    <small>Admission granted</small>
+  </article>
+
+  <article class="stat-card stat-card--danger">
+    <div class="stat-card__header">
+      <span>Rejected</span>
+      <span class="material-symbols-outlined" style="color: var(--rose-600);">cancel</span>
+    </div>
+    <strong>{{ stats.rejected }}</strong>
+    <small>Ineligible / Unsuccessful</small>
+  </article>
+
+  <article class="stat-card">
+    <div class="stat-card__header">
+      <span>Registered Students</span>
+      <span class="material-symbols-outlined" style="color: var(--slate-600);">groups</span>
+    </div>
+    <strong>{{ stats.total_students }}</strong>
+    <small>Active candidate profiles</small>
+  </article>
+
+  <article class="stat-card stat-card--warning">
+    <div class="stat-card__header">
+      <span>Pending Documents</span>
+      <span class="material-symbols-outlined" style="color: var(--amber-500);">verified</span>
+    </div>
+    <strong>{{ stats.pending_documents }}</strong>
+    <small><a href="{% url 'university_admin:documents_queue' %}" class="text-link">Review Queue &rarr;</a></small>
+  </article>
+
+  <article class="stat-card stat-card--success">
+    <div class="stat-card__header">
+      <span>Active Programs</span>
+      <span class="material-symbols-outlined" style="color: var(--emerald-600);">school</span>
+    </div>
+    <strong>{{ stats.active_programs }}</strong>
+    <small>Admissions open</small>
+  </article>
 </section>
 
-<section class="panel">
-  <div class="panel__heading">
-    <h1>Applications</h1>
-    <div class="panel__actions">
-      <a class="button button--secondary" href="{% url 'university_admin:export_applications' 'csv' %}?{{ request.GET.urlencode }}">Export CSV</a>
-      <a class="button button--secondary" href="{% url 'university_admin:export_applications' 'json' %}?{{ request.GET.urlencode }}">Export JSON</a>
+<!-- Action Shortcuts Bar -->
+<div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+  <a href="{% url 'university_admin:applications' %}" class="button button--primary">
+    <span class="material-symbols-outlined">assignment</span>
+    <span>Review All Applications</span>
+  </a>
+  <a href="{% url 'university_admin:documents_queue' %}" class="button button--secondary">
+    <span class="material-symbols-outlined">fact_check</span>
+    <span>Verify Documents ({{ stats.pending_documents }})</span>
+  </a>
+  <a href="{% url 'university_admin:programs' %}" class="button button--secondary">
+    <span class="material-symbols-outlined">tune</span>
+    <span>Manage Programs & Criteria</span>
+  </a>
+  <a href="{% url 'university_admin:test_sessions' %}" class="button button--secondary">
+    <span class="material-symbols-outlined">add_circle</span>
+    <span>Schedule Test Session</span>
+  </a>
+  <a href="{% url 'university_admin:notifications' %}" class="button button--secondary">
+    <span class="material-symbols-outlined">campaign</span>
+    <span>Broadcast Announcement</span>
+  </a>
+</div>
+
+<div class="detail-grid">
+  <!-- Program Applications Breakdown -->
+  <div class="panel" style="margin-bottom: 0;">
+    <div class="panel__heading">
+      <h2>Program Intake Distribution</h2>
+      <a href="{% url 'university_admin:programs' %}" class="text-link" style="font-size: 0.85rem;">View All Programs</a>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Campus</th>
+            <th>Admissions</th>
+            <th>Applications</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prog in program_stats %}
+          <tr>
+            <td>
+              <strong>{{ prog.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ prog.code }}</div>
+            </td>
+            <td><span class="badge badge--muted">{{ prog.department.campus.code }}</span></td>
+            <td>
+              {% if prog.admissions_open %}
+                <span class="badge badge--success">Open</span>
+              {% else %}
+                <span class="badge badge--danger">Closed</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong style="font-size: 1rem; color: var(--blue-600);">{{ prog.applicant_count }}</strong>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 20px;">No application records by program yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
-  <form method="get" class="filter-bar">
-    {% for field in filter.form.visible_fields %}
-      <div class="filter-field">
-        {{ field.label_tag }}
-        {{ field }}
-      </div>
-    {% endfor %}
-    <button class="button button--primary" type="submit">Filter</button>
-  </form>
+
+  <!-- Upcoming Test Sessions -->
+  <div class="panel" style="margin-bottom: 0;">
+    <div class="panel__heading">
+      <h2>Upcoming Test Sessions</h2>
+      <a href="{% url 'university_admin:test_sessions' %}" class="text-link" style="font-size: 0.85rem;">Manage Sessions</a>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>Program / Center</th>
+            <th>Date & Time</th>
+            <th>Hall</th>
+            <th>Seats Left</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for session in test_sessions %}
+          <tr>
+            <td>
+              <strong>{{ session.program.name }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.test_center.name }}</div>
+            </td>
+            <td>
+              <strong>{{ session.test_date|date:'d M Y' }}</strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">{{ session.reporting_time|time:'H:i' }}</div>
+            </td>
+            <td>{{ session.hall }}</td>
+            <td>
+              <span class="badge {% if session.available_seats > 10 %}badge--success{% else %}badge--warning{% endif %}">
+                {{ session.available_seats }} available
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 20px;">No active test sessions configured. <a href="{% url 'university_admin:test_sessions' %}" class="text-link">Create one</a>.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Applications Table -->
+<section class="panel" style="margin-top: 24px;">
+  <div class="panel__heading">
+    <div>
+      <h2>Recent Application Submissions</h2>
+      <p style="margin: 4px 0 0 0; color: var(--slate-500); font-size: 0.85rem;">Latest applicant registrations received across all campuses and departments</p>
+    </div>
+    <div class="panel__actions">
+      <a class="button button--secondary button--sm" href="{% url 'university_admin:export_applications' 'csv' %}">
+        <span class="material-symbols-outlined" style="font-size: 16px;">download</span> Export CSV
+      </a>
+      <a class="button button--secondary button--sm" href="{% url 'university_admin:applications' %}">
+        View All ({{ stats.total_applications }})
+      </a>
+    </div>
+  </div>
+
   <div class="table-wrap">
     <table class="data-table">
       <thead>
         <tr>
           <th>Candidate</th>
-          <th>Photo</th>
-          <th>Campus</th>
-          <th>Department</th>
           <th>Program</th>
+          <th>Campus</th>
           <th>Roll Number</th>
           <th>Test Date</th>
           <th>Status</th>
-          <th>Created</th>
-          <th>Actions</th>
+          <th>Applied</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        {% for applicant in page_obj %}
-          <tr>
-            <td>
-              <div class="candidate-cell">
-                {% if applicant.profile_photo %}<img src="{{ applicant.profile_photo.url }}" alt="{{ applicant.full_name }}">{% endif %}
-                <div><strong>{{ applicant.full_name }}</strong><small>{{ applicant.email }}</small></div>
+        {% for applicant in recent_applicants %}
+        <tr>
+          <td>
+            <div class="candidate-cell">
+              {% if applicant.profile_photo %}
+                <img src="{{ applicant.profile_photo.url }}" alt="{{ applicant.full_name }}">
+              {% else %}
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-500); font-weight: 700;">
+                  {{ applicant.full_name|slice:':1' }}
+                </div>
+              {% endif %}
+              <div>
+                <strong><a href="{% url 'university_admin:application_detail' applicant.pk %}" class="text-link">{{ applicant.full_name }}</a></strong>
+                <div style="font-size: 0.78rem; color: var(--slate-500);">CNIC: {{ applicant.cnic }}</div>
               </div>
-            </td>
-            <td>{% if applicant.profile_photo %}<img src="{{ applicant.profile_photo.url }}" alt="{{ applicant.full_name }}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;">{% else %}<span class="meta">No photo</span>{% endif %}</td>
-            <td><span class="badge badge--muted">{{ applicant.campus.code }}</span></td>
-            <td>{{ applicant.program.department.name }}</td>
-            <td>{{ applicant.program.name }}</td>
-            <td>{{ applicant.roll_number|default:'Pending' }}</td>
-            <td>{{ applicant.test_date|default:'TBA' }}</td>
-            <td><span class="status status--{% if applicant.status == 'Rejected' %}closed{% else %}open{% endif %}">{{ applicant.status }}</span></td>
-            <td>{{ applicant.created_at|date:'d M Y, H:i' }}</td>
-            <td>
-              <a class="text-link" href="{% url 'university_admin:application_detail' applicant.pk %}">View</a>
-              <span class="meta"> | </span>
-              <a class="text-link" href="{% url 'university_admin:application_detail' applicant.pk %}">Update Status</a>
-              <span class="meta"> | </span>
-              <a class="text-link" href="{% url 'admissions:roll_slip' applicant.pk %}">Roll Slip</a>
-            </td>
-          </tr>
+            </div>
+          </td>
+          <td>
+            <strong>{{ applicant.program.name }}</strong>
+            <div style="font-size: 0.78rem; color: var(--slate-500);">{{ applicant.program.code }}</div>
+          </td>
+          <td><span class="badge badge--muted">{{ applicant.campus.code }}</span></td>
+          <td>
+            {% if applicant.roll_number %}
+              <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ applicant.roll_number }}</span>
+            {% else %}
+              <span style="color: var(--slate-400); font-style: italic;">Pending</span>
+            {% endif %}
+          </td>
+          <td>{{ applicant.test_date|default:'TBA' }}</td>
+          <td>
+            {% if applicant.status == 'Rejected' or applicant.application_status == 'REJECTED' %}
+              <span class="badge badge--danger">Rejected</span>
+            {% elif applicant.status == 'Roll No Issued' or applicant.application_status == 'SCHEDULED' %}
+              <span class="badge badge--primary">Test Scheduled</span>
+            {% elif applicant.status == 'Admission Confirmed' or applicant.application_status == 'ACCEPTED' %}
+              <span class="badge badge--success">Accepted</span>
+            {% elif applicant.status == 'Shortlisted for Entry Test' %}
+              <span class="badge badge--warning">Shortlisted</span>
+            {% else %}
+              <span class="badge badge--muted">{{ applicant.status|default:applicant.application_status }}</span>
+            {% endif %}
+          </td>
+          <td style="font-size: 0.85rem; color: var(--slate-500);">{{ applicant.created_at|date:'d M Y, H:i' }}</td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <a class="button button--secondary button--sm" href="{% url 'university_admin:application_detail' applicant.pk %}">
+                Review
+              </a>
+              {% if applicant.roll_number %}
+              <a class="button button--secondary button--sm" href="{% url 'admissions:roll_slip' applicant.pk %}" target="_blank" title="Print Roll Slip">
+                <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
         {% empty %}
-          <tr><td colspan="10">No applications found. Try adjusting your filters or search criteria.</td></tr>
+        <tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--slate-500);">No applications found yet.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  {% include 'partials/pagination.html' %}
 </section>
 {% endblock %}

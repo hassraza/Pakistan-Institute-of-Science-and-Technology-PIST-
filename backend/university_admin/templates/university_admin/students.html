@@ -1,0 +1,105 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Students Directory | PIST Superadmin{% endblock %}
+{% block admin_heading %}Registered Students Directory{% endblock %}
+{% block admin_subheading %}Comprehensive registry of enrolled student profiles, academic histories, and applicant accounts{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel__heading">
+    <div>
+      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Students Directory ({{ total_students }})</h1>
+      <span style="font-size: 0.85rem; color: var(--slate-500);">All verified student accounts created in PIST portal</span>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <form method="get" class="filter-bar" style="grid-template-columns: 1fr auto;">
+    <div class="filter-field">
+      <label for="searchQuery">Search Student Profiles</label>
+      <input type="text" id="searchQuery" name="q" value="{{ search_query }}" placeholder="Search by name, Student ID (e.g. PIST-2026-0001), CNIC, email, or phone..." class="form-control">
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="button button--primary" type="submit">
+        <span class="material-symbols-outlined" style="font-size: 18px;">search</span> Search
+      </button>
+      {% if search_query %}
+        <a href="{% url 'university_admin:students_list' %}" class="button button--secondary">Clear</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Student Identity</th>
+          <th>Student ID</th>
+          <th>CNIC</th>
+          <th>Contact</th>
+          <th>Applications</th>
+          <th>Documents</th>
+          <th>Registered</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in page_obj %}
+        <tr>
+          <td>
+            <div class="candidate-cell">
+              {% if student.profile_photo %}
+                <img src="{{ student.profile_photo.url }}" alt="{{ student.full_name }}">
+              {% else %}
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--slate-100); display: flex; align-items: center; justify-content: center; color: var(--slate-600); font-weight: 700;">
+                  {{ student.full_name|slice:':1' }}
+                </div>
+              {% endif %}
+              <div>
+                <strong><a href="{% url 'university_admin:student_detail' student.pk %}" class="text-link">{{ student.full_name }}</a></strong>
+                <div style="font-size: 0.78rem; color: var(--slate-500);">Father: {{ student.father_name|default:'N/A' }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span style="font-family: monospace; font-weight: 700; color: var(--blue-600);">{{ student.student_id }}</span>
+          </td>
+          <td>
+            <span style="font-family: monospace;">{{ student.cnic }}</span>
+          </td>
+          <td>
+            <div>{{ student.user.email }}</div>
+            <div style="font-size: 0.78rem; color: var(--slate-500);">{{ student.phone }}</div>
+          </td>
+          <td>
+            <span class="badge badge--primary">
+              {{ student.program_applications.count }} Application(s)
+            </span>
+          </td>
+          <td>
+            <span class="badge badge--muted">
+              {{ student.academic_documents.count }} Document(s)
+            </span>
+          </td>
+          <td style="font-size: 0.82rem; color: var(--slate-500);">
+            {{ student.created_at|date:'d M Y' }}
+          </td>
+          <td>
+            <a class="button button--secondary button--sm" href="{% url 'university_admin:student_detail' student.pk %}">
+              View Profile
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 32px; color: var(--slate-500);">
+            No students found matching your search.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% include 'partials/pagination.html' %}
+</section>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Broadcast Notice | PIST Superadmin{% endblock %}
+{% block admin_heading %}Broadcast Notification Broadcaster{% endblock %}
+{% block admin_subheading %}Send official admission alerts, test updates, and announcements directly to student portals{% endblock %}
+
+{% block content %}
+<div class="detail-grid" style="grid-template-columns: 1fr 1.5fr; align-items: flex-start;">
+  <!-- Composer Card -->
+  <div class="panel" style="margin-bottom: 0;">
+    <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin-top: 0; margin-bottom: 14px;">
+      Compose Broadcast
+    </h2>
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group">
+          {{ form.target_audience.label_tag }}
+          {{ form.target_audience }}
+        </div>
+
+        <div class="form-group" id="programFieldGroup" style="display: none;">
+          {{ form.program.label_tag }}
+          {{ form.program }}
+        </div>
+
+        <div class="form-group" id="studentFieldGroup" style="display: none;">
+          {{ form.student_identifier.label_tag }}
+          {{ form.student_identifier }}
+          <small style="color: var(--slate-400); font-size: 0.78rem; display: block; margin-top: 2px;">
+            Enter official Student ID (e.g. PIST-2026-0001) or Candidate CNIC
+          </small>
+        </div>
+
+        <div class="form-group">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+        </div>
+
+        <div class="form-group">
+          {{ form.message.label_tag }}
+          {{ form.message }}
+        </div>
+
+        <button type="submit" class="button button--primary" style="margin-top: 6px;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">campaign</span>
+          <span>Dispatch Broadcast Notice</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Recent Dispatches Log -->
+  <div class="panel" style="margin-bottom: 0;">
+    <div class="panel__heading">
+      <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-900); margin: 0;">Recent Notifications Log</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table" style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>Student Recipient</th>
+            <th>Title & Message</th>
+            <th>Status</th>
+            <th>Dispatched</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for notif in notifications %}
+          <tr>
+            <td>
+              <strong><a href="{% url 'university_admin:student_detail' notif.student.pk %}" class="text-link">{{ notif.student.full_name }}</a></strong>
+              <div style="font-size: 0.78rem; color: var(--slate-500); font-family: monospace;">
+                {{ notif.student.student_id }}
+              </div>
+            </td>
+            <td>
+              <strong>{{ notif.title }}</strong>
+              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 2px;">
+                {{ notif.message|truncatechars:100 }}
+              </div>
+            </td>
+            <td>
+              {% if notif.is_read %}
+                <span class="badge badge--success" style="font-size: 0.72rem;">Read</span>
+              {% else %}
+                <span class="badge badge--muted" style="font-size: 0.72rem;">Delivered</span>
+              {% endif %}
+            </td>
+            <td style="font-size: 0.8rem; color: var(--slate-400); white-space: nowrap;">
+              {{ notif.created_at|date:'d M, H:i' }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 32px; color: var(--slate-500);">
+              No notifications dispatched yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleAudienceChange() {
+    const sel = document.getElementById('targetAudienceSelect');
+    const progGroup = document.getElementById('programFieldGroup');
+    const studGroup = document.getElementById('studentFieldGroup');
+
+    if (!sel) return;
+
+    if (sel.value === 'program') {
+      progGroup.style.display = 'block';
+      studGroup.style.display = 'none';
+    } else if (sel.value === 'single') {
+      progGroup.style.display = 'none';
+      studGroup.style.display = 'block';
+    } else {
+      progGroup.style.display = 'none';
+      studGroup.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const sel = document.getElementById('targetAudienceSelect');
+    if (sel) {
+      sel.addEventListener('change', handleAudienceChange);
+      handleAudienceChange();
+    }
+  });
+</script>
+{% endblock %}

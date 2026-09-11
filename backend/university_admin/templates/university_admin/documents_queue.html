@@ -1,0 +1,311 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Document Verification Queue | PIST Superadmin{% endblock %}
+{% block admin_heading %}Document Verification & Scrutiny Queue{% endblock %}
+{% block admin_subheading %}Centralized queue to verify educational certificates, CNIC copies, and test slips across all applicants{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel__heading">
+    <div>
+      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Document Queue</h1>
+      <span style="font-size: 0.85rem; color: var(--slate-500);">Verify student credentials for admission eligibility</span>
+    </div>
+
+    <!-- Status Tabs -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <a href="?status=PENDING" class="button button--sm {% if status_filter == 'PENDING' %}button--primary{% else %}button--secondary{% endif %}">
+        <span>Pending Review</span>
+        <span class="badge badge--warning" style="margin-left: 4px; padding: 2px 6px;">{{ pending_count }}</span>
+      </a>
+      <a href="?status=VERIFIED" class="button button--sm {% if status_filter == 'VERIFIED' %}button--primary{% else %}button--secondary{% endif %}">
+        <span>Verified</span>
+        <span class="badge badge--success" style="margin-left: 4px; padding: 2px 6px;">{{ verified_count }}</span>
+      </a>
+      <a href="?status=REJECTED" class="button button--sm {% if status_filter == 'REJECTED' %}button--primary{% else %}button--secondary{% endif %}">
+        <span>Rejected</span>
+        <span class="badge badge--danger" style="margin-left: 4px; padding: 2px 6px;">{{ rejected_count }}</span>
+      </a>
+      <a href="?status=ALL" class="button button--sm {% if status_filter == 'ALL' %}button--primary{% else %}button--secondary{% endif %}">
+        <span>All Documents</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <form method="get" class="filter-bar">
+    <input type="hidden" name="status" value="{{ status_filter }}">
+    <div class="filter-field">
+      <label for="qInput">Candidate Search</label>
+      <input type="text" id="qInput" name="q" value="{{ search_query }}" placeholder="Candidate name, CNIC, or Student ID..." class="form-control">
+    </div>
+
+    <div class="filter-field">
+      <label for="typeSelect">Document Category</label>
+      <select id="typeSelect" name="type" class="form-control">
+        <option value="">-- All Categories --</option>
+        {% for val, lbl in document_types %}
+          <option value="{{ val }}" {% if doc_type_filter == val %}selected{% endif %}>{{ lbl }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <button class="button button--primary" type="submit">
+        <span class="material-symbols-outlined" style="font-size: 18px;">search</span> Filter
+      </button>
+      <a href="{% url 'university_admin:documents_queue' %}" class="button button--secondary">Reset</a>
+    </div>
+  </form>
+
+  <!-- Documents Table -->
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Candidate</th>
+          <th>Document Type</th>
+          <th>File Details</th>
+          <th>Uploaded At</th>
+          <th>Verification Status</th>
+          <th>Reviewed By</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in page_obj %}
+        <tr>
+          <td>
+            <strong><a href="{% url 'university_admin:student_detail' doc.student.pk %}" class="text-link">{{ doc.student.full_name }}</a></strong>
+            <div style="font-size: 0.78rem; color: var(--slate-500); font-family: monospace;">
+              {{ doc.student.student_id }} &bull; {{ doc.student.cnic }}
+            </div>
+          </td>
+          <td>
+            <strong>{{ doc.get_document_type_display }}</strong>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="badge badge--muted" style="padding: 2px 6px; font-size: 0.72rem;">{{ doc.file_extension|default:'FILE' }}</span>
+              <span style="font-family: monospace; font-size: 0.82rem;">{{ doc.file_name }}</span>
+            </div>
+            {% if doc.file_size_display %}
+              <div style="font-size: 0.75rem; color: var(--slate-400);">{{ doc.file_size_display }}</div>
+            {% endif %}
+          </td>
+          <td style="font-size: 0.85rem; color: var(--slate-500);">
+            {{ doc.uploaded_at|date:'d M Y, H:i' }}
+          </td>
+          <td>
+            {% if doc.verification_status == 'VERIFIED' %}
+              <span class="badge badge--success">
+                <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Verified
+              </span>
+            {% elif doc.verification_status == 'REJECTED' %}
+              <span class="badge badge--danger">
+                <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Rejected
+              </span>
+              {% if doc.rejection_reason %}
+                <div style="font-size: 0.75rem; color: var(--rose-600); margin-top: 4px; max-width: 200px;">{{ doc.rejection_reason|truncatechars:60 }}</div>
+              {% endif %}
+            {% else %}
+              <span class="badge badge--warning">
+                <span class="material-symbols-outlined" style="font-size: 14px;">hourglass_top</span> Pending
+              </span>
+            {% endif %}
+          </td>
+          <td style="font-size: 0.8rem; color: var(--slate-500);">
+            {% if doc.reviewed_by %}
+              <div>{{ doc.reviewed_by.get_full_name|default:doc.reviewed_by.username }}</div>
+              <div style="font-size: 0.75rem; color: var(--slate-400);">{{ doc.reviewed_at|date:'d M, H:i' }}</div>
+            {% else %}
+              <span style="color: var(--slate-400); font-style: italic;">Not yet reviewed</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <!-- Preview Button -->
+              <button type="button" class="button button--secondary button--sm"
+                data-title="{{ doc.get_document_type_display }}"
+                data-file-name="{{ doc.file_name }}"
+                data-is-image="{% if doc.is_image %}true{% else %}false{% endif %}"
+                data-is-pdf="{% if doc.is_pdf %}true{% else %}false{% endif %}"
+                data-file-url="{% url 'students:document_view' doc.pk %}"
+                data-download-url="{% url 'students:document_view' doc.pk %}?download=1"
+                onclick="adminPreviewDoc(this)">
+                <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+              </button>
+
+              <!-- Approve Button -->
+              <form method="post" action="{% url 'university_admin:document_review_action' doc.pk %}" style="margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="approve">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="button button--success button--sm" title="Approve Document" {% if doc.verification_status == 'VERIFIED' %}disabled style="opacity: 0.5;"{% endif %}>
+                  <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+                </button>
+              </form>
+
+              <!-- Reject Button -->
+              <button type="button" onclick="openRejectModal('{{ doc.pk }}', '{{ doc.get_document_type_display|escapejs }}')"
+                class="button button--secondary button--sm" style="color: #dc2626; border-color: #fca5a5;" title="Reject / Request Re-upload">
+                <span class="material-symbols-outlined" style="font-size: 16px;">block</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 32px; color: var(--slate-500);">
+            No documents found matching the filter criteria.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% include 'partials/pagination.html' %}
+</section>
+
+<!-- Document Preview Modal Dialog -->
+<div id="admin-preview-backdrop" onclick="closeAdminPreview()"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9990; backdrop-filter: blur(4px);">
+</div>
+<div id="admin-preview-modal"
+  style="display: none; position: fixed; inset: 0; z-index: 9995; align-items: center; justify-content: center; padding: 24px;">
+  <div style="width: 100%; max-width: 860px; max-height: 90vh; background: #fff; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+      <div>
+        <h3 id="admin-preview-title" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">Document Preview</h3>
+        <span id="admin-preview-filename" style="font-size: 0.8rem; color: #64748b; font-family: monospace;"></span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <a id="admin-preview-newtab" href="#" target="_blank" class="button button--secondary" style="min-height: 32px; padding: 0 10px; font-size: 0.8rem;">Open in New Tab</a>
+        <a id="admin-preview-download" href="#" download class="button button--secondary" style="min-height: 32px; padding: 0 10px; font-size: 0.8rem;">Download</a>
+        <button type="button" onclick="closeAdminPreview()" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #64748b;">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+    <div style="padding: 20px; overflow-y: auto; flex: 1; display: flex; align-items: center; justify-content: center; background: #f1f5f9;">
+      <div id="admin-img-wrapper" style="display: none; text-align: center; max-width: 100%;">
+        <img id="admin-preview-img" src="" alt="Document Preview" style="max-width: 100%; max-height: 70vh; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #cbd5e1;">
+      </div>
+      <div id="admin-pdf-wrapper" style="display: none; width: 100%; height: 65vh;">
+        <iframe id="admin-preview-iframe" src="" style="width: 100%; height: 100%; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff;" title="Document PDF Preview"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Rejection Feedback Modal Dialog -->
+<div id="reject-modal-backdrop" onclick="closeRejectModal()"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9990; backdrop-filter: blur(4px);">
+</div>
+<div id="reject-modal"
+  style="display: none; position: fixed; inset: 0; z-index: 9995; align-items: center; justify-content: center; padding: 24px;">
+  <div style="width: 100%; max-width: 540px; background: #fff; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid #e2e8f0;">
+    <form id="reject-form" method="post" action="">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="reject">
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+      <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #fff1f2; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="material-symbols-outlined" style="color: #e11d48; font-size: 22px;">report_problem</span>
+          <strong style="color: #9f1239; font-size: 1.05rem;">Request Document Resubmission</strong>
+        </div>
+        <button type="button" onclick="closeRejectModal()" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #9f1239;">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div style="padding: 20px;">
+        <p style="margin: 0 0 12px 0; font-size: 0.88rem; color: #334155;">
+          Document: <strong id="reject-doc-title">Certificate</strong>
+        </p>
+        <textarea id="reject-reason-input" name="rejection_reason" rows="3" required
+          placeholder="Explain why this document requires resubmission..."
+          style="width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-size: 0.88rem; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+
+      <div style="padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" onclick="closeRejectModal()" class="button button--secondary" style="min-height: 36px;">Cancel</button>
+        <button type="submit" class="button" style="min-height: 36px; background: #dc2626; color: #fff; font-weight: 700; border-color: #b91c1c;">
+          Reject Document
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function adminPreviewDoc(target) {
+    let doc = target;
+    if (target instanceof HTMLElement || (target && target.dataset)) {
+      doc = {
+        title: target.dataset.title || 'Document Preview',
+        fileName: target.dataset.fileName || '',
+        isImage: target.dataset.isImage === 'true',
+        isPdf: target.dataset.isPdf === 'true',
+        fileUrl: target.dataset.fileUrl || '',
+        downloadUrl: target.dataset.downloadUrl || target.dataset.fileUrl || ''
+      };
+    }
+    if (!doc || !doc.fileUrl) return;
+
+    document.getElementById('admin-preview-title').textContent = doc.title || 'Document Preview';
+    document.getElementById('admin-preview-filename').textContent = doc.fileName || '';
+    document.getElementById('admin-preview-download').href = doc.downloadUrl || doc.fileUrl;
+    document.getElementById('admin-preview-newtab').href = doc.fileUrl;
+
+    const imgWrapper = document.getElementById('admin-img-wrapper');
+    const pdfWrapper = document.getElementById('admin-pdf-wrapper');
+    const img = document.getElementById('admin-preview-img');
+    const iframe = document.getElementById('admin-preview-iframe');
+
+    imgWrapper.style.display = 'none';
+    pdfWrapper.style.display = 'none';
+
+    if (doc.isImage) {
+      img.src = doc.fileUrl;
+      imgWrapper.style.display = 'block';
+    } else {
+      iframe.src = doc.fileUrl;
+      pdfWrapper.style.display = 'block';
+    }
+
+    document.getElementById('admin-preview-backdrop').style.display = 'block';
+    document.getElementById('admin-preview-modal').style.display = 'flex';
+  }
+
+  function closeAdminPreview() {
+    document.getElementById('admin-preview-backdrop').style.display = 'none';
+    document.getElementById('admin-preview-modal').style.display = 'none';
+    document.getElementById('admin-preview-img').src = '';
+    document.getElementById('admin-preview-iframe').src = '';
+  }
+
+  function openRejectModal(docId, docTitle) {
+    const form = document.getElementById('reject-form');
+    form.action = `/university-admin/documents/${docId}/review/`;
+    document.getElementById('reject-doc-title').textContent = docTitle;
+    document.getElementById('reject-reason-input').value = '';
+    document.getElementById('reject-modal-backdrop').style.display = 'block';
+    document.getElementById('reject-modal').style.display = 'flex';
+    document.getElementById('reject-reason-input').focus();
+  }
+
+  function closeRejectModal() {
+    document.getElementById('reject-modal-backdrop').style.display = 'none';
+    document.getElementById('reject-modal').style.display = 'none';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeAdminPreview();
+      closeRejectModal();
+    }
+  });
+</script>
+{% endblock %}

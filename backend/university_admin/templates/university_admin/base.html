@@ -4,36 +4,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}PIST Admin{% endblock %}</title>
+  <title>{% block title %}PIST Superadmin Portal{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/admin.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="admin-shell">
   <aside class="sidebar">
-    <div class="sidebar__brand">PIST ADMIN</div>
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-logo">P</div>
+      <div>
+        <span class="sidebar__brand-title">PIST Portal</span>
+        <span class="sidebar__brand-subtitle">Superadmin Control</span>
+      </div>
+    </div>
+
     <nav>
-      <a href="{% url 'university_admin:dashboard' %}">Dashboard</a>
-      <a href="{% url 'university_admin:applications' %}">Applications</a>
-      <a href="{% url 'admissions:home' %}" target="_blank" rel="noopener">Public Site</a>
-      <a href="{% url 'university_admin:logout' %}">Logout</a>
+      <div class="nav-section-title">Core Operations</div>
+      <a href="{% url 'university_admin:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
+        <span class="material-symbols-outlined">assignment</span>
+        <span>Applications Queue</span>
+      </a>
+      <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
+        <span class="material-symbols-outlined">groups</span>
+        <span>Students Directory</span>
+      </a>
+      <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
+        <span class="material-symbols-outlined">verified</span>
+        <span>Document Verification</span>
+      </a>
+
+      <div class="nav-section-title">Admissions & Testing</div>
+      <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' or request.resolver_match.url_name == 'program_edit' %}active{% endif %}">
+        <span class="material-symbols-outlined">school</span>
+        <span>Programs & Criteria</span>
+      </a>
+      <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' %}active{% endif %}">
+        <span class="material-symbols-outlined">event_available</span>
+        <span>Test Sessions</span>
+      </a>
+
+      <div class="nav-section-title">Outreach & Communications</div>
+      <a href="{% url 'university_admin:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+        <span class="material-symbols-outlined">campaign</span>
+        <span>Broadcast Notice</span>
+      </a>
+
+      <div class="sidebar-divider"></div>
+
+      <a href="{% url 'admissions:home' %}" target="_blank" rel="noopener">
+        <span class="material-symbols-outlined">public</span>
+        <span>Public Admissions Site</span>
+      </a>
+      <a href="{% url 'university_admin:logout' %}">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Logout</span>
+      </a>
     </nav>
   </aside>
+
   <div class="admin-main">
     <header class="admin-topbar">
       <div>
         <strong>{% block admin_heading %}University Admission Office{% endblock %}</strong>
-        <span>Data-driven admissions management</span>
+        <span>{% block admin_subheading %}Pakistan Institute of Science and Technology Superadmin Portal{% endblock %}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span class="topbar-badge topbar-badge--super">
+          <span class="material-symbols-outlined" style="font-size: 16px;">verified_user</span>
+          Superadmin Privileges
+        </span>
+        {% if user.is_authenticated %}
+        <span class="topbar-badge">
+          <span class="material-symbols-outlined" style="font-size: 16px;">account_circle</span>
+          {{ user.get_full_name|default:user.username }}
+        </span>
+        {% endif %}
       </div>
     </header>
+
     <main class="admin-content">
       {% include 'partials/messages.html' %}
       {% block content %}{% endblock %}
     </main>
   </div>
+
   <script src="{% static 'js/admin.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>

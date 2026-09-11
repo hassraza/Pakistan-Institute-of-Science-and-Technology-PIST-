@@ -1,0 +1,94 @@
+{% extends 'university_admin/base.html' %}
+{% block title %}Programs & Admissions Windows | PIST Superadmin{% endblock %}
+{% block admin_heading %}Programs & Admission Window Controls{% endblock %}
+{% block admin_subheading %}Configure academic program offerings, open/close admission windows, adjust eligibility minimums and deadlines{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel__heading">
+    <div>
+      <h1 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--navy-900);">Academic Degree Programs</h1>
+      <span style="font-size: 0.85rem; color: var(--slate-500);">Live admission controls across all departments and campuses</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Program & Department</th>
+          <th>Campus</th>
+          <th>Level & Duration</th>
+          <th>Required Test</th>
+          <th>Min Eligibility</th>
+          <th>Deadline</th>
+          <th>Total Applicants</th>
+          <th>Admissions Window</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prog in programs %}
+        <tr>
+          <td>
+            <strong>{{ prog.name }}</strong>
+            <div style="font-size: 0.78rem; color: var(--slate-500);">
+              Code: <span style="font-family: monospace; font-weight: 600;">{{ prog.code }}</span> &bull; Dept: {{ prog.department.name }}
+            </div>
+          </td>
+          <td><span class="badge badge--muted">{{ prog.department.campus.code }}</span></td>
+          <td>
+            <div>{{ prog.degree_level }}</div>
+            <div style="font-size: 0.78rem; color: var(--slate-500);">{{ prog.duration }}</div>
+          </td>
+          <td>
+            <span class="badge badge--primary">{{ prog.required_test_type }}</span>
+          </td>
+          <td>
+            <strong style="color: var(--navy-900);">{{ prog.eligibility_percentage }}%</strong>
+          </td>
+          <td>
+            {% if prog.application_deadline %}
+              <span style="font-size: 0.88rem; font-weight: 600;">{{ prog.application_deadline|date:'d M Y' }}</span>
+            {% else %}
+              <span style="color: var(--slate-400);">No deadline</span>
+            {% endif %}
+          </td>
+          <td>
+            <strong style="color: var(--blue-600); font-size: 1rem;">{{ prog.total_applicants }}</strong>
+          </td>
+          <td>
+            <form method="post" action="{% url 'university_admin:program_toggle' prog.pk %}" style="margin: 0;">
+              {% csrf_token %}
+              {% if prog.admissions_open %}
+                <button type="submit" class="button button--success button--sm" title="Click to Close Admissions">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">lock_open</span>
+                  <span>Admissions Open</span>
+                </button>
+              {% else %}
+                <button type="submit" class="button button--danger button--sm" title="Click to Open Admissions">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                  <span>Closed</span>
+                </button>
+              {% endif %}
+            </form>
+          </td>
+          <td>
+            <a href="{% url 'university_admin:program_edit' prog.pk %}" class="button button--secondary button--sm">
+              <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+              <span>Edit Criteria</span>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" style="text-align: center; padding: 32px; color: var(--slate-500);">
+            No programs found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
