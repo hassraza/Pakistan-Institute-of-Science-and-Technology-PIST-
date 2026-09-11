@@ -101,6 +101,29 @@ class ProgramSettingsForm(forms.ModelForm):
         }
 
 
+class ProgramCreateForm(forms.ModelForm):
+    class Meta:
+        model = Program
+        fields = [
+            'department', 'campus', 'name', 'code', 'description',
+            'degree_level', 'duration', 'eligibility_percentage',
+            'required_test_type', 'application_deadline', 'admissions_open',
+        ]
+        widgets = {
+            'department': forms.Select(attrs={'class': 'form-control'}),
+            'campus': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'code': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'degree_level': forms.Select(attrs={'class': 'form-control'}),
+            'duration': forms.TextInput(attrs={'class': 'form-control'}),
+            'eligibility_percentage': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0', 'max': '100'}),
+            'required_test_type': forms.Select(attrs={'class': 'form-control'}),
+            'application_deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'admissions_open': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
 class TestSessionForm(forms.ModelForm):
     class Meta:
         model = TestSession

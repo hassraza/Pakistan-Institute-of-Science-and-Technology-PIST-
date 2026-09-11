@@ -32,6 +32,7 @@ from .forms import (
     ApplicationRejectForm,
     ApplicationStatusForm,
     BroadcastNotificationForm,
+    ProgramCreateForm,
     ProgramSettingsForm,
     ScheduleTestForm,
     StaffLoginForm,
@@ -561,6 +562,25 @@ def programs_list(request):
         {
             'programs': programs,
             'campuses': Campus.objects.all(),
+        },
+    )
+
+
+@staff_required
+def program_create(request):
+    form = ProgramCreateForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        program = form.save()
+        messages.success(request, f'Program {program.name} was created successfully.')
+        return redirect('university_admin:programs')
+
+    return render(
+        request,
+        'university_admin/program_edit.html',
+        {
+            'program': None,
+            'form': form,
+            'is_create': True,
         },
     )
 

@@ -1,7 +1,7 @@
 {% extends 'university_admin/base.html' %}
 {% load static %}
 
-{% block title %}Edit {{ program.name }} | PIST ERP{% endblock %}
+{% block title %}{% if is_create %}Create Program{% else %}Edit {{ program.name }}{% endif %} | PIST ERP{% endblock %}
 
 {% block content %}
 <div class="erp-program-edit-page" style="max-width: 760px; margin: 0 auto;">
@@ -9,11 +9,11 @@
   <div class="erp-page-header">
     <div>
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-        <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">ACADEMIC OFFERING</span>
-        <span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ program.code }}</span>
+        <span class="erp-badge" style="background: rgba(0,38,34,0.08); color: var(--erp-primary); font-weight: 700;">{% if is_create %}NEW ACADEMIC OFFERING{% else %}ACADEMIC OFFERING{% endif %}</span>
+        {% if program %}<span class="erp-code" style="color: var(--erp-primary); font-weight: 700;">{{ program.code }}</span>{% endif %}
       </div>
-      <h1 class="erp-page-title">Edit Program Admission Criteria</h1>
-      <p class="erp-page-subtitle">{{ program.name }} &bull; {{ program.department.name }} &bull; {{ program.department.campus.name }}</p>
+      <h1 class="erp-page-title">{% if is_create %}Create Academic Degree Program{% else %}Edit Program Admission Criteria{% endif %}</h1>
+      {% if program %}<p class="erp-page-subtitle">{{ program.name }} &bull; {{ program.department.name }} &bull; {{ program.department.campus.name }}</p>{% else %}<p class="erp-page-subtitle">Add a new offering to the academic registry.</p>{% endif %}
     </div>
     <div class="erp-header-actions">
       <a href="{% url 'university_admin:programs' %}" class="erp-btn erp-btn-secondary">
@@ -25,13 +25,48 @@
   <!-- Edit Card Form -->
   <div class="erp-card">
     <div class="erp-card-header">
-      <h2 class="erp-card-title">Admission Window &amp; Eligibility Parameters</h2>
+          <h2 class="erp-card-title">{% if is_create %}Program Details &amp; Admission Parameters{% else %}Admission Window &amp; Eligibility Parameters{% endif %}</h2>
     </div>
     <div class="erp-card-body">
       <form method="post">
         {% csrf_token %}
 
         <div style="display: flex; flex-direction: column; gap: 20px;">
+          {% if is_create %}
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div>
+              <label for="{{ form.name.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Program Name</label>
+              {{ form.name }}
+            </div>
+            <div>
+              <label for="{{ form.code.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Program Code</label>
+              {{ form.code }}
+            </div>
+            <div>
+              <label for="{{ form.department.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Department</label>
+              {{ form.department }}
+            </div>
+            <div>
+              <label for="{{ form.campus.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Campus</label>
+              {{ form.campus }}
+            </div>
+          </div>
+          <div>
+            <label for="{{ form.description.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Description</label>
+            {{ form.description }}
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div>
+              <label for="{{ form.degree_level.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Degree Level</label>
+              {{ form.degree_level }}
+            </div>
+            <div>
+              <label for="{{ form.duration.id_for_label }}" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 6px;">Duration</label>
+              {{ form.duration }}
+            </div>
+          </div>
+          {% endif %}
+
           <!-- Admissions Toggle Pill -->
           <div style="display: flex; align-items: center; gap: 12px; background: var(--erp-card-subtle); padding: 16px 20px; border-radius: var(--erp-radius-sm); border: 1px solid var(--erp-border);">
             {{ form.admissions_open }}
@@ -71,7 +106,7 @@
             <a href="{% url 'university_admin:programs' %}" class="erp-btn erp-btn-secondary">Cancel</a>
             <button type="submit" class="erp-btn erp-btn-primary">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-              Save Program Settings
+              {% if is_create %}Create Program{% else %}Save Program Settings{% endif %}
             </button>
           </div>
         </div>

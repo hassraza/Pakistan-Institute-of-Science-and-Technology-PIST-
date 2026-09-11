@@ -19,6 +19,10 @@
       <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
         {{ programs.count }} Active Offerings
       </span>
+      <a href="{% url 'university_admin:program_create' %}" class="erp-btn erp-btn-primary">
+        <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+        Create Program
+      </a>
     </div>
   </div>
 

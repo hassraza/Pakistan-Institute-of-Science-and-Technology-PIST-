@@ -26,6 +26,7 @@ urlpatterns = [
     
     # Programs & Admissions Control
     path('programs/', views.programs_list, name='programs'),
+    path('programs/new/', views.program_create, name='program_create'),
     path('programs/<int:program_id>/toggle/', views.program_toggle_admissions, name='program_toggle'),
     path('programs/<int:program_id>/edit/', views.program_edit, name='program_edit'),
     
