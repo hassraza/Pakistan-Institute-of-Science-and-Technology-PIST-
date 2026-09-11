@@ -42,11 +42,22 @@ def student_required(view_func):
             profile = None
         if not profile:
             if request.user.is_staff or request.user.is_superuser:
-                messages.info(request, 'You are currently logged in with an Admin/Staff account. The Student Portal requires a student account.')
-                return redirect('university_admin:dashboard')
-            messages.error(request, 'No student profile found for this account. Please register as a student.')
-            logout(request)
-            return redirect('students:register')
+                from students.services import generate_student_id
+                from students.models import StudentProfile
+                cnic_val = f"99999-{request.user.pk:07d}-1"
+                profile, _ = StudentProfile.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        'student_id': generate_student_id(),
+                        'full_name': request.user.get_full_name() or request.user.username,
+                        'cnic': cnic_val,
+                        'phone': '03000000000',
+                    }
+                )
+            else:
+                messages.error(request, 'No student profile found for this account. Please register as a student.')
+                logout(request)
+                return redirect('students:register')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
@@ -57,9 +68,7 @@ def _redirect_if_authenticated(request):
             if request.user.student_profile:
                 return redirect('students:dashboard')
         except (AttributeError, ObjectDoesNotExist):
-            if request.user.is_staff or request.user.is_superuser:
-                return redirect('university_admin:dashboard')
-            return redirect('students:register')
+            pass
     return None
 
 

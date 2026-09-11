@@ -219,7 +219,7 @@ def application_detail(request, application_uuid):
     schedule_form = ScheduleTestForm(program=applicant.program)
 
     # General status update POST
-    if request.method == 'POST' and 'update_status' in request.POST:
+    if request.method == 'POST' and ('update_status' in request.POST or 'status' in request.POST):
         status_form = ApplicationStatusForm(request.POST, instance=applicant)
         if status_form.is_valid():
             status_form.save()

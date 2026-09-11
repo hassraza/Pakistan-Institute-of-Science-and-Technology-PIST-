@@ -77,7 +77,7 @@
       {% if application.roll_number %}
         <a class="button button--secondary" href="{% url 'admissions:roll_slip' application.pk %}" target="_blank">
           <span class="material-symbols-outlined">print</span>
-          <span>Print Slip</span>
+          <span>Print Roll Slip</span>
         </a>
       {% endif %}
       <a class="button button--secondary" href="{% url 'university_admin:applications' %}">Back to List</a>
@@ -147,7 +147,7 @@
         <form method="post" class="status-form" style="display: flex; gap: 8px; align-items: center;">
           {% csrf_token %}
           <input type="hidden" name="update_status" value="1">
-          <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--slate-600); white-space: nowrap;">Workflow Status:</label>
+          <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--slate-600); white-space: nowrap;">Update Overall Application Status:</label>
           {{ form.status }}
           <button class="button button--secondary button--sm" type="submit">Update</button>
         </form>
