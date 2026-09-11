@@ -43,6 +43,8 @@
   --erp-badge-red-text: #93000a;
   --erp-badge-dark-bg: #002622;
   --erp-badge-dark-text: #ffffff;
+  --erp-amber-bg: #e9e2d2;
+  --erp-amber-text: #251a00;
 
   /* Legacy Variable Aliases for Backward Compatibility with existing templates */
   --brand-green: #002622;
@@ -63,6 +65,8 @@
   --card-border: #e2e8f0;
   --card-radius: 4px;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --erp-radius-lg: 8px;
+  --erp-shadow-md: var(--shadow-md);
 
   /* Geometry & Layout */
   --sidebar-width: 256px;
@@ -409,6 +413,24 @@ code, pre, .font-mono {
   gap: 16px;
   flex: 1;
   max-width: 600px;
+}
+
+.topbar__menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--erp-border);
+  background: var(--erp-surface);
+  color: var(--erp-text-secondary);
+  border-radius: var(--radius-xs);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sidebar-backdrop {
+  display: none;
 }
 
 /* Omnisearch Input */
@@ -1168,19 +1190,83 @@ code, pre, .font-mono {
     flex-direction: column;
   }
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid var(--erp-border);
+    width: min(86vw, 320px);
+    min-width: 0;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-105%);
+    transition: transform 0.2s ease;
+    border-right: 1px solid var(--erp-border);
+    border-bottom: none;
+    box-shadow: var(--shadow-md);
+  }
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop.is-visible {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 27, 43, 0.32);
+    z-index: 45;
   }
   .admin-topbar {
     padding: 0 16px;
+  }
+  .topbar__menu-btn {
+    display: inline-flex;
+  }
+  .topbar__left {
+    gap: 8px;
+  }
+  .topbar__cycle-badge {
+    display: none;
+  }
+  .topbar__right {
+    gap: 6px;
+  }
+  .topbar__right .button {
+    display: none;
   }
   .admin-content {
     padding: 16px;
   }
   .erp-kpi-row-6, .erp-kpi-row-4 {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar__search-box {
+    max-width: none;
+  }
+  .topbar__search-input::placeholder {
+    font-size: 0;
+  }
+  .topbar__search-input::placeholder::after {
+    content: 'Search records';
+    font-size: 12.5px;
+  }
+  .admin-content {
+    padding: 14px 12px 40px;
+  }
+  .erp-page-header__title-group h1 {
+    font-size: 1.3rem;
+    flex-wrap: wrap;
+  }
+  .erp-page-header__actions,
+  .erp-page-header__actions .button,
+  .erp-header-actions,
+  .erp-header-actions .erp-btn {
+    width: 100%;
+  }
+  .erp-page-header__actions .button,
+  .erp-header-actions .erp-btn {
+    justify-content: center;
+  }
+  .panel, .erp-card {
+    padding: 16px;
   }
 }

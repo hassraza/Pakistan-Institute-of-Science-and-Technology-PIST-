@@ -1,5 +1,24 @@
 // PIST Academic ERP Admin JS Helpers
 document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('admin-sidebar');
+  const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
+  const sidebarClose = document.querySelector('[data-sidebar-close]');
+
+  const setSidebarOpen = (isOpen) => {
+    if (!sidebar || !sidebarToggle || !sidebarClose) return;
+    sidebar.classList.toggle('is-open', isOpen);
+    sidebarClose.classList.toggle('is-visible', isOpen);
+    sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+  };
+
+  sidebarToggle?.addEventListener('click', () => {
+    setSidebarOpen(!sidebar.classList.contains('is-open'));
+  });
+  sidebarClose?.addEventListener('click', () => setSidebarOpen(false));
+  sidebar?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setSidebarOpen(false));
+  });
+
   // 1. Data-confirm confirmation popups
   document.querySelectorAll('[data-confirm]').forEach((form) => {
     form.addEventListener('submit', (event) => {
@@ -59,6 +78,7 @@ function closeModal(id) {
 // Escape key to close modals
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+      setSidebarOpen(false);
     document.querySelectorAll('.admin-modal-backdrop.is-active').forEach(modal => {
       modal.classList.remove('is-active');
     });

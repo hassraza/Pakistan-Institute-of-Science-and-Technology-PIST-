@@ -14,7 +14,8 @@
 </head>
 <body class="admin-shell">
   <!-- Left Sidebar (Matching Stitch / Figma ERP Aside) -->
-  <aside class="sidebar">
+  <div class="sidebar-backdrop" data-sidebar-close></div>
+  <aside class="sidebar" id="admin-sidebar">
     <div class="sidebar__top">
       <!-- PIST Official Academic ERP Brand Header -->
       <div class="sidebar__brand">
@@ -183,6 +184,9 @@
     <!-- Topbar (Matching Stitch / Figma Header 64px) -->
     <header class="admin-topbar">
       <div class="topbar__left">
+        <button type="button" class="topbar__menu-btn" data-sidebar-toggle aria-controls="admin-sidebar" aria-expanded="false" title="Open navigation">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
         <!-- Omnisearch Input -->
         <div class="topbar__search-box">
           <span class="material-symbols-outlined">search</span>
