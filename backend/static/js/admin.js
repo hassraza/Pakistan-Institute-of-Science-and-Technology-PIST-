@@ -1,15 +1,19 @@
 // PIST Academic ERP Admin JS Helpers
-document.addEventListener('DOMContentLoaded', () => {
+function setSidebarOpen(isOpen) {
   const sidebar = document.getElementById('admin-sidebar');
   const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
   const sidebarClose = document.querySelector('[data-sidebar-close]');
 
-  const setSidebarOpen = (isOpen) => {
-    if (!sidebar || !sidebarToggle || !sidebarClose) return;
-    sidebar.classList.toggle('is-open', isOpen);
-    sidebarClose.classList.toggle('is-visible', isOpen);
-    sidebarToggle.setAttribute('aria-expanded', String(isOpen));
-  };
+  if (!sidebar || !sidebarToggle || !sidebarClose) return;
+  sidebar.classList.toggle('is-open', isOpen);
+  sidebarClose.classList.toggle('is-visible', isOpen);
+  sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('admin-sidebar');
+  const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
+  const sidebarClose = document.querySelector('[data-sidebar-close]');
 
   sidebarToggle?.addEventListener('click', () => {
     setSidebarOpen(!sidebar.classList.contains('is-open'));
@@ -19,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', () => setSidebarOpen(false));
   });
 
-  // 1. Data-confirm confirmation popups
   document.querySelectorAll('[data-confirm]').forEach((form) => {
     form.addEventListener('submit', (event) => {
       const message = form.getAttribute('data-confirm');
@@ -29,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. Ctrl+K / Cmd+K Omnisearch shortcut
   const searchInput = document.getElementById('erp-global-search');
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
@@ -41,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 3. Omnisearch Enter key search redirect
   if (searchInput) {
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -53,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. Select All Checkboxes in data tables
   const selectAllBox = document.getElementById('select-all-applicants');
   if (selectAllBox) {
     selectAllBox.addEventListener('change', () => {
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Modal helpers
 function openModal(id) {
   const el = document.getElementById(id);
   if (el) el.classList.add('is-active');
@@ -75,10 +74,9 @@ function closeModal(id) {
   if (el) el.classList.remove('is-active');
 }
 
-// Escape key to close modals
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-      setSidebarOpen(false);
+    setSidebarOpen(false);
     document.querySelectorAll('.admin-modal-backdrop.is-active').forEach(modal => {
       modal.classList.remove('is-active');
     });

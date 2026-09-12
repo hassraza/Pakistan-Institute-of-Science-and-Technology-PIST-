@@ -10,23 +10,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'pist-demo-secret-key-change-this-before-production-2026!')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-#ALLOWED_HOSTS = ['Hasaza55.pythonanywhere.com' ,host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
-import os
+if DEBUG:
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'pist-dev-secret-key-only-for-local-development')
+else:
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    if not SECRET_KEY:
+        raise RuntimeError('SECRET_KEY must be configured in production.')
 
+DEFAULT_ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'testserver']
 ALLOWED_HOSTS = [
-    '.pythonanywhere.com',
-    'hasaza55.pythonanywhere.com',
-    '.vercel.app',
-    'testserver',
-] + [
     host.strip()
-    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    for host in os.environ.get('ALLOWED_HOSTS', ','.join(DEFAULT_ALLOWED_HOSTS)).split(',')
     if host.strip()
 ]
 
@@ -37,7 +33,9 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://your-pist-project.vercel.app',  # Replace with your actual Vercel frontend URL
+    origin.strip()
+    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+    if origin.strip()
 ]
 
 
@@ -152,7 +150,12 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', 'pist-integration-secret-key-2026')
+if DEBUG:
+    PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', 'pist-dev-integration-key')
+else:
+    PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY')
+    if not PIST_EXTERNAL_API_KEY:
+        raise RuntimeError('PIST_EXTERNAL_API_KEY must be configured for production integrations.')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -198,7 +201,12 @@ SPECTACULAR_SETTINGS = {
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+    if not os.environ.get('EMAIL_HOST'): 
+        raise RuntimeError('Email configuration is required in production. Set EMAIL_HOST and related settings.')
 
 STUDENT_MIN_AGE = 15
 STUDENT_MAX_AGE = 100

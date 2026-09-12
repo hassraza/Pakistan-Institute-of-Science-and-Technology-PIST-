@@ -606,8 +606,36 @@
   window.performSearch = performSearch;
   window.openSearchModal = openSearchModal;
   window.closeSearchModal = closeSearchModal;
-  window.openMobileNav = openMobileMenu;
-  window.closeMobileNav = closeMobileMenu;
+  window.openMobileNav = window.openMobileNav || function() {
+    const drawer = document.getElementById('mobile-nav-drawer') || document.querySelector('[data-site-nav]');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    const toggle = document.getElementById('mobile-menu-toggle') || document.querySelector('[data-menu-toggle]');
+    if (drawer) {
+      drawer.classList.remove('translate-x-full');
+      drawer.classList.add('translate-x-0', 'is-open');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('overflow-hidden');
+  };
+  window.closeMobileNav = window.closeMobileNav || function() {
+    const drawer = document.getElementById('mobile-nav-drawer') || document.querySelector('[data-site-nav]');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    const toggle = document.getElementById('mobile-menu-toggle') || document.querySelector('[data-menu-toggle]');
+    if (drawer) {
+      drawer.classList.remove('translate-x-0', 'is-open');
+      drawer.classList.add('translate-x-full');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('overflow-hidden');
+  };
 
   function updateActiveResult() {
     const items = resultsContainer ? resultsContainer.querySelectorAll('.search-result-item') : [];
@@ -840,4 +868,3 @@
   document.querySelectorAll('[data-print-roll-slip]').forEach((button) => {
     button.addEventListener('click', () => window.print());
   });
-});

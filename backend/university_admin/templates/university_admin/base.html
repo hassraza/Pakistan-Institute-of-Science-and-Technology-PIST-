@@ -12,205 +12,105 @@
   <link rel="stylesheet" href="{% static 'css/admin.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
+{% if request.resolver_match and request.resolver_match.url_name == 'login' %}
+<body class="admin-auth-body">
+  <main class="admin-auth-shell">
+    {% include 'partials/messages.html' %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{% static 'js/admin.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+{% else %}
 <body class="admin-shell">
-  <!-- Left Sidebar (Matching Stitch / Figma ERP Aside) -->
   <div class="sidebar-backdrop" data-sidebar-close></div>
   <aside class="sidebar" id="admin-sidebar">
     <div class="sidebar__top">
-      <!-- PIST Official Academic ERP Brand Header -->
       <div class="sidebar__brand">
         <a href="{% url 'university_admin:dashboard' %}" style="display: flex; align-items: center;">
           <img src="{% static 'images/pist_erp_logo.svg' %}" alt="PIST Academic ERP" class="sidebar__brand-logo">
         </a>
       </div>
 
-      <!-- Admissions Cycle Selector Pill -->
       <div class="sidebar__cycle-pill" title="Active Admissions Cycle">
         <div class="sidebar__cycle-left">
           <span class="sidebar__cycle-dot"></span>
-          <span>Fall 2025 Admissions Cycle</span>
+          <span>Admissions Cycle</span>
         </div>
         <span class="material-symbols-outlined sidebar__cycle-arrows">unfold_more</span>
       </div>
 
-      <!-- Navigation Links -->
       <nav>
         <a href="{% url 'university_admin:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">grid_view</span>
-            <span>Dashboard</span>
-          </span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">grid_view</span><span>Dashboard</span></span>
         </a>
-
-        <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' and request.GET.view == 'admissions' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">event_available</span>
-            <span>Admissions</span>
-          </span>
-        </a>
-
         <a href="{% url 'university_admin:applications' %}" class="{% if request.resolver_match.url_name == 'applications' or request.resolver_match.url_name == 'application_detail' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">description</span>
-            <span>Applications</span>
-          </span>
-          <span class="sidebar__badge">1,420</span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">description</span><span>Applications</span></span>
         </a>
-
         <a href="{% url 'university_admin:programs' %}" class="{% if request.resolver_match.url_name == 'programs' or request.resolver_match.url_name == 'program_edit' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">school</span>
-            <span>Programs</span>
-          </span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">school</span><span>Programs</span></span>
         </a>
-
         <a href="{% url 'university_admin:students_list' %}" class="{% if request.resolver_match.url_name == 'students_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">group</span>
-            <span>Students</span>
-          </span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">group</span><span>Students</span></span>
         </a>
-
         <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.resolver_match.url_name == 'test_sessions' and not request.GET.view %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">assignment_turned_in</span>
-            <span>Entry Tests</span>
-          </span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">assignment_turned_in</span><span>Entry Tests</span></span>
         </a>
-
-        <a href="{% url 'university_admin:test_sessions' %}" class="{% if request.GET.tab == 'roll_slips' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">confirmation_number</span>
-            <span>Roll Number Slips</span>
-          </span>
-        </a>
-
-        <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">format_list_numbered</span>
-            <span>Merit Lists</span>
-          </span>
-        </a>
-
-        <a href="{% url 'university_admin:programs' %}?filter=departments">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">apartment</span>
-            <span>Departments</span>
-          </span>
-        </a>
-
-        <a href="{% url 'university_admin:students_list' %}?role=faculty">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">person_pin</span>
-            <span>Faculty</span>
-          </span>
-        </a>
-
         <a href="{% url 'university_admin:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">campaign</span>
-            <span>Notifications</span>
-          </span>
-          <span class="sidebar__badge sidebar__badge--red">3</span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">campaign</span><span>Notifications</span></span>
         </a>
-
-        <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.GET.tab == 'docs' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">folder_open</span>
-            <span>Documents</span>
-          </span>
+        <a href="{% url 'university_admin:documents_queue' %}" class="{% if request.resolver_match.url_name == 'documents_queue' %}active{% endif %}">
+          <span class="nav-item-content"><span class="material-symbols-outlined">folder_open</span><span>Documents</span></span>
         </a>
-
         <a href="{% url 'university_admin:reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">bar_chart</span>
-            <span>Reports</span>
-          </span>
-        </a>
-
-        <a href="{% url 'university_admin:dashboard' %}?view=settings">
-          <span class="nav-item-content">
-            <span class="material-symbols-outlined">settings</span>
-            <span>Settings</span>
-          </span>
+          <span class="nav-item-content"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></span>
         </a>
       </nav>
     </div>
-
-    <!-- Sidebar Bottom Utility Strip -->
     <div class="sidebar__bottom">
       <div class="sidebar__hec-sync">
         <span>HEC Portal Sync</span>
-        <span class="sidebar__hec-status">
-          <span class="sidebar__hec-dot"></span>
-          <span>Active</span>
-        </span>
+        <span class="sidebar__hec-status"><span class="sidebar__hec-dot"></span><span>Active</span></span>
       </div>
-
-      <a href="#" class="sidebar__support-link">
+      <a href="{% url 'university_admin:dashboard' %}" class="sidebar__support-link">
         <span class="material-symbols-outlined" style="font-size: 16px;">help_outline</span>
         <span>Support & Manual</span>
       </a>
-
-      <!-- Controller Profile Card -->
       <div class="sidebar__user-profile">
-        <div class="sidebar__avatar">
-          {{ user.first_name|default:user.username|slice:':1'|upper }}
-        </div>
+        <div class="sidebar__avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</div>
         <div class="sidebar__user-info">
           <div class="sidebar__user-name">{{ user.get_full_name|default:user.username }}</div>
           <div class="sidebar__user-role">Registrar & Controller</div>
         </div>
       </div>
-
-      <!-- Quick Nav for public site and logout -->
       <div class="sidebar__quick-links">
-        <a href="{% url 'admissions:home' %}" target="_blank" title="Public Main Site">
-          <span class="material-symbols-outlined" style="font-size: 15px;">public</span>
-        </a>
-        <a href="{% url 'university_admin:logout' %}" title="Logout">
-          <span class="material-symbols-outlined" style="font-size: 15px;">logout</span>
-        </a>
+        <a href="{% url 'admissions:home' %}" target="_blank" title="Public Main Site"><span class="material-symbols-outlined" style="font-size: 15px;">public</span></a>
+        <a href="{% url 'university_admin:logout' %}" title="Logout"><span class="material-symbols-outlined" style="font-size: 15px;">logout</span></a>
       </div>
     </div>
   </aside>
 
-  <!-- Main Content Area -->
   <div class="admin-main">
-    <!-- Topbar (Matching Stitch / Figma Header 64px) -->
     <header class="admin-topbar">
       <div class="topbar__left">
-        <!-- Omnisearch Input -->
         <div class="topbar__search-box">
           <span class="material-symbols-outlined">search</span>
           <input type="text" id="erp-global-search" class="topbar__search-input" placeholder="Search by CNIC, App ID, or Student Name... [Ctrl K]" autocomplete="off">
         </div>
-        <div class="topbar__cycle-badge">
-          Admissions Cycle 2025-26 - Round 1
-        </div>
       </div>
-
       <div class="topbar__right">
-        <button type="button" class="topbar__icon-btn" title="Calendar">
-          <span class="material-symbols-outlined" style="font-size: 20px;">calendar_month</span>
-        </button>
-        <button type="button" class="topbar__icon-btn" title="Notifications">
-          <span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
-          <span class="notify-dot"></span>
-        </button>
-        <div class="topbar__avatar">
-          {{ user.first_name|default:user.username|slice:':1'|upper }}
-        </div>
+        <button type="button" class="topbar__icon-btn" title="Calendar"><span class="material-symbols-outlined" style="font-size: 20px;">calendar_month</span></button>
+        <button type="button" class="topbar__icon-btn" title="Notifications"><span class="material-symbols-outlined" style="font-size: 20px;">notifications</span><span class="notify-dot"></span></button>
+        <div class="topbar__avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</div>
       </div>
     </header>
-
     <main class="admin-content">
       {% include 'partials/messages.html' %}
       {% block content %}{% endblock %}
     </main>
   </div>
-
   <script src="{% static 'js/admin.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
+{% endif %}
 </html>
