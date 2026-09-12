@@ -1,45 +1,57 @@
-{% extends 'university_admin/base.html' %}
-{% load static %}
+﻿{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>University Admin Login | PIST ERP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body class="admin-auth-body">
+  <main class="admin-auth-shell">
+    {% include 'partials/messages.html' %}
+    <div style="min-height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; padding: 20px;">
+      <div class="erp-card" style="width: 100%; max-width: 440px; border-radius: var(--erp-radius-lg); box-shadow: var(--erp-shadow-md);">
+        <div style="background: var(--erp-primary); padding: 32px 28px; text-align: center; border-radius: var(--erp-radius-lg) var(--erp-radius-lg) 0 0;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+            <img src="{% static 'images/pist_erp_logo.svg' %}" alt="PIST Logo" style="width: 44px; height: 44px;">
+            <div style="text-align: left;">
+              <div style="color: #ffffff; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.01em;">PIST</div>
+              <div style="color: var(--erp-gold); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Academic ERP</div>
+            </div>
+          </div>
+          <h1 style="color: #ffffff; font-size: 1.15rem; font-weight: 700; margin: 0;">Officer Authentication</h1>
+          <p style="color: rgba(255, 255, 255, 0.75); font-size: 0.8rem; margin: 4px 0 0 0;">Enter your credentials to access the admissions registry</p>
+        </div>
 
-{% block title %}University Admin Login | PIST ERP{% endblock %}
-
-{% block content %}
-<div style="min-height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; padding: 20px;">
-  <div class="erp-card" style="width: 100%; max-width: 440px; border-radius: var(--erp-radius-lg); box-shadow: var(--erp-shadow-md);">
-    <div style="background: var(--erp-primary); padding: 32px 28px; text-align: center; border-radius: var(--erp-radius-lg) var(--erp-radius-lg) 0 0;">
-      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-        <img src="{% static 'images/pist_erp_logo.svg' %}" alt="PIST Logo" style="width: 44px; height: 44px;">
-        <div style="text-align: left;">
-          <div style="color: #ffffff; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.01em;">PIST</div>
-          <div style="color: var(--erp-gold); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Academic ERP</div>
+        <div class="erp-card-body" style="padding: 28px;">
+          <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--erp-text-main); margin-bottom: 6px;">Username or Official ID</label>
+                <input type="text" name="username" autofocus required class="erp-input" placeholder="e.g. registrar.controller">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--erp-text-main); margin-bottom: 6px;">Secure Password</label>
+                <input type="password" name="password" required class="erp-input" placeholder="••••••••••••">
+              </div>
+              <button class="erp-btn erp-btn-primary" type="submit" style="width: 100%; justify-content: center; padding: 12px; margin-top: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                Sign In to ERP Portal
+              </button>
+            </div>
+          </form>
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--erp-border); text-align: center; font-size: 0.78rem; color: var(--erp-text-muted);">
+            Audit Reference: <strong>PIST/ERP/AUTH-SEC-2025</strong>
+          </div>
         </div>
       </div>
-      <h1 style="color: #ffffff; font-size: 1.15rem; font-weight: 700; margin: 0;">Officer Authentication</h1>
-      <p style="color: rgba(255, 255, 255, 0.75); font-size: 0.8rem; margin: 4px 0 0 0;">Enter your credentials to access the admissions registry</p>
     </div>
-
-    <div class="erp-card-body" style="padding: 28px;">
-      <form method="post">
-        {% csrf_token %}
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div>
-            <label style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--erp-text-main); margin-bottom: 6px;">Username or Official ID</label>
-            <input type="text" name="username" autofocus required class="erp-input" placeholder="e.g. registrar.controller">
-          </div>
-          <div>
-            <label style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--erp-text-main); margin-bottom: 6px;">Secure Password</label>
-            <input type="password" name="password" required class="erp-input" placeholder="••••••••••••">
-          </div>
-          <button class="erp-btn erp-btn-primary" type="submit" style="width: 100%; justify-content: center; padding: 12px; margin-top: 8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-            Sign In to ERP Portal
-          </button>
-        </div>
-      </form>
-      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--erp-border); text-align: center; font-size: 0.78rem; color: var(--erp-text-muted);">
-        Audit Reference: <strong>PIST/ERP/AUTH-SEC-2025</strong>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+  </main>
+  <script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>

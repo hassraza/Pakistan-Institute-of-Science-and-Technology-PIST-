@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -12,16 +12,6 @@
   <link rel="stylesheet" href="{% static 'css/admin.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-{% if request.resolver_match and request.resolver_match.url_name == 'login' %}
-<body class="admin-auth-body">
-  <main class="admin-auth-shell">
-    {% include 'partials/messages.html' %}
-    {% block content %}{% endblock %}
-  </main>
-  <script src="{% static 'js/admin.js' %}"></script>
-  {% block extra_js %}{% endblock %}
-</body>
-{% else %}
 <body class="admin-shell">
   <div class="sidebar-backdrop" data-sidebar-close></div>
   <aside class="sidebar" id="admin-sidebar">
@@ -112,5 +102,4 @@
   <script src="{% static 'js/admin.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
-{% endif %}
 </html>
