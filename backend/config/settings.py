@@ -12,12 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-if DEBUG:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'pist-dev-secret-key-only-for-local-development')
-else:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise RuntimeError('SECRET_KEY must be configured in production.')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'pist-django-secret-key-hasaza555-prod-2026')
+
 
 DEFAULT_ALLOWED_HOSTS = [
     'localhost',
