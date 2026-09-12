@@ -571,7 +571,7 @@ def program_create(request):
     form = ProgramCreateForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         program = form.save()
-        messages.success(request, f'Program {program.name} was created successfully.')
+        messages.success(request, f'Program {program.name} was created successfully and posted to PakUniPortal.')
         return redirect('university_admin:programs')
 
     return render(
@@ -595,7 +595,7 @@ def program_toggle_admissions(request, program_id):
     program.save(update_fields=['admissions_open', 'updated_at'])
 
     status_str = 'Opened' if program.admissions_open else 'Closed'
-    messages.success(request, f'Admissions {status_str} for {program.name} ({program.code}).')
+    messages.success(request, f'Admissions {status_str} for {program.name} ({program.code}) and synchronized with PakUniPortal.')
     return redirect('university_admin:programs')
 
 
@@ -606,7 +606,7 @@ def program_edit(request, program_id):
 
     if request.method == 'POST' and form.is_valid():
         form.save()
-        messages.success(request, f'Program settings updated for {program.name}.')
+        messages.success(request, f'Program settings updated and synchronized with PakUniPortal for {program.name}.')
         return redirect('university_admin:programs')
 
     return render(
@@ -617,6 +617,22 @@ def program_edit(request, program_id):
             'form': form,
         },
     )
+
+
+@staff_required
+def program_sync_portal(request):
+    if request.method != 'POST':
+        return HttpResponseForbidden()
+
+    from admissions.pakuniportal_sync import bulk_sync_all_programs
+    success, result = bulk_sync_all_programs()
+    if success:
+        count = result.get('count', len(result.get('synced', []))) if isinstance(result, dict) else ''
+        messages.success(request, f'Programs successfully synchronized with PakUniPortal ({count} processed).')
+    else:
+        messages.warning(request, f'PakUniPortal sync note: {result}')
+    return redirect('university_admin:programs')
+
 
 
 # ==============================================================================

@@ -29,6 +29,8 @@ urlpatterns = [
     path('programs/new/', views.program_create, name='program_create'),
     path('programs/<int:program_id>/toggle/', views.program_toggle_admissions, name='program_toggle'),
     path('programs/<int:program_id>/edit/', views.program_edit, name='program_edit'),
+    path('programs/sync-portal/', views.program_sync_portal, name='program_sync_portal'),
+
     
     # Test Sessions Management
     path('test-sessions/', views.test_sessions_list, name='test_sessions'),

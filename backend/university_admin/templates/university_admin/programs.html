@@ -15,10 +15,17 @@
       <h1 class="erp-page-title">Academic Degree Programs &amp; Admission Controls</h1>
       <p class="erp-page-subtitle">Configure undergraduate and graduate offerings, toggle live application intake windows, and manage entry criteria.</p>
     </div>
-    <div class="erp-header-actions">
+    <div class="erp-header-actions" style="display: flex; gap: 8px; align-items: center;">
       <span class="erp-badge" style="background: rgba(184, 237, 226, 0.5); color: #013e37; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
         {{ programs.count }} Active Offerings
       </span>
+      <form action="{% url 'university_admin:program_sync_portal' %}" method="post" style="display: inline; margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="erp-btn erp-btn-secondary" style="border: 1px solid var(--erp-border); background: var(--erp-surface); color: var(--erp-primary);" title="Force sync all programs to PakUniPortal">
+          <span class="material-symbols-outlined" style="font-size: 16px;">sync</span>
+          Sync with PakUniPortal
+        </button>
+      </form>
       <a href="{% url 'university_admin:program_create' %}" class="erp-btn erp-btn-primary">
         <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
         Create Program

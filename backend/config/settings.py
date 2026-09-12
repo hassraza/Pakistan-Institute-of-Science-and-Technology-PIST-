@@ -166,6 +166,14 @@ else:
     if not PIST_EXTERNAL_API_KEY:
         raise RuntimeError('PIST_EXTERNAL_API_KEY must be configured for production integrations.')
 
+# PakUniPortal Integration Settings
+PAKUNIPORTAL_BASE_URL = os.environ.get('PAKUNIPORTAL_BASE_URL', 'http://127.0.0.1:8000').rstrip('/')
+PAKUNIPORTAL_SYNC_API_KEY = os.environ.get('PAKUNIPORTAL_SYNC_API_KEY', 'pist-integration-secret-key-2026')
+PAKUNIPORTAL_PROGRAM_SYNC_PATH = os.environ.get('PAKUNIPORTAL_PROGRAM_SYNC_PATH', '/api/v1/pist/programs/sync/')
+PAKUNIPORTAL_SYNC_ENABLED = os.environ.get('PAKUNIPORTAL_SYNC_ENABLED', 'True').lower() in ('true', '1', 'yes')
+PAKUNIPORTAL_SYNC_TIMEOUT = int(os.environ.get('PAKUNIPORTAL_SYNC_TIMEOUT', '5'))
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
