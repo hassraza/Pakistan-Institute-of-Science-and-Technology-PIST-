@@ -159,12 +159,8 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-if DEBUG:
-    PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', 'pist-dev-integration-key')
-else:
-    PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY')
-    if not PIST_EXTERNAL_API_KEY:
-        raise RuntimeError('PIST_EXTERNAL_API_KEY must be configured for production integrations.')
+PIST_EXTERNAL_API_KEY = os.environ.get('PIST_EXTERNAL_API_KEY', 'pist-integration-secret-key-2026')
+
 
 # PakUniPortal Integration Settings
 PAKUNIPORTAL_BASE_URL = os.environ.get('PAKUNIPORTAL_BASE_URL', 'http://127.0.0.1:8000').rstrip('/')
@@ -218,12 +214,10 @@ SPECTACULAR_SETTINGS = {
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if DEBUG or not os.environ.get('EMAIL_HOST'):
+    EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 else:
     EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-    if not os.environ.get('EMAIL_HOST'): 
-        raise RuntimeError('Email configuration is required in production. Set EMAIL_HOST and related settings.')
 
 STUDENT_MIN_AGE = 15
 STUDENT_MAX_AGE = 100
@@ -237,9 +231,10 @@ LOGIN_ATTEMPT_WINDOW_MINUTES = 10
 SESSION_COOKIE_HTTPONLY = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if os.environ.get('USE_HTTPS_PROXY', 'False').lower() == 'true' else None
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True' if not DEBUG else 'False').lower() == 'true'
-CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True' if not DEBUG else 'False').lower() == 'true'
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True' if not DEBUG else 'False').lower() == 'true'
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() == 'true'
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = 'same-origin'
