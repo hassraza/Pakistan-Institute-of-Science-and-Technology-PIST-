@@ -15,6 +15,11 @@
    - `SESSION_COOKIE_SECURE=True`
    - `CSRF_COOKIE_SECURE=True`
    - `SECURE_SSL_REDIRECT=True`
+
+The deployed hostname is included as a code fallback, but configure these values in
+the PythonAnywhere web app and reload the web app after saving them. Do not leave
+`DEBUG=True` in the deployed environment; otherwise Django exposes detailed error
+pages and settings when a request fails.
 4. Run migrations and seed data:
 
 ```bash

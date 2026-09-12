@@ -19,16 +19,25 @@ else:
     if not SECRET_KEY:
         raise RuntimeError('SECRET_KEY must be configured in production.')
 
-DEFAULT_ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'testserver']
+DEFAULT_ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    'testserver',
+    'hasaza555.pythonanywhere.com',
+]
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get('ALLOWED_HOSTS', ','.join(DEFAULT_ALLOWED_HOSTS)).split(',')
     if host.strip()
 ]
 
+DEFAULT_CSRF_TRUSTED_ORIGINS = ['https://hasaza555.pythonanywhere.com']
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    for origin in os.environ.get(
+        'CSRF_TRUSTED_ORIGINS', ','.join(DEFAULT_CSRF_TRUSTED_ORIGINS)
+    ).split(',')
     if origin.strip()
 ]
 
