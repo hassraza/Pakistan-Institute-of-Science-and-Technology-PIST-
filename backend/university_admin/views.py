@@ -317,68 +317,71 @@ def application_schedule_action(request, application_uuid):
     form = ScheduleTestForm(request.POST, program=applicant.program)
 
     if form.is_valid():
-        session = form.cleaned_data.get('test_session')
-        with transaction.atomic():
-            if session:
-                if session.available_seats > 0:
-                    session.available_seats -= 1
-                    session.save(update_fields=['available_seats'])
-                applicant.test_session = session
-                applicant.test_date = session.test_date
-                applicant.reporting_time = session.reporting_time
-                applicant.test_venue = session.test_center.name
-                applicant.test_building = session.building
-                applicant.test_hall = session.hall
-            else:
-                applicant.test_date = form.cleaned_data.get('custom_test_date') or timezone.localdate()
-                applicant.reporting_time = form.cleaned_data.get('custom_reporting_time')
-                applicant.test_venue = form.cleaned_data.get('custom_venue') or applicant.campus.name
-                applicant.test_building = form.cleaned_data.get('custom_building') or 'Academic Block'
-                applicant.test_hall = form.cleaned_data.get('custom_hall') or 'Examination Hall'
+        try:
+            session = form.cleaned_data.get('test_session')
+            with transaction.atomic():
+                if session:
+                    if session.available_seats > 0:
+                        session.available_seats -= 1
+                        session.save(update_fields=['available_seats'])
+                    applicant.test_session = session
+                    applicant.test_date = session.test_date
+                    applicant.reporting_time = session.reporting_time
+                    applicant.test_venue = session.test_center.name
+                    applicant.test_building = session.building
+                    applicant.test_hall = session.hall
+                else:
+                    applicant.test_date = form.cleaned_data.get('custom_test_date') or timezone.localdate()
+                    applicant.reporting_time = form.cleaned_data.get('custom_reporting_time')
+                    applicant.test_venue = form.cleaned_data.get('custom_venue') or applicant.campus.name
+                    applicant.test_building = form.cleaned_data.get('custom_building') or 'Academic Block'
+                    applicant.test_hall = form.cleaned_data.get('custom_hall') or 'Examination Hall'
 
-                # Ensure test session exists for roll slip relation
-                test_center = TestCenter.objects.filter(campus=applicant.campus, is_active=True).first()
-                if not test_center:
-                    test_center = TestCenter.objects.create(
-                        campus=applicant.campus,
-                        name=f'{applicant.campus.name} Center',
-                        address=applicant.campus.city,
-                        building=applicant.test_building,
-                        hall=applicant.test_hall,
-                        capacity=100,
+                    # Ensure test session exists for roll slip relation
+                    test_center = TestCenter.objects.filter(campus=applicant.campus, is_active=True).first()
+                    if not test_center:
+                        test_center = TestCenter.objects.create(
+                            campus=applicant.campus,
+                            name=f'{applicant.campus.name} Center',
+                            address=applicant.campus.city,
+                            building=applicant.test_building,
+                            hall=applicant.test_hall,
+                            capacity=100,
+                        )
+                    session, _ = TestSession.objects.get_or_create(
+                        test_center=test_center,
+                        program=applicant.program,
+                        test_date=applicant.test_date,
+                        defaults={
+                            'reporting_time': applicant.reporting_time or timezone.datetime.strptime('08:30', '%H:%M').time(),
+                            'building': applicant.test_building,
+                            'hall': applicant.test_hall,
+                            'available_seats': 50,
+                        }
                     )
-                session, _ = TestSession.objects.get_or_create(
-                    test_center=test_center,
-                    program=applicant.program,
-                    test_date=applicant.test_date,
-                    defaults={
-                        'reporting_time': applicant.reporting_time or timezone.datetime.strptime('08:30', '%H:%M').time(),
-                        'building': applicant.test_building,
-                        'hall': applicant.test_hall,
-                        'available_seats': 50,
-                    }
+                    applicant.test_session = session
+
+                applicant.application_status = PISTApplicant.ApplicationStatus.SCHEDULED
+                applicant.status = PISTApplicant.Status.ROLL_ISSUED
+                applicant.eligibility_status = PISTApplicant.EligibilityStatus.ELIGIBLE
+                applicant.save(update_fields=['test_session', 'test_date', 'reporting_time', 'test_venue', 'test_building', 'test_hall', 'application_status', 'status', 'eligibility_status', 'updated_at'])
+
+                if not applicant.roll_number:
+                    RollNumberService.issue_roll_number(applicant)
+
+            if applicant.student:
+                Notification.objects.create(
+                    student=applicant.student,
+                    title='Entry Test Scheduled & Roll Slip Issued',
+                    message=(
+                        f'Your entry test for {applicant.program.name} is scheduled for {applicant.test_date} '
+                        f'at {applicant.test_venue}. Your Roll Number is {applicant.roll_number}.'
+                    ),
                 )
-                applicant.test_session = session
 
-            applicant.application_status = PISTApplicant.ApplicationStatus.SCHEDULED
-            applicant.status = PISTApplicant.Status.ROLL_ISSUED
-            applicant.eligibility_status = PISTApplicant.EligibilityStatus.ELIGIBLE
-            applicant.save(update_fields=['test_session', 'test_date', 'reporting_time', 'test_venue', 'test_building', 'test_hall', 'application_status', 'status', 'eligibility_status', 'updated_at'])
-
-            if not applicant.roll_number:
-                RollNumberService.issue_roll_number(applicant)
-
-        if applicant.student:
-            Notification.objects.create(
-                student=applicant.student,
-                title='Entry Test Scheduled & Roll Slip Issued',
-                message=(
-                    f'Your entry test for {applicant.program.name} is scheduled for {applicant.test_date} '
-                    f'at {applicant.test_venue}. Your Roll Number is {applicant.roll_number}.'
-                ),
-            )
-
-        messages.success(request, f'Test scheduled and roll number {applicant.roll_number} assigned to {applicant.full_name}.')
+            messages.success(request, f'Test scheduled and roll number {applicant.roll_number} assigned to {applicant.full_name}.')
+        except Exception as exc:
+            messages.error(request, f'Failed to schedule test: {exc}')
     else:
         messages.error(request, 'Failed to schedule test. Please check the session details.')
 

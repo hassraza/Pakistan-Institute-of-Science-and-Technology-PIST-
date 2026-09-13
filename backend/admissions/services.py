@@ -199,9 +199,13 @@ class RollNumberService:
         sequence, _ = RollNumberSequence.objects.select_for_update().get_or_create(
             campus=application.campus, program=application.program, year=current_admission_year(),
         )
-        sequence.last_number += 1
+        dept_code = application.program.department.code or 'GEN'
+        while True:
+            sequence.last_number += 1
+            roll_number = f'PIST-{application.campus.code}-{dept_code}-{current_admission_year()}-{sequence.last_number:04d}'
+            if not RollSlip.objects.filter(roll_number=roll_number).exists():
+                break
         sequence.save(update_fields=['last_number'])
-        roll_number = f'PIST-{application.campus.code}-{application.program.department.code}-{current_admission_year()}-{sequence.last_number:04d}'
         slip = RollSlip.objects.create(application=application, roll_number=roll_number, test_session=session)
         application.roll_number = roll_number
         application.save(update_fields=['roll_number', 'updated_at'])
